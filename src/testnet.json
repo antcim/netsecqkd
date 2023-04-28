@@ -1,6 +1,6 @@
 {
     "is_parallel": false,
-    "stop_time": 2000000000000,
+    "stop_time": 5000000000000,
     "nodes": [
         {
             "name": "node1",
@@ -15,20 +15,34 @@
             "memo_size": 50
         }
     ],
-    "qconnections": [
+    "qchannels": [
         {
-            "node1": "node1",
-            "node2": "node2",
-            "attenuation": 0.0002,
-            "distance": 500,
-            "type": "meet_in_the_middle"
+            "name": "qchannel0",
+            "source": "node1",
+            "destination": "node2",
+            "attenuation": 0.00001,
+            "distance": 1000
+        },
+        {
+            "name": "qchannel1",
+            "source": "node2",
+            "destination": "node1",
+            "attenuation": 0.00001,
+            "distance": 1000
         }
     ],
-    "cconnections": [
+    "cchannels": [
         {
-            "node1": "node1",
-            "node2": "node2",
-            "delay": 500000000
+            "name": "cchannel1",
+            "source": "node1",
+            "destination": "node2",
+            "distance": 1000
+        },
+        {
+            "name": "cchannel2",
+            "source": "node2",
+            "destination": "node1",
+            "distance": 1000
         }
     ]
 }
