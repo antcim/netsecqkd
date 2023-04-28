@@ -76,4 +76,12 @@ def test(sim_time, keysize):
     for i, e in enumerate(n1.protocol_stack[0].error_rates):
         print("\tkey {}:\t{}%".format(i + 1, e * 100))
 
+    print("Node 1 keys:")
+    for i, key in enumerate(km1.keys):
+        print("\t{0:0128b}".format(key))
+    
+    print("Node 2 keys:")
+    for i, key in enumerate(km2.keys):
+        print("\t{0:0128b}".format(key))
+
 test(5000, 128)
