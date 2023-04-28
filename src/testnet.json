@@ -1,0 +1,34 @@
+{
+    "is_parallel": false,
+    "stop_time": 2000000000000,
+    "nodes": [
+        {
+            "name": "node1",
+            "type": "QKDNode",
+            "seed": 0,
+            "memo_size": 50
+        },
+        {
+            "name": "node2",
+            "type": "QKDNode",
+            "seed": 1,
+            "memo_size": 50
+        }
+    ],
+    "qconnections": [
+        {
+            "node1": "node1",
+            "node2": "node2",
+            "attenuation": 0.0002,
+            "distance": 500,
+            "type": "meet_in_the_middle"
+        }
+    ],
+    "cconnections": [
+        {
+            "node1": "node1",
+            "node2": "node2",
+            "delay": 500000000
+        }
+    ]
+}
