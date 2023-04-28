@@ -31,6 +31,7 @@ def test(sim_time, keysize):
     sim_time: duration of simulation time (ms)
     keysize: size of generated secure key (bits)
     """
+    NUM_KEYS = 25
 
     network_config = "src/testnet.json"
     network_topo = QKDTopo(network_config)
@@ -52,10 +53,10 @@ def test(sim_time, keysize):
     qc1.polarization_fidelity = 0.97
     
     # instantiate our written keysize protocol
-    km1 = KeyManager(tl, keysize, 25)
+    km1 = KeyManager(tl, keysize, NUM_KEYS)
     km1.lower_protocols.append(n1.protocol_stack[0])
     n1.protocol_stack[0].upper_protocols.append(km1)
-    km2 = KeyManager(tl, keysize, 25)
+    km2 = KeyManager(tl, keysize, NUM_KEYS)
     km2.lower_protocols.append(n2.protocol_stack[0])
     n2.protocol_stack[0].upper_protocols.append(km2)
     
