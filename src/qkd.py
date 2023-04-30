@@ -13,6 +13,7 @@ import json
 
 from netparser import netparse
 
+
 class KeyManager():
     def __init__(self, timeline, keysize, num_keys):
         self.timeline = timeline
@@ -42,35 +43,28 @@ def genNetwork(filepath):
 
 
 def readConfig(filepath):
-    network_config = "src/testnet.json"
-    return QKDTopo(network_config)
+    return QKDTopo(filepath)
 
-
-def test(keysize):
+def runQKD(network, keysize):
     NUM_KEYS = 25
     PRINT_KEYS = False
 
-    filepath = 'src/rndNetConf.json'
+    tl = network.get_timeline()
 
-    genNetwork(filepath)
-    netparse(filepath)
-    network_topo = readConfig("src/testnet.json")
-    tl = network_topo.get_timeline()
-
-    for i, node in enumerate(network_topo.get_nodes_by_type(QKDTopo.QKD_NODE)):
+    for i, node in enumerate(network.get_nodes_by_type(QKDTopo.QKD_NODE)):
         for key in node.qchannels.keys():
             print(node.qchannels[key].name)
 
-    n1 = network_topo.get_nodes_by_type(QKDTopo.QKD_NODE)[0]
-    n2 = network_topo.get_nodes_by_type(QKDTopo.QKD_NODE)[1]
+    n1 = network.get_nodes_by_type(QKDTopo.QKD_NODE)[0]
+    n2 = network.get_nodes_by_type(QKDTopo.QKD_NODE)[1]
     n1.set_seed(0)
     n2.set_seed(1)
     pair_bb84_protocols(n1.protocol_stack[0], n2.protocol_stack[0])
 
-    cc0 = network_topo.get_cchannels()[0]
-    cc1 = network_topo.get_cchannels()[1]
-    qc0 = network_topo.get_qchannels()[0]
-    qc1 = network_topo.get_qchannels()[1]
+    cc0 = network.get_cchannels()[0]
+    cc1 = network.get_cchannels()[1]
+    qc0 = network.get_qchannels()[0]
+    qc1 = network.get_qchannels()[1]
     qc0.polarization_fidelity = 0.97
     qc1.polarization_fidelity = 0.97
 
@@ -109,4 +103,9 @@ def test(keysize):
             print("\t{0:0128b}".format(key))
 
 
-test(128)
+filepath = 'src/testnet1.json'
+parsedpath ='src/testnet1parsed.json'
+# genNetwork(filepath)
+# netparse(filepath, parsedpath)
+network = readConfig(parsedpath)
+runQKD(network, 128)

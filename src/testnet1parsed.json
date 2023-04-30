@@ -31,6 +31,18 @@
             "type": "QKDNode",
             "seed": 0,
             "memo_size": 50
+        },
+        {
+            "name": "node5",
+            "type": "QKDNode",
+            "seed": 0,
+            "memo_size": 50
+        },
+        {
+            "name": "node6",
+            "type": "QKDNode",
+            "seed": 0,
+            "memo_size": 50
         }
     ],
     "qchannels": [
@@ -61,6 +73,20 @@
             "destination": "node4",
             "attenuation": 1e-05,
             "distance": 1000
+        },
+        {
+            "name": "qchannel4",
+            "source": "node4",
+            "destination": "node5",
+            "attenuation": 1e-05,
+            "distance": 1000
+        },
+        {
+            "name": "qchannel5",
+            "source": "node5",
+            "destination": "node6",
+            "attenuation": 1e-05,
+            "distance": 1000
         }
     ],
     "cchannels": [
@@ -86,6 +112,18 @@
             "name": "cchannel3",
             "source": "node3",
             "destination": "node4",
+            "distance": 1000
+        },
+        {
+            "name": "cchannel4",
+            "source": "node4",
+            "destination": "node5",
+            "distance": 1000
+        },
+        {
+            "name": "cchannel5",
+            "source": "node5",
+            "destination": "node6",
             "distance": 1000
         }
     ]

@@ -1,6 +1,6 @@
 import json
 
-def netparse(filepath):
+def netparse(filepath, savepath):
     # READ JSON INTO DICT
     with open(filepath, 'r') as f:
         dict = json.load(f)
@@ -64,5 +64,5 @@ def netparse(filepath):
     # print(json.dumps(dict, indent = 4))
 
     # WRITE JSON
-    with open('src/parsed.json', 'w') as f:
+    with open(savepath, 'w') as f:
         f.write(json.dumps(dict, indent=4))
