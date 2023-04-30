@@ -28,8 +28,10 @@ def netparse(filepath, savepath):
     cchannels_list = []
     count = 0
     for l in links:
+
+        # sx to dx
         qchannel_dict = {
-            'name': 'qchannel'+str(count),
+            'name': 'qchannel'+str(count)+'_'+str(l['source'])+'to'+ str(l['target']),
             'source': 'node' + str(l['source']),
             'destination': 'node' + str(l['target']),
             'attenuation': 0.00001,
@@ -38,9 +40,27 @@ def netparse(filepath, savepath):
         qchannels_list.append(qchannel_dict)
 
         cchannel_dict = {
-            'name': 'cchannel'+str(count),
+            'name': 'cchannel'+str(count)+'_'+str(l['source'])+'to'+ str(l['target']),
             'source': 'node' + str(l['source']),
             'destination': 'node' + str(l['target']),
+            'distance': 1000
+        }
+        cchannels_list.append(cchannel_dict)
+
+        # dx to sx
+        qchannel_dict = {
+            'name': 'qchannel'+str(count)+'_'+str(l['target'])+'to'+ str(l['source']),
+            'source': 'node' + str(l['target']),
+            'destination': 'node' + str(l['source']),
+            'attenuation': 0.00001,
+            'distance': 1000
+        }
+        qchannels_list.append(qchannel_dict)    
+
+        cchannel_dict = {
+            'name': 'cchannel'+str(count)+'_'+str(l['target'])+'to'+ str(l['source']),
+            'source': 'node' + str(l['target']),
+            'destination': 'node' + str(l['source']),
             'distance': 1000
         }
         cchannels_list.append(cchannel_dict)

@@ -103,9 +103,11 @@ def runQKD(network, keysize):
             print("\t{0:0128b}".format(key))
 
 
+DO_GEN = False
 filepath = 'src/testnet1.json'
 parsedpath ='src/testnet1parsed.json'
-# genNetwork(filepath)
-# netparse(filepath, parsedpath)
+if DO_GEN:
+    genNetwork(filepath)
+    netparse(filepath, parsedpath)
 network = readConfig(parsedpath)
 runQKD(network, 128)
