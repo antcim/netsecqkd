@@ -103,12 +103,6 @@
             "type": "QKDNode",
             "seed": 0,
             "memo_size": 50
-        },
-        {
-            "name": "node17",
-            "type": "QKDNode",
-            "seed": 0,
-            "memo_size": 50
         }
     ],
     "qchannels": [
@@ -163,50 +157,50 @@
         },
         {
             "name": "qchannel7",
+            "source": "node6",
+            "destination": "node13",
+            "attenuation": 1e-05,
+            "distance": 1000
+        },
+        {
+            "name": "qchannel8",
             "source": "node7",
             "destination": "node8",
             "attenuation": 1e-05,
             "distance": 1000
         },
         {
-            "name": "qchannel8",
+            "name": "qchannel9",
             "source": "node8",
             "destination": "node9",
             "attenuation": 1e-05,
             "distance": 1000
         },
         {
-            "name": "qchannel9",
+            "name": "qchannel10",
             "source": "node9",
             "destination": "node10",
             "attenuation": 1e-05,
             "distance": 1000
         },
         {
-            "name": "qchannel10",
+            "name": "qchannel11",
+            "source": "node9",
+            "destination": "node14",
+            "attenuation": 1e-05,
+            "distance": 1000
+        },
+        {
+            "name": "qchannel12",
             "source": "node10",
             "destination": "node11",
             "attenuation": 1e-05,
             "distance": 1000
         },
         {
-            "name": "qchannel11",
+            "name": "qchannel13",
             "source": "node11",
             "destination": "node12",
-            "attenuation": 1e-05,
-            "distance": 1000
-        },
-        {
-            "name": "qchannel12",
-            "source": "node12",
-            "destination": "node13",
-            "attenuation": 1e-05,
-            "distance": 1000
-        },
-        {
-            "name": "qchannel13",
-            "source": "node13",
-            "destination": "node14",
             "attenuation": 1e-05,
             "distance": 1000
         },
@@ -219,15 +213,8 @@
         },
         {
             "name": "qchannel15",
-            "source": "node15",
+            "source": "node14",
             "destination": "node16",
-            "attenuation": 1e-05,
-            "distance": 1000
-        },
-        {
-            "name": "qchannel16",
-            "source": "node16",
-            "destination": "node17",
             "attenuation": 1e-05,
             "distance": 1000
         }
@@ -277,44 +264,44 @@
         },
         {
             "name": "cchannel7",
+            "source": "node6",
+            "destination": "node13",
+            "distance": 1000
+        },
+        {
+            "name": "cchannel8",
             "source": "node7",
             "destination": "node8",
             "distance": 1000
         },
         {
-            "name": "cchannel8",
+            "name": "cchannel9",
             "source": "node8",
             "destination": "node9",
             "distance": 1000
         },
         {
-            "name": "cchannel9",
+            "name": "cchannel10",
             "source": "node9",
             "destination": "node10",
             "distance": 1000
         },
         {
-            "name": "cchannel10",
+            "name": "cchannel11",
+            "source": "node9",
+            "destination": "node14",
+            "distance": 1000
+        },
+        {
+            "name": "cchannel12",
             "source": "node10",
             "destination": "node11",
             "distance": 1000
         },
         {
-            "name": "cchannel11",
+            "name": "cchannel13",
             "source": "node11",
             "destination": "node12",
-            "distance": 1000
-        },
-        {
-            "name": "cchannel12",
-            "source": "node12",
-            "destination": "node13",
-            "distance": 1000
-        },
-        {
-            "name": "cchannel13",
-            "source": "node13",
-            "destination": "node14",
             "distance": 1000
         },
         {
@@ -325,14 +312,8 @@
         },
         {
             "name": "cchannel15",
-            "source": "node15",
+            "source": "node14",
             "destination": "node16",
-            "distance": 1000
-        },
-        {
-            "name": "cchannel16",
-            "source": "node16",
-            "destination": "node17",
             "distance": 1000
         }
     ]

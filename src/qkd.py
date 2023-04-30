@@ -11,6 +11,7 @@ from sequence.topology.qkd_topo import QKDTopo
 import networkx as nx
 import json
 
+from netparser import netparse
 
 class KeyManager():
     def __init__(self, timeline, keysize, num_keys):
@@ -31,12 +32,12 @@ class KeyManager():
         self.times.append(self.timeline.now() * 1e-9)
 
 
-def genNetwork(filename):
+def genNetwork(filepath):
     # generate random graph
     G = nx.random_lobster(10, 0.2, 0.25)
     # JSON representation
     jsonG = nx.node_link_data(G)
-    with open(filename, 'w') as f:
+    with open(filepath, 'w') as f:
         json.dump(jsonG, f, ensure_ascii=False)
 
 
@@ -49,7 +50,10 @@ def test(keysize):
     NUM_KEYS = 25
     PRINT_KEYS = False
 
-    genNetwork('src/rndNetConf.json')
+    filepath = 'src/rndNetConf.json'
+
+    genNetwork(filepath)
+    netparse(filepath)
     network_topo = readConfig("src/testnet.json")
     tl = network_topo.get_timeline()
 
