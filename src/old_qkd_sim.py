@@ -1,4 +1,3 @@
-import copy
 from ipywidgets import interact
 from matplotlib import pyplot as plt
 import time
@@ -13,8 +12,6 @@ import networkx as nx
 import json
 
 from netparser import netparse
-from superqkdnode import SuperQKDNode
-from srqkdnode import SRQKDNode
 
 
 class KeyManager():
@@ -50,35 +47,15 @@ def readConfig(filepath):
 
 def runQKD(network, keysize):
     NUM_KEYS = 25
-    PRINT_KEYS = False
+    PRINT_KEYS = True
 
     tl = network.get_timeline()
 
-    sim_nodes = {}
-
-    # construct dictionary of super qkd nodes
-    for i, node in enumerate(network.get_nodes_by_type(QKDTopo.QKD_NODE)):
-        print("Links for {}".format(node.name))
-        sim_nodes[node.name] = SuperQKDNode(node.name)
-    
-    # make connections
-    for i, node in enumerate(network.get_nodes_by_type(QKDTopo.QKD_NODE)):
-        for key in node.cchannels.keys():
-            sender = node
-            receiver = copy.copy(node)
-            sim_nodes[node.name].addSRQKDNode(SRQKDNode(sender, receiver))
-            print("Channel: " + str(node.cchannels[key].name))
-            print("Sender: " + str(node.cchannels[key].sender.name))
-            print("Receiver: " + str(node.cchannels[key].receiver))
-
-    for key, node in sim_nodes.items():
-        print(key, ' : ', node.name)
-        for srqknode in node.srqkdnodes:
-            print(key, 'sender : ', srqknode.sender.name)
-            print(key, 'receiver : ', srqknode.receiver.name)
-
-
-    return
+    # for i, node in enumerate(network.get_nodes_by_type(QKDTopo.QKD_NODE)):
+    #     print("channels for {}".format(node.name))
+    #     node.set_seed(i)
+    #     for key in node.qchannels.keys():
+    #         print(node.qchannels[key].name)
 
     n1 = network.get_nodes_by_type(QKDTopo.QKD_NODE)[0]
     n2 = network.get_nodes_by_type(QKDTopo.QKD_NODE)[1]
@@ -137,7 +114,7 @@ def runQKD(network, keysize):
 KEY_SIZE = 128
 DO_GEN = False
 filepath = 'src/rnd1.json'
-parsedpath = 'src/twonodes.json'
+parsedpath = 'src/rnd1parsed.json'
 if DO_GEN:
     genNetwork(filepath)
     netparse(filepath, parsedpath)

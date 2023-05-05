@@ -3,13 +3,13 @@
     "stop_time": 5000000000000,
     "nodes": [
         {
-            "name": "node1",
+            "name": "node0",
             "type": "QKDNode",
             "seed": 0,
             "memo_size": 50
         },
         {
-            "name": "node2",
+            "name": "node1",
             "type": "QKDNode",
             "seed": 1,
             "memo_size": 50
@@ -18,30 +18,30 @@
     "qchannels": [
         {
             "name": "qchannel0",
-            "source": "node1",
-            "destination": "node2",
+            "source": "node0",
+            "destination": "node1",
             "attenuation": 0.00001,
             "distance": 1000
         },
         {
             "name": "qchannel1",
-            "source": "node2",
-            "destination": "node1",
+            "source": "node1",
+            "destination": "node0",
             "attenuation": 0.00001,
             "distance": 1000
         }
     ],
     "cchannels": [
         {
-            "name": "cchannel1",
-            "source": "node1",
-            "destination": "node2",
+            "name": "cchannel0",
+            "source": "node0",
+            "destination": "node1",
             "distance": 1000
         },
         {
-            "name": "cchannel2",
-            "source": "node2",
-            "destination": "node1",
+            "name": "cchannel1",
+            "source": "node1",
+            "destination": "node0",
             "distance": 1000
         }
     ]
