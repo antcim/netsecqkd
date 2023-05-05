@@ -51,9 +51,19 @@ def runQKD(network, keysize):
 
     tl = network.get_timeline()
 
+    sender = network.get_nodes_by_type(QKDTopo.QKD_NODE)[1]
+    receiver = network.get_nodes_by_type(QKDTopo.QKD_NODE)[2]
+    print("NAME: "+network.get_nodes_by_type(QKDTopo.QKD_NODE)[1].name)
+    print("NAME: "+network.get_nodes_by_type(QKDTopo.QKD_NODE)[2].name)
+    msg = "HELLO"
+    sender.send_message("node0", msg)
+
     for i, node in enumerate(network.get_nodes_by_type(QKDTopo.QKD_NODE)):
+        print("channels for {}".format(node.name))
+        node.set_seed(i)
         for key in node.qchannels.keys():
             print(node.qchannels[key].name)
+
 
     n1 = network.get_nodes_by_type(QKDTopo.QKD_NODE)[0]
     n2 = network.get_nodes_by_type(QKDTopo.QKD_NODE)[1]
@@ -105,7 +115,7 @@ def runQKD(network, keysize):
 
 DO_GEN = False
 filepath = 'src/testnet1.json'
-parsedpath ='src/testnet1parsed.json'
+parsedpath = 'src/testnet1parsed.json'
 if DO_GEN:
     genNetwork(filepath)
     netparse(filepath, parsedpath)
