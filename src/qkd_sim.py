@@ -107,8 +107,8 @@ def runQKD(network, keysize):
 # qkd simulator setup and run
 KEY_SIZE = 128
 DO_GEN = False
-filepath = 'src/testnet1.json'
-parsedpath = 'src/testnet1parsed.json'
+filepath = 'src/rnd1.json'
+parsedpath = 'src/rnd1parsed.json'
 if DO_GEN:
     genNetwork(filepath)
     netparse(filepath, parsedpath)
