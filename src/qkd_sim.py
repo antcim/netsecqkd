@@ -59,6 +59,11 @@ def runQKD(network, keysize):
 
     n1 = network.get_nodes_by_type(QKDTopo.QKD_NODE)[0]
     n2 = network.get_nodes_by_type(QKDTopo.QKD_NODE)[1]
+
+    print(n1.name)
+    print(n2.name)
+    print(tl.stop_time)
+
     n1.set_seed(0)
     n2.set_seed(1)
     pair_bb84_protocols(n1.protocol_stack[0], n2.protocol_stack[0])

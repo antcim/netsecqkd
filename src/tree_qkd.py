@@ -39,12 +39,10 @@ def old_test(sim_time, keysize):
     n0 = QKDNode("n0", tl, stack_size=1)
     n1 = QKDNode("n1", tl, stack_size=1)
     n2 = QKDNode("n2", tl, stack_size=1)
-    #n3 = QKDNode("n3", tl, stack_size=1)
     
     n0.set_seed(0)
     n1.set_seed(1)
     n2.set_seed(2)
-    #n3.set_seed(3)
 
     pair_bb84_protocols(n0.protocol_stack[0], n2.protocol_stack[0])
     pair_bb84_protocols(n1.protocol_stack[0], n0.protocol_stack[0])
@@ -58,12 +56,18 @@ def old_test(sim_time, keysize):
 
     cc2 = ClassicalChannel("cc_n2_n0", tl, distance=1e3)
     cc3 = ClassicalChannel("cc_n0_n2", tl, distance=1e3)
+
+    cc4 = ClassicalChannel("cc_n1_n2", tl, distance=1e3)
+    cc5 = ClassicalChannel("cc_n2_n1", tl, distance=1e3)
     
     cc0.set_ends(n0, n1.name)
     cc1.set_ends(n1, n0.name)
 
     cc2.set_ends(n2, n0.name)
     cc3.set_ends(n0, n2.name)
+
+    cc4.set_ends(n1, n2.name)
+    cc5.set_ends(n2, n1.name)
     
     # construct a quantum communication channel
     # (with arguments for the channel name, timeline, attenuation (in dB/km), and distance (in m))
@@ -73,32 +77,30 @@ def old_test(sim_time, keysize):
     qc2 = QuantumChannel("qc_n2_n0", tl, attenuation=1e-5, distance=1e3, polarization_fidelity=0.97)
     qc3 = QuantumChannel("qc_n0_n2", tl, attenuation=1e-5, distance=1e3, polarization_fidelity=0.97)
 
+    qc4 = QuantumChannel("qc_n1_n2", tl, attenuation=1e-5, distance=1e3, polarization_fidelity=0.97)
+    qc5 = QuantumChannel("qc_n2_n1", tl, attenuation=1e-5, distance=1e3, polarization_fidelity=0.97)
+
     qc0.set_ends(n0, n1.name)
     qc1.set_ends(n1, n0.name)
 
     qc2.set_ends(n2, n0.name)
     qc3.set_ends(n0, n2.name)
+
+    qc4.set_ends(n1, n2.name)
+    qc5.set_ends(n2, n1.name)
    
     # instantiate our written keysize protocol
     km0 = KeyManager(tl, keysize, 25)
     km0.lower_protocols.append(n0.protocol_stack[0])
     n0.protocol_stack[0].upper_protocols.append(km0)
 
-    #km0_1 = KeyManager(tl, keysize, 25)
-    #km0_1.lower_protocols.append(n0.protocol_stack[0])
-    #n0.protocol_stack[0].upper_protocols.append(km0_1)
-
     km1 = KeyManager(tl, keysize, 25)
     km1.lower_protocols.append(n1.protocol_stack[0])
     n1.protocol_stack[0].upper_protocols.append(km1)
 
-    #km2 = KeyManager(tl, keysize, 25)
-    #km2.lower_protocols.append(n2.protocol_stack[0])
-    #n2.protocol_stack[0].upper_protocols.append(km2)
-
-    #km3 = KeyManager(tl, keysize, 25)
-    #km3.lower_protocols.append(n3.protocol_stack[0])
-    #n3.protocol_stack[0].upper_protocols.append(km3)
+    km2 = KeyManager(tl, keysize, 25)
+    km2.lower_protocols.append(n2.protocol_stack[0])
+    n2.protocol_stack[0].upper_protocols.append(km2)
 
     # start simulation and record timing
     tl.init()
