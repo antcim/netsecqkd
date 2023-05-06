@@ -50,94 +50,156 @@ def readConfig(filepath):
 
 def runQKD(network, keysize):
     NUM_KEYS = 25
-    PRINT_KEYS = False
+    PRINT_KEYS = True
 
-    tl = network.get_timeline()
+    # tl = network.get_timeline() reading it from json doesn't work
+    tl = Timeline(5000 * 1e9)
 
     sim_nodes = {}
 
     # construct dictionary of super qkd nodes
     for i, node in enumerate(network.get_nodes_by_type(QKDTopo.QKD_NODE)):
-        print("Links for {}".format(node.name))
-        sim_nodes[node.name] = SuperQKDNode(node.name)
+        sim_nodes[node.name] = SuperQKDNode(node.name + "TEST")
     
     # make connections
     for i, node in enumerate(network.get_nodes_by_type(QKDTopo.QKD_NODE)):
+        print("Links for {}".format(node.name))
         for key in node.cchannels.keys():
-            sender = node
-            receiver = copy.deepcopy(node)
-            sim_nodes[node.name].addSRQKDNode(SRQKDNode(sender, receiver))
             print("Channel: " + str(node.cchannels[key].name))
             print("Sender: " + str(node.cchannels[key].sender.name))
             print("Receiver: " + str(node.cchannels[key].receiver))
 
+            source = node.name
+            dest = node.cchannels[key].receiver
+
+            senderName = source + " to " + dest + ".sender" 
+            sender = QKDNode(senderName, tl, stack_size=1)
+
+            receiverName = source + " to " + dest + ".receiver" 
+            receiver = QKDNode(receiverName, tl, stack_size=1)
+
+            destReceiver = dest + " to " + source + ".receiver" 
+            destSender = dest + " to " + source + ".sender"
+
+            # sender channels
+            cchannelName = "cchannel[" + source + " to " +  dest + ".sender]" 
+            cchannel = ClassicalChannel(cchannelName, tl, 1000, 1)
+            cchannel.set_ends(sender, destReceiver)
+
+            qchannelName = "qchannel[" + source + " to " +  dest + ".sender]" 
+            qchannel = QuantumChannel(qchannelName, tl, 0.0001, 1000, 0.97)
+            qchannel.set_ends(sender, destReceiver)
+
+            # receiver channels
+            cchannelName = "cchannel[" + source + " to " +  dest + ".receiver]" 
+            cchannel = ClassicalChannel(cchannelName, tl, 1000, 1)
+            cchannel.set_ends(receiver, destSender)
+
+            qchannelName = "qchannel[" + source + " to " +  dest + ".receiver]" 
+            qchannel = QuantumChannel(qchannelName, tl, 0.0001, 1000, 0.97)
+            qchannel.set_ends(receiver, destSender)
+
+            sim_nodes[node.name].addSRQKDNode(SRQKDNode(sender, receiver))
+
+            print(senderName)
+            print(receiverName)
+
+        print("\n")
+
     for key, node in sim_nodes.items():
-        print(key, ' : ', node.name)
+        print(key, 'SRQKDNode of ', node.name)
         for srqknode in node.srqkdnodes:
             print(key, 'sender : ', srqknode.sender.name)
             print(key, 'receiver : ', srqknode.receiver.name)
+        print("\n")
 
     # QKD from 0 to 1
-    n0 = sim_nodes["node0"].srqkdnodes[0].sender
-    n1 = sim_nodes["node1"].srqkdnodes[0].receiver
+    print("QKD from 0 to 1")
 
-    print(n0.name)
-    print(n1.name)
-    print(tl.stop_time)
+    alice = sim_nodes["node0"].srqkdnodes[0].sender
+    bob = sim_nodes["node1"].srqkdnodes[0].receiver
 
-    n0.set_seed(0)
-    n1.set_seed(1)
-    pair_bb84_protocols(n0.protocol_stack[0], n1.protocol_stack[0])
+    print("NAME ALICE: ", alice.name)
 
-    for key, channel in n0.cchannels.items():
-        print(key + " "+ channel.name)
+    alice.set_seed(0)
+    bob.set_seed(1)
+
+    pair_bb84_protocols(alice.protocol_stack[0], bob.protocol_stack[0])
+
+    print("\nCChannel of : ", alice.name)
+    for key, channel in alice.cchannels.items():
+        print("key: ", key , " name: " , channel.name, "\n")
+
+    print("\nCChannel of : ", bob.name)
+    for key, channel in bob.cchannels.items():
+        print("key: ", key , " name: " , channel.name, "\n")
+
+    print("\nQChannel of : ", alice.name)
+    for key, channel in alice.qchannels.items():
+        print("key: ", key , " name: " , channel.name, "\n")
+
+    print("\nQChannel of : ", bob.name)
+    for key, channel in bob.qchannels.items():
+        print("key: ", key , " name: " , channel.name, "\n")
 
     # index of dict is the endpoint of the channel
-    cc0 = n0.cchannels["node1"]
-    cc1 = n1.cchannels["node0"]
-    qc0 = n0.qchannels["node1"]
-    qc1 = n1.qchannels["node0"]
-    qc0.polarization_fidelity = 0.97
-    qc1.polarization_fidelity = 0.97
+    cc0 = alice.cchannels["node1 to node0.receiver"]
+    cc1 = bob.cchannels["node0 to node1.sender"]
+    qc0 = alice.qchannels["node1 to node0.receiver"]
+    qc1 = bob.qchannels["node0 to node1.sender"]
+    qc0.polarization_fidelity = 1
+    qc1.polarization_fidelity = 1
 
     # instantiate our written keysize protocol
     km1 = KeyManager(tl, keysize, NUM_KEYS)
-    km1.lower_protocols.append(n0.protocol_stack[0])
-    n0.protocol_stack[0].upper_protocols.append(km1)
+    km1.lower_protocols.append(alice.protocol_stack[0])
+    alice.protocol_stack[0].upper_protocols.append(km1)
     km2 = KeyManager(tl, keysize, NUM_KEYS)
-    km2.lower_protocols.append(n1.protocol_stack[0])
-    n1.protocol_stack[0].upper_protocols.append(km2)
+    km2.lower_protocols.append(bob.protocol_stack[0])
+    bob.protocol_stack[0].upper_protocols.append(km2)
 
     # QKD from 1 to 0
-    n2 = sim_nodes["node1"].srqkdnodes[0].sender
-    n3 = sim_nodes["node0"].srqkdnodes[0].receiver
+    print("QKD from 1 to 0")
 
-    print(n2.name)
-    print(n3.name)
-    print(tl.stop_time)
+    anna = sim_nodes["node1"].srqkdnodes[0].sender
+    berny = sim_nodes["node0"].srqkdnodes[0].receiver
 
-    n2.set_seed(0)
-    n3.set_seed(1)
-    pair_bb84_protocols(n2.protocol_stack[0], n3.protocol_stack[0])
+    anna.set_seed(0)
+    berny.set_seed(1)
 
-    for key, channel in n2.cchannels.items():
-        print(key + " "+ channel.name)
+    pair_bb84_protocols(anna.protocol_stack[0], berny.protocol_stack[0])
+
+    print("\nCChannel of : ", anna.name)
+    for key, channel in anna.cchannels.items():
+        print("key: ", key , " name: " , channel.name, "\n")
+
+    print("\nCChannel of : ", berny.name)
+    for key, channel in berny.cchannels.items():
+        print("key: ", key , " name: " , channel.name, "\n")
+
+    print("\nQChannel of : ", anna.name)
+    for key, channel in anna.qchannels.items():
+        print("key: ", key , " name: " , channel.name, "\n")
+
+    print("\nQChannel of : ", berny.name)
+    for key, channel in berny.qchannels.items():
+        print("key: ", key , " name: " , channel.name, "\n")
 
     # index of dict is the endpoint of the channel
-    cc0 = n2.cchannels["node0"]
-    cc1 = n3.cchannels["node1"]
-    qc0 = n2.qchannels["node0"]
-    qc1 = n3.qchannels["node1"]
-    qc0.polarization_fidelity = 0.97
-    qc1.polarization_fidelity = 0.97
+    cc0 = anna.cchannels["node0 to node1.receiver"]
+    cc1 = berny.cchannels["node1 to node0.sender"]
+    qc0 = anna.qchannels["node0 to node1.receiver"]
+    qc1 = berny.qchannels["node1 to node0.sender"]
+    qc0.polarization_fidelity = 1
+    qc1.polarization_fidelity = 1
 
     # instantiate our written keysize protocol
     km3 = KeyManager(tl, keysize, NUM_KEYS)
-    km3.lower_protocols.append(n2.protocol_stack[0])
-    n2.protocol_stack[0].upper_protocols.append(km3)
+    km3.lower_protocols.append(anna.protocol_stack[0])
+    anna.protocol_stack[0].upper_protocols.append(km3)
     km4 = KeyManager(tl, keysize, NUM_KEYS)
-    km4.lower_protocols.append(n3.protocol_stack[0])
-    n3.protocol_stack[0].upper_protocols.append(km4)
+    km4.lower_protocols.append(berny.protocol_stack[0])
+    berny.protocol_stack[0].upper_protocols.append(km4)
 
     # start simulation and record timing
     tl.init()
@@ -160,11 +222,11 @@ def runQKD(network, keysize):
     plt.show()
 
     print("key error rates:")
-    for i, e in enumerate(n0.protocol_stack[0].error_rates):
+    for i, e in enumerate(alice.protocol_stack[0].error_rates):
         print("\tkey {}:\t{}%".format(i + 1, e * 100))
 
     print("key error rates:")
-    for i, e in enumerate(n3.protocol_stack[0].error_rates):
+    for i, e in enumerate(anna.protocol_stack[0].error_rates):
         print("\tkey {}:\t{}%".format(i + 1, e * 100))
 
     if PRINT_KEYS:
