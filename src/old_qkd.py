@@ -1,3 +1,4 @@
+import sys
 import copy
 from ipywidgets import interact
 from matplotlib import pyplot as plt
@@ -50,7 +51,7 @@ def readConfig(filepath):
 
 def runQKD(network, keysize):
     NUM_KEYS = 25
-    PRINT_KEYS = True
+    PRINT_KEYS = False
 
     # tl = network.get_timeline() reading it from json doesn't work
     tl = Timeline(5000 * 1e9)
@@ -101,17 +102,19 @@ def runQKD(network, keysize):
 
             sim_nodes[node.name].addSRQKDNode(SRQKDNode(sender, receiver))
 
+            
+
             print(senderName)
             print(receiverName)
 
         print("\n")
 
-    for key, node in sim_nodes.items():
-        print(key, 'SRQKDNode of ', node.name)
-        for srqknode in node.srqkdnodes:
-            print(key, 'sender : ', srqknode.sender.name)
-            print(key, 'receiver : ', srqknode.receiver.name)
-        print("\n")
+    # for key, node in sim_nodes.items():
+    #     print(key, 'SRQKDNode of ', node.name)
+    #     for srqknode in node.srqkdnodes:
+    #         print(key, 'sender : ', srqknode.sender.name)
+    #         print(key, 'receiver : ', srqknode.receiver.name)
+    #     print("\n")
 
     # QKD from 0 to 1
     print("QKD from 0 to 1")
@@ -119,28 +122,28 @@ def runQKD(network, keysize):
     alice = sim_nodes["node0"].srqkdnodes[0].sender
     bob = sim_nodes["node1"].srqkdnodes[0].receiver
 
-    print("NAME ALICE: ", alice.name)
+    # print("NAME ALICE: ", alice.name)
 
     alice.set_seed(0)
     bob.set_seed(1)
 
     pair_bb84_protocols(alice.protocol_stack[0], bob.protocol_stack[0])
 
-    print("\nCChannel of : ", alice.name)
-    for key, channel in alice.cchannels.items():
-        print("key: ", key , " name: " , channel.name, "\n")
+    # print("\nCChannel of : ", alice.name)
+    # for key, channel in alice.cchannels.items():
+    #     print("key: ", key , " name: " , channel.name, "\n")
 
-    print("\nCChannel of : ", bob.name)
-    for key, channel in bob.cchannels.items():
-        print("key: ", key , " name: " , channel.name, "\n")
+    # print("\nCChannel of : ", bob.name)
+    # for key, channel in bob.cchannels.items():
+    #     print("key: ", key , " name: " , channel.name, "\n")
 
-    print("\nQChannel of : ", alice.name)
-    for key, channel in alice.qchannels.items():
-        print("key: ", key , " name: " , channel.name, "\n")
+    # print("\nQChannel of : ", alice.name)
+    # for key, channel in alice.qchannels.items():
+    #     print("key: ", key , " name: " , channel.name, "\n")
 
-    print("\nQChannel of : ", bob.name)
-    for key, channel in bob.qchannels.items():
-        print("key: ", key , " name: " , channel.name, "\n")
+    # print("\nQChannel of : ", bob.name)
+    # for key, channel in bob.qchannels.items():
+    #     print("key: ", key , " name: " , channel.name, "\n")
 
     # index of dict is the endpoint of the channel
     cc0 = alice.cchannels["node1 to node0.receiver"]
@@ -169,21 +172,21 @@ def runQKD(network, keysize):
 
     pair_bb84_protocols(anna.protocol_stack[0], berny.protocol_stack[0])
 
-    print("\nCChannel of : ", anna.name)
-    for key, channel in anna.cchannels.items():
-        print("key: ", key , " name: " , channel.name, "\n")
+    # print("\nCChannel of : ", anna.name)
+    # for key, channel in anna.cchannels.items():
+    #     print("key: ", key , " name: " , channel.name, "\n")
 
-    print("\nCChannel of : ", berny.name)
-    for key, channel in berny.cchannels.items():
-        print("key: ", key , " name: " , channel.name, "\n")
+    # print("\nCChannel of : ", berny.name)
+    # for key, channel in berny.cchannels.items():
+    #     print("key: ", key , " name: " , channel.name, "\n")
 
-    print("\nQChannel of : ", anna.name)
-    for key, channel in anna.qchannels.items():
-        print("key: ", key , " name: " , channel.name, "\n")
+    # print("\nQChannel of : ", anna.name)
+    # for key, channel in anna.qchannels.items():
+    #     print("key: ", key , " name: " , channel.name, "\n")
 
-    print("\nQChannel of : ", berny.name)
-    for key, channel in berny.qchannels.items():
-        print("key: ", key , " name: " , channel.name, "\n")
+    # print("\nQChannel of : ", berny.name)
+    # for key, channel in berny.qchannels.items():
+    #     print("key: ", key , " name: " , channel.name, "\n")
 
     # index of dict is the endpoint of the channel
     cc0 = anna.cchannels["node0 to node1.receiver"]
