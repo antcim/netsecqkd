@@ -16,6 +16,7 @@ from netparser import netparse
 from superqkdnode import SuperQKDNode
 from srqkdnode import SRQKDNode
 
+from NewQKDTopo import NewQKDTopo
 
 # defalut simulation values
 num_keys = 3
@@ -23,12 +24,11 @@ key_size = 128
 do_gen = True
 print_keys = False
 print_error = False
-filepath = 'src/rnd.json'
-parsepath = 'src/rndp.json'
+filepath = 'rnd.json'
+parsepath = 'rndp.json'
 verbose = False
 fidelity = 1
 draw = False
-
 
 ################# KEY MANAGER #########################
 
@@ -52,7 +52,6 @@ class KeyManager():
         self.times.append(self.timeline.now() * 1e-9)
 
 ######################################################
-
 
 def genNetwork(filepath):
     # generate random graph
@@ -129,6 +128,10 @@ def genTopology(network, tl):
                 print(key, 'sender : ', srqknode.sender.name)
                 print(key, 'receiver : ', srqknode.receiver.name)
             print("\n")
+        
+        for n in sim_nodes.values():
+            print("Routing table ", n.name, ": ", n.routing_table)
+        print("\n")
 
     return sim_nodes
 
@@ -174,6 +177,14 @@ def runSim(tl, network, sim_nodes, keysize):
             key_managers[srnode.sender.name] = km1
             key_managers[srnode.receiver.name] = km2
 
+    # Questo fa generare le routing table
+    aux = NewQKDTopo(parsepath, sim_nodes)
+
+    for n in sim_nodes:
+        print("ROUTING TABLE ", n)
+        for i,k in sim_nodes[n].routing_table.items():
+            print("\tTO ",i,", Path: ", k)
+        
     # start simulation and record timing
     tl.init()
 
@@ -204,7 +215,6 @@ def runSim(tl, network, sim_nodes, keysize):
 
 
 def main(argv):
-
     global num_keys
     global key_size
     global do_gen
@@ -215,7 +225,6 @@ def main(argv):
     global verbose
     global fidelity
     global draw
-
 
     opts, args = getopt.getopt(argv, "f:n:s:ekvq:d")
     for opt, arg in opts:
@@ -242,9 +251,11 @@ def main(argv):
         genNetwork(filepath)
         netparse(filepath, parsepath)
     network = readConfig(parsepath)
+    
     tl = Timeline(5000 * 1e9)
     sim_nodes = genTopology(network, tl)
     runSim(tl, network, sim_nodes, key_size)
+    #NewQKDTopo("network_topo.json")
 
 
 if __name__ == "__main__":
