@@ -1,5 +1,5 @@
 from enum import Enum, auto
-
+#dsd
 class MsgType(Enum):
     TEXT_MESS = auto()
 
