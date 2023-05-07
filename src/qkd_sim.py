@@ -1,6 +1,5 @@
-import copy
-from xml.dom import Node
-from matplotlib import pyplot as plt
+import sys
+import getopt
 import time
 
 from sequence.kernel.timeline import Timeline
@@ -16,7 +15,19 @@ from netparser import netparse
 from superqkdnode import SuperQKDNode
 from srqkdnode import SRQKDNode
 
+
+num_keys = 25
+key_size = 128
+do_gen = True
+print_keys = False
+print_error = False
+filepath = 'src/rnd.json'
+parsepath = 'src/rndp.json'
+verbose = False
+fidelity = 1
+
 ################# KEY MANAGER #########################
+
 
 class KeyManager():
 
@@ -39,6 +50,7 @@ class KeyManager():
 
 ######################################################
 
+
 def genNetwork(filepath):
     # generate random graph
     G = nx.random_lobster(10, 0.2, 0.25)
@@ -58,7 +70,7 @@ def genTopology(network, tl):
     # construct dictionary of super qkd nodes
     for i, node in enumerate(network.get_nodes_by_type(QKDTopo.QKD_NODE)):
         sim_nodes[node.name] = SuperQKDNode(node.name)
-    
+
     # make connections
     for i, node in enumerate(network.get_nodes_by_type(QKDTopo.QKD_NODE)):
         for key in node.cchannels.keys():
@@ -66,49 +78,51 @@ def genTopology(network, tl):
             source = node.name
             dest = node.cchannels[key].receiver
 
-            senderName = source + " to " + dest + ".sender" 
+            senderName = source + " to " + dest + ".sender"
             sender = QKDNode(senderName, tl, stack_size=1)
 
-            receiverName = source + " to " + dest + ".receiver" 
+            receiverName = source + " to " + dest + ".receiver"
             receiver = QKDNode(receiverName, tl, stack_size=1)
 
-            destReceiver = dest + " to " + source + ".receiver" 
+            destReceiver = dest + " to " + source + ".receiver"
             destSender = dest + " to " + source + ".sender"
 
             # sender channels
-            cchannelName = "cchannel[" + source + " to " +  dest + ".sender]" 
+            cchannelName = "cchannel[" + source + " to " + dest + ".sender]"
             cchannel = ClassicalChannel(cchannelName, tl, 1000, 1)
             cchannel.set_ends(sender, destReceiver)
 
-            qchannelName = "qchannel[" + source + " to " +  dest + ".sender]" 
-            qchannel = QuantumChannel(qchannelName, tl, 0.0001, 1000)
+            qchannelName = "qchannel[" + source + " to " + dest + ".sender]"
+            qchannel = QuantumChannel(qchannelName, tl, 0.0001, 1000, fidelity)
             qchannel.set_ends(sender, destReceiver)
 
             # receiver channels
-            cchannelName = "cchannel[" + source + " to " +  dest + ".receiver]" 
+            cchannelName = "cchannel[" + source + " to " + dest + ".receiver]"
             cchannel = ClassicalChannel(cchannelName, tl, 1000, 1)
             cchannel.set_ends(receiver, destSender)
 
-            qchannelName = "qchannel[" + source + " to " +  dest + ".receiver]" 
-            qchannel = QuantumChannel(qchannelName, tl, 0.0001, 1000)
+            qchannelName = "qchannel[" + source + " to " + dest + ".receiver]"
+            qchannel = QuantumChannel(qchannelName, tl, 0.0001, 1000, fidelity)
             qchannel.set_ends(receiver, destSender)
 
             sim_nodes[node.name].addSRQKDNode(SRQKDNode(sender, receiver))
 
-    for key, node in sim_nodes.items():
-        print(key, 'SRQKDNode of ', node.name)
-        for srqknode in node.srqkdnodes:
-            print(key, 'sender : ', srqknode.sender.name)
-            print(key, 'receiver : ', srqknode.receiver.name)
-        print("\n")
+    if verbose:
+        for key, node in sim_nodes.items():
+            print(key, 'SRQKDNode of ', node.name)
+            for srqknode in node.srqkdnodes:
+                print(key, 'sender : ', srqknode.sender.name)
+                print(key, 'receiver : ', srqknode.receiver.name)
+            print("\n")
 
     return sim_nodes
+
 
 def runSim(tl, network, sim_nodes, keysize):
     for i, node in enumerate(network.get_nodes_by_type(QKDTopo.QKD_NODE)):
         neighbors = node.qchannels.keys()
         for k in neighbors:
-            s_name = node.name + " to " + k +".sender"
+            s_name = node.name + " to " + k + ".sender"
             d_name = k + " to " + node.name + ".receiver"
 
             A = None
@@ -129,65 +143,90 @@ def runSim(tl, network, sim_nodes, keysize):
 
             pair_bb84_protocols(A.protocol_stack[0], B.protocol_stack[0])
             print("[PAIR]", A.name, "and", B.name)
-    
+
     key_managers = {}
 
     for n in sim_nodes.values():
         for srnode in n.srqkdnodes:
-            km1 = KeyManager(tl, keysize, NUM_KEYS)
+            km1 = KeyManager(tl, keysize, num_keys)
             km1.lower_protocols.append(srnode.sender.protocol_stack[0])
             srnode.sender.protocol_stack[0].upper_protocols.append(km1)
 
-            km2 = KeyManager(tl, keysize, NUM_KEYS)
+            km2 = KeyManager(tl, keysize, num_keys)
             km2.lower_protocols.append(srnode.receiver.protocol_stack[0])
             srnode.receiver.protocol_stack[0].upper_protocols.append(km2)
 
             key_managers[srnode.sender.name] = km1
             key_managers[srnode.receiver.name] = km2
-    
 
     # start simulation and record timing
     tl.init()
-    
+
     senders = list(filter(lambda KM: KM.endswith('.sender'), key_managers))
 
     for km in senders:
         key_managers[km].send_request()
-    
+
     tick = time.time()
     tl.run()
     print("execution time %.2f sec" % (time.time() - tick))
 
     # print error rate for each sender
-    if PRINT_ERROR_RATE:
+    if print_error:
         for sn in sim_nodes.values():
             for n in sn.srqkdnodes:
                 A = n.sender
-                print("[",A.name,"] key error rates:")
+                print("[", A.name, "] key error rates:")
                 for i, e in enumerate(A.protocol_stack[0].error_rates):
                     print("\tkey {}:\t{}%".format(i + 1, e * 100))
 
-    if PRINT_KEYS:
+    if print_keys:
         # print keys for each sender
         for s in senders:
-            print("[",s,"] keys:")
+            print("[", s, "] keys:")
             for i, key in enumerate(key_managers[s].keys):
                 print("\t{0:0128b}".format(key))
 
 
-# qkd simulator setup and run
-NUM_KEYS = 25
-KEY_SIZE = 128
-DO_GEN = True
-PRINT_KEYS = False
-PRINT_ERROR_RATE = False
-filepath = 'src/rnd.json'
-parsedpath = 'src/rndp.json'
-if DO_GEN:
-    genNetwork(filepath)
-    netparse(filepath, parsedpath)
-network = readConfig(parsedpath)
-tl = Timeline(5000 * 1e9)
-sim_nodes = genTopology(network, tl)
-runSim(tl, network, sim_nodes, KEY_SIZE)
+def main(argv):
 
+    global num_keys
+    global key_size
+    global do_gen
+    global print_keys
+    global print_error
+    global filepath
+    global parsepath
+    global verbose
+    global fidelity
+
+    opts, args = getopt.getopt(argv, "f:n:s:ekvq:")
+    for opt, arg in opts:
+        if opt == '-f':
+            do_gen = False
+            parsepath = arg
+        elif opt in ['-n']:
+            num_keys = int(arg)
+        elif opt in ['-s']:
+            key_size = int(arg)
+        elif opt in ['-e']:
+            print_error = True
+        elif opt in ['-k']:
+            print_keys = True
+        elif opt in ['-v']:
+            verbose = True
+        elif opt in ['-q']:
+            print_error = True
+            fidelity = float(arg)
+
+    if do_gen:
+        genNetwork(filepath)
+        netparse(filepath, parsepath)
+    network = readConfig(parsepath)
+    tl = Timeline(5000 * 1e9)
+    sim_nodes = genTopology(network, tl)
+    runSim(tl, network, sim_nodes, key_size)
+
+
+if __name__ == "__main__":
+    main(sys.argv[1:])

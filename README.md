@@ -1,7 +1,7 @@
 # Network Security Project: QKD
 
 ## Dev File Guide
-The project is contained into `qkd.py`.
+The project is contained into `qkd_sim.py`.
 
 The `netparser.py` parses a random network generated with networkx to a sequance .json config file.
 
@@ -13,6 +13,16 @@ The `netparser.py` parses a random network generated with networkx to a sequance
 
 `bb84sequence.py` is a reference script from the sequence repo.
 
+## CLI Argument
+- \-f read topology from json config file
+- \-nk the number of key to generate per each QKD instance
+- \-nb the number bits of each key to generate per each QKD instance
+- \-fq fidelity of the quantum channels
+- \-e print error reates
+- \-k print generated key
+- \-v verbose printing of the network and pairing setup
+
 ## Dependencies List
 networkx
+
 sequence
