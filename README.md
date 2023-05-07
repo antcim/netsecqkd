@@ -15,9 +15,9 @@ The `netparser.py` parses a random network generated with networkx to a sequance
 
 ## CLI Argument
 - \-f read topology from json config file
-- \-nk the number of key to generate per each QKD instance
-- \-nb the number bits of each key to generate per each QKD instance
-- \-fq fidelity of the quantum channels
+- \-n the number of key to generate per each QKD instance
+- \-s the number bits of each key to generate per each QKD instance
+- \-q fidelity of the quantum channels
 - \-e print error reates
 - \-k print generated key
 - \-v verbose printing of the network and pairing setup
