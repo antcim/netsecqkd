@@ -81,7 +81,7 @@ def genTopology(network, tl):
             cchannel.set_ends(sender, destReceiver)
 
             qchannelName = "qchannel[" + source + " to " +  dest + ".sender]" 
-            qchannel = QuantumChannel(qchannelName, tl, 0.0001, 1000, 0.97)
+            qchannel = QuantumChannel(qchannelName, tl, 0.0001, 1000)
             qchannel.set_ends(sender, destReceiver)
 
             # receiver channels
@@ -90,7 +90,7 @@ def genTopology(network, tl):
             cchannel.set_ends(receiver, destSender)
 
             qchannelName = "qchannel[" + source + " to " +  dest + ".receiver]" 
-            qchannel = QuantumChannel(qchannelName, tl, 0.0001, 1000, 0.97)
+            qchannel = QuantumChannel(qchannelName, tl, 0.0001, 1000)
             qchannel.set_ends(receiver, destSender)
 
             sim_nodes[node.name].addSRQKDNode(SRQKDNode(sender, receiver))
@@ -105,8 +105,6 @@ def genTopology(network, tl):
     return sim_nodes
 
 def runSim(tl, network, sim_nodes, keysize):
-    NUM_KEYS = 25
-
     for i, node in enumerate(network.get_nodes_by_type(QKDTopo.QKD_NODE)):
         neighbors = node.qchannels.keys()
         for k in neighbors:
@@ -161,25 +159,30 @@ def runSim(tl, network, sim_nodes, keysize):
     print("execution time %.2f sec" % (time.time() - tick))
 
     # print error rate for each sender
-    for sn in sim_nodes.values():
-        for n in sn.srqkdnodes:
-            A = n.sender
-            print("[",A.name,"] key error rates:")
-            for i, e in enumerate(A.protocol_stack[0].error_rates):
-                print("\tkey {}:\t{}%".format(i + 1, e * 100))
+    if PRINT_ERROR_RATE:
+        for sn in sim_nodes.values():
+            for n in sn.srqkdnodes:
+                A = n.sender
+                print("[",A.name,"] key error rates:")
+                for i, e in enumerate(A.protocol_stack[0].error_rates):
+                    print("\tkey {}:\t{}%".format(i + 1, e * 100))
 
-    # print keys for each sender
-    for s in senders:
-        print("[",s,"] keys:")
-        for i, key in enumerate(key_managers[s].keys):
-            print("\t{0:0128b}".format(key))
+    if PRINT_KEYS:
+        # print keys for each sender
+        for s in senders:
+            print("[",s,"] keys:")
+            for i, key in enumerate(key_managers[s].keys):
+                print("\t{0:0128b}".format(key))
 
 
 # qkd simulator setup and run
+NUM_KEYS = 25
 KEY_SIZE = 128
-DO_GEN = False
-filepath = 'rnd1.json'
-parsedpath = 'twonodes.json'
+DO_GEN = True
+PRINT_KEYS = False
+PRINT_ERROR_RATE = False
+filepath = 'src/rnd.json'
+parsedpath = 'src/rndp.json'
 if DO_GEN:
     genNetwork(filepath)
     netparse(filepath, parsedpath)
