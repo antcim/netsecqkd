@@ -1,6 +1,7 @@
 import sys
 import getopt
 import time
+import matplotlib.pyplot as plt
 
 from sequence.kernel.timeline import Timeline
 from sequence.topology.node import QKDNode
@@ -16,7 +17,8 @@ from superqkdnode import SuperQKDNode
 from srqkdnode import SRQKDNode
 
 
-num_keys = 25
+# defalut simulation values
+num_keys = 3
 key_size = 128
 do_gen = True
 print_keys = False
@@ -25,10 +27,10 @@ filepath = 'src/rnd.json'
 parsepath = 'src/rndp.json'
 verbose = False
 fidelity = 1
+draw = False
 
 
 ################# KEY MANAGER #########################
-
 
 class KeyManager():
 
@@ -55,10 +57,22 @@ class KeyManager():
 def genNetwork(filepath):
     # generate random graph
     G = nx.random_lobster(10, 0.2, 0.25)
+    # G = nx.star_graph(10)
+    # G = nx.ladder_graph(10)
+    # G = nx.path_graph(10)
+    # G = nx.cycle_graph(10)
     # JSON representation
     jsonG = nx.node_link_data(G)
     with open(filepath, 'w') as f:
         json.dump(jsonG, f, ensure_ascii=False)
+
+    if draw:
+        pos = nx.spring_layout(G)
+        nx.draw_networkx_nodes(G, pos, cmap=plt.get_cmap('jet'), node_size = 500)
+        nx.draw_networkx_labels(G, pos)
+        nx.draw_networkx_edges(G, pos, edge_color='r', arrows=True)
+        nx.draw_networkx_edges(G, pos, arrows=False)
+        plt.show()
 
 
 def readConfig(filepath):
@@ -200,8 +214,10 @@ def main(argv):
     global parsepath
     global verbose
     global fidelity
+    global draw
 
-    opts, args = getopt.getopt(argv, "f:n:s:ekvq:")
+
+    opts, args = getopt.getopt(argv, "f:n:s:ekvq:d")
     for opt, arg in opts:
         if opt == '-f':
             do_gen = False
@@ -219,6 +235,8 @@ def main(argv):
         elif opt in ['-q']:
             print_error = True
             fidelity = float(arg)
+        elif opt in ['-d']:
+            draw = True
 
     if do_gen:
         genNetwork(filepath)
