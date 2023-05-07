@@ -56,7 +56,7 @@ class KeyManager():
 
 def genNetwork(filepath):
     # generate random graph
-    G = nx.random_lobster(10, 0.2, 0.25)
+    G = nx.random_lobster(10, 0.53, 0.25)
     # G = nx.star_graph(10)
     # G = nx.ladder_graph(10)
     # G = nx.path_graph(10)
