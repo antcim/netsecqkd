@@ -141,10 +141,6 @@ def genTopology(network, tl):
                 print(key, 'sender : ', srqknode.sender.name)
                 print(key, 'receiver : ', srqknode.receiver.name)
             print("\n")
-        
-        for n in sim_nodes.values():
-            print("Routing table ", n.name, ": ", n.routing_table)
-        print("\n")
 
     return sim_nodes
 
@@ -281,6 +277,7 @@ def main(argv):
     global verbose
     global fidelity
     global draw
+    global print_routing
 
     opts, args = getopt.getopt(argv, "f:n:s:ekvq:dr")
     for opt, arg in opts:
