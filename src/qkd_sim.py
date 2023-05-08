@@ -78,7 +78,7 @@ def genNetwork(filepath):
         nx.draw_networkx_labels(G, pos)
         nx.draw_networkx_edges(G, pos, edge_color='r', arrows=True)
         nx.draw_networkx_edges(G, pos, arrows=False)
-        plt.savefig("src/graph.png", dpi=500, orientation = 'landscape', bbox_inches='tight')
+        plt.savefig("graph.png", dpi=500, orientation = 'landscape', bbox_inches='tight')
 
 
 def readConfig(filepath):
@@ -131,9 +131,8 @@ def genTopology(network, tl):
 
             sim_nodes[node.name].addSRQKDNode(SRQKDNode(sender, receiver, senderp, receiverp))
 
-    # print('sim_nodes["node0"].srqkdnodes[0].sender.protocols', sim_nodes['node0'].srqkdnodes[0].sender.protocols[1].other_node)
-    # print('sim_nodes["node1"].srqkdnodes[0].receiver.protocols', sim_nodes['node1'].srqkdnodes[0].receiver.protocols[1].other_node)
-
+    #print('sim_nodes["node0"].srqkdnodes[0].sender.protocols', sim_nodes['node0'].srqkdnodes[0].sender.protocols)
+    #print('sim_nodes["node1"].srqkdnodes[0].receiver.protocols', sim_nodes['node1'].srqkdnodes[0].receiver.protocols)
 
     if verbose:
         for key, node in sim_nodes.items():
@@ -221,8 +220,7 @@ def runSim(tl, network, sim_nodes, keysize):
 
     while tl.schedule_counter > tl.run_counter:
         continue
-    
-    
+        
     for n in sim_nodes.values():
         for srnode in n.srqkdnodes:
             key_managers[srnode.sender.name].keys[0]
@@ -231,8 +229,6 @@ def runSim(tl, network, sim_nodes, keysize):
     #key1node0 =  "{0:0128b}".format(key_managers["node0 to node1.sender"].keys[0])
     key_format = "{0:0"+str(key_size)+"b}"
     key1node0 = key_format.format(key_managers["node0 to node1.sender"].keys[0])
-
-
 
     print("KEY = ", key1node0)
 
