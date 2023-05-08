@@ -20,7 +20,8 @@ class SenderProtocol(Protocol):
     def start(self, text):
         new_msg = Message(MsgType.TEXT_MESS, self.other_name)
         new_msg.payload = text
-        print("!!!START SEND MESSAGE!!!", new_msg.msg_type, " " , new_msg.payload, " " , new_msg.receiver)
+        new_msg.protocol_type = "receiverp"
+       # print("!!!START SEND MESSAGE!!!", new_msg.msg_type, " " , new_msg.payload, " " , new_msg.receiver)
         self.own.send_message(self.other_node, new_msg)
 
     def received_message(self, src: str, message: Message):
@@ -43,4 +44,5 @@ class ReceiverProtocol(Protocol):
         print("node '{}' received TEXT message at time {}: {}".format(self.own.name, self.own.timeline.now(), message.payload))
         new_msg = Message(MsgType.TEXT_MESS, self.other_name)
         new_msg.payload = "PLAINTEXT REPLY"
+        new_msg.protocol_type = "senderp"
         self.own.send_message(self.other_node, new_msg)

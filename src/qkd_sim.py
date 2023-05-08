@@ -124,9 +124,6 @@ def genTopology(network, tl):
             qchannel = QuantumChannel(qchannelName, tl, 0.0001, 1000, fidelity)
             qchannel.set_ends(receiver, destSender)
 
-            print("DEST RECEIVER: ", destReceiver)
-            print("DEST SENDER: ", destSender)
-
             senderp = SenderProtocol(sender, "senderp", "receiverp", destReceiver)
             receiverp = ReceiverProtocol(receiver, "receiverp", "senderp", destSender)
 
