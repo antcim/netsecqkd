@@ -5,9 +5,11 @@ Chiavi generate possiblilmente diverse se la fidelity dei canali quantistici < 1
 
 
 ## To do
-- mandare messaggi tra nodi direttamente collegati
+- aggiungere lista chiavi a srqkdnode
+- aggiungere keys a protocolli sendere e receiver
+- fare la crypt/decrypt nel protocollo
+- a ogni messaggio consumare le key in ordine (la usa e cancella)
 
-- cifare i messaggi
 
 # errors in receive_message function of QKDNode in node.py of sequence lib
 if type(protocol) == msg.protocol_type:
@@ -22,3 +24,8 @@ this is a fix for it
 if protocol.name == "receiverp" or protocol.name == "senderp":
     protocol.received_message(src, msg)
     return
+
+
+
+
+
