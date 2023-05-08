@@ -33,7 +33,7 @@ filepath = 'rnd.json'
 parsepath = 'rndp.json'
 verbose = False
 fidelity = 1
-draw = False
+draw = True
 
 ################# KEY MANAGER #########################
 
@@ -190,10 +190,11 @@ def runSim(tl, network, sim_nodes, keysize):
             key_managers[srnode.sender.name] = km1
             key_managers[srnode.receiver.name] = km2
 
-            process = Process(srnode.senderp, "start", ["PLAINTEXT SEND"])
-            event = Event(count * 1e9, process)
-            count += 1000
-            tl.schedule(event)
+            # # this sets up the messagin events on the classical channels
+            # process = Process(srnode.senderp, "start", ["PLAINTEXT SEND"])
+            # event = Event(count * 1e9, process)
+            # count += 1000
+            # tl.schedule(event)
         
     # generate routing tables
     aux = NewQKDTopo(parsepath, sim_nodes)
@@ -206,17 +207,44 @@ def runSim(tl, network, sim_nodes, keysize):
 
     # start simulation and record timing
     tl.init()
-    senders = list(filter(lambda KM: KM.endswith('.sender'), key_managers))
-
+    
     # send QKD requests
+    senders = list(filter(lambda KM: KM.endswith('.sender'), key_managers))
     for km in senders:
         key_managers[km].send_request()
 
+    tl.show_progress = False
     tick = time.time()
     tl.run()
-    print(tl.schedule_counter)
-    print(tl.run_counter)
-    print("execution time %.2f sec" % (time.time() - tick))
+
+    while tl.schedule_counter > tl.run_counter:
+        continue
+    
+    
+    for n in sim_nodes.values():
+        for srnode in n.srqkdnodes:
+            key_managers[srnode.sender.name].keys[0]
+            
+
+    key1node0 =  "\t{0:0128b}".format(key_managers["node0 to node1.sender"].keys[0])[0:4]
+    print("KEY = ", key1node0)
+
+    count = 0
+    for n in sim_nodes.values():
+        for srnode in n.srqkdnodes:
+            # this sets up the messagin events on the classical channels
+            process = Process(srnode.senderp, "start", ["PLAINTEXT SEND"])
+            event = Event(tl.time + count * 1e9, process)
+            count += 1000
+            tl.schedule(event)
+
+    tl.init()
+    tl.run()
+
+
+    # print(tl.schedule_counter)
+    # print(tl.run_counter)
+    # print("execution time %.2f sec" % (time.time() - tick))
 
     # print error rate for each sender
     if print_error:
@@ -275,7 +303,7 @@ def main(argv):
         netparse(filepath, parsepath)
     network = readConfig(parsepath)
     
-    # tl = Timeline(5000 * 1e9)
+    tl = Timeline(5000 * 1e9)
     tl = Timeline()
     sim_nodes = genTopology(network, tl)
     runSim(tl, network, sim_nodes, key_size)
