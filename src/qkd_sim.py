@@ -8,6 +8,8 @@ from sequence.topology.node import QKDNode
 from sequence.components.optical_channel import QuantumChannel, ClassicalChannel
 from sequence.qkd.BB84 import pair_bb84_protocols
 from sequence.topology.qkd_topo import QKDTopo
+from sequence.kernel.process import Process
+from sequence.kernel.event import Event
 
 import networkx as nx
 import json
@@ -18,12 +20,15 @@ from srqkdnode import SRQKDNode
 
 from NewQKDTopo import NewQKDTopo
 
+from messaging import SenderProtocol, ReceiverProtocol
+
 # defalut simulation values
 num_keys = 3
 key_size = 128
 do_gen = True
 print_keys = False
 print_error = False
+print_routing = False
 filepath = 'rnd.json'
 parsepath = 'rndp.json'
 verbose = False
@@ -85,7 +90,7 @@ def genTopology(network, tl):
     for i, node in enumerate(network.get_nodes_by_type(QKDTopo.QKD_NODE)):
         sim_nodes[node.name] = SuperQKDNode(node.name)
 
-    # make connections
+    # make network topology
     for i, node in enumerate(network.get_nodes_by_type(QKDTopo.QKD_NODE)):
         for key in node.cchannels.keys():
 
@@ -119,7 +124,17 @@ def genTopology(network, tl):
             qchannel = QuantumChannel(qchannelName, tl, 0.0001, 1000, fidelity)
             qchannel.set_ends(receiver, destSender)
 
-            sim_nodes[node.name].addSRQKDNode(SRQKDNode(sender, receiver))
+            print("DEST RECEIVER: ", destReceiver)
+            print("DEST SENDER: ", destSender)
+
+            senderp = SenderProtocol(sender, "senderp", "receiverp", destReceiver)
+            receiverp = ReceiverProtocol(receiver, "receiverp", "senderp", destSender)
+
+            sim_nodes[node.name].addSRQKDNode(SRQKDNode(sender, receiver, senderp, receiverp))
+
+    print('sim_nodes["node0"].srqkdnodes[0].sender.protocols', sim_nodes['node0'].srqkdnodes[0].sender.protocols[1].other_node)
+    print('sim_nodes["node1"].srqkdnodes[0].receiver.protocols', sim_nodes['node1'].srqkdnodes[0].receiver.protocols[1].other_node)
+
 
     if verbose:
         for key, node in sim_nodes.items():
@@ -164,6 +179,7 @@ def runSim(tl, network, sim_nodes, keysize):
 
     key_managers = {}
 
+    count = 0
     for n in sim_nodes.values():
         for srnode in n.srqkdnodes:
             km1 = KeyManager(tl, keysize, num_keys)
@@ -177,24 +193,32 @@ def runSim(tl, network, sim_nodes, keysize):
             key_managers[srnode.sender.name] = km1
             key_managers[srnode.receiver.name] = km2
 
-    # Questo fa generare le routing table
+            process = Process(srnode.senderp, "start", ["PLAINTEXT SEND"])
+            event = Event(count * 1e9, process)
+            count += 1000
+            tl.schedule(event)
+        
+    # generate routing tables
     aux = NewQKDTopo(parsepath, sim_nodes)
 
-    for n in sim_nodes:
-        print("ROUTING TABLE ", n)
-        for i,k in sim_nodes[n].routing_table.items():
-            print("\tTO ",i,", Path: ", k)
-        
+    if print_routing:
+        for n in sim_nodes:
+            print("ROUTING TABLE ", n)
+            for i,k in sim_nodes[n].routing_table.items():
+                print("\tTO ",i,", Path: ", k)
+
     # start simulation and record timing
     tl.init()
-
     senders = list(filter(lambda KM: KM.endswith('.sender'), key_managers))
 
+    # send QKD requests
     for km in senders:
         key_managers[km].send_request()
 
     tick = time.time()
     tl.run()
+    print(tl.schedule_counter)
+    print(tl.run_counter)
     print("execution time %.2f sec" % (time.time() - tick))
 
     # print error rate for each sender
@@ -226,7 +250,7 @@ def main(argv):
     global fidelity
     global draw
 
-    opts, args = getopt.getopt(argv, "f:n:s:ekvq:d")
+    opts, args = getopt.getopt(argv, "f:n:s:ekvq:dr")
     for opt, arg in opts:
         if opt == '-f':
             do_gen = False
@@ -246,13 +270,16 @@ def main(argv):
             fidelity = float(arg)
         elif opt in ['-d']:
             draw = True
+        elif opt in ['-r']:
+            print_routing = True
 
     if do_gen:
         genNetwork(filepath)
         netparse(filepath, parsepath)
     network = readConfig(parsepath)
     
-    tl = Timeline(5000 * 1e9)
+    # tl = Timeline(5000 * 1e9)
+    tl = Timeline()
     sim_nodes = genTopology(network, tl)
     runSim(tl, network, sim_nodes, key_size)
     #NewQKDTopo("network_topo.json")

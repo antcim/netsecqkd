@@ -20,6 +20,7 @@ class SenderProtocol(Protocol):
     def start(self, text):
         new_msg = Message(MsgType.TEXT_MESS, self.other_name)
         new_msg.payload = text
+        print("!!!START SEND MESSAGE!!!", new_msg.msg_type, " " , new_msg.payload, " " , new_msg.receiver)
         self.own.send_message(self.other_node, new_msg)
 
     def received_message(self, src: str, message: Message):
@@ -43,42 +44,3 @@ class ReceiverProtocol(Protocol):
         new_msg = Message(MsgType.TEXT_MESS, self.other_name)
         new_msg.payload = "PLAINTEXT REPLY"
         self.own.send_message(self.other_node, new_msg)
-
-from sequence.kernel.timeline import Timeline
-from sequence.components.optical_channel import ClassicalChannel
-
-tl = Timeline(5e12)
-
-node1 = Node("node1", tl)
-node2 = Node("node2", tl)
-node3 = Node("node3", tl)
-
-cc0 = ClassicalChannel("cc0", tl, 1e3, 1e9)
-cc1 = ClassicalChannel("cc1", tl, 1e3, 1e9)
-
-cc2 = ClassicalChannel("cc2", tl, 1e3, 1e9)
-cc3 = ClassicalChannel("cc3", tl, 1e3, 1e9)
-
-cc4 = ClassicalChannel("cc4", tl, 1e3, 1e9)
-cc5 = ClassicalChannel("cc5", tl, 1e3, 1e9)
-
-cc0.set_ends(node1, node2.name)
-cc1.set_ends(node2, node1.name)
-
-cc2.set_ends(node2, node3.name)
-cc3.set_ends(node3, node2.name)
-
-cc4.set_ends(node1, node3.name)
-cc5.set_ends(node3, node1.name)
-
-senderp = SenderProtocol(node1, "senderp", "receiverp", "node3")
-receiverp = ReceiverProtocol(node3, "receiverp", "senderp", "node1")
-
-from sequence.kernel.process import Process
-from sequence.kernel.event import Event
-
-process = Process(senderp, "start", ["PLAINTEXT SEND"])
-event = Event(0, process)
-tl.schedule(event)
-tl.init()
-tl.run()
