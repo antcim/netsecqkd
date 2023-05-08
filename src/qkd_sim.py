@@ -22,6 +22,8 @@ from NewQKDTopo import NewQKDTopo
 
 from messaging import SenderProtocol, ReceiverProtocol
 
+import onetimepad
+
 # defalut simulation values
 num_keys = 3
 key_size = 128
@@ -129,8 +131,8 @@ def genTopology(network, tl):
 
             sim_nodes[node.name].addSRQKDNode(SRQKDNode(sender, receiver, senderp, receiverp))
 
-    print('sim_nodes["node0"].srqkdnodes[0].sender.protocols', sim_nodes['node0'].srqkdnodes[0].sender.protocols[1].other_node)
-    print('sim_nodes["node1"].srqkdnodes[0].receiver.protocols', sim_nodes['node1'].srqkdnodes[0].receiver.protocols[1].other_node)
+    # print('sim_nodes["node0"].srqkdnodes[0].sender.protocols', sim_nodes['node0'].srqkdnodes[0].sender.protocols[1].other_node)
+    # print('sim_nodes["node1"].srqkdnodes[0].receiver.protocols', sim_nodes['node1'].srqkdnodes[0].receiver.protocols[1].other_node)
 
 
     if verbose:
@@ -226,14 +228,22 @@ def runSim(tl, network, sim_nodes, keysize):
             key_managers[srnode.sender.name].keys[0]
             
 
-    key1node0 =  "\t{0:0128b}".format(key_managers["node0 to node1.sender"].keys[0])[0:4]
+    #key1node0 =  "{0:0128b}".format(key_managers["node0 to node1.sender"].keys[0])
+    key_format = "{0:0"+str(key_size)+"b}"
+    key1node0 = key_format.format(key_managers["node0 to node1.sender"].keys[0])
+
+
+
     print("KEY = ", key1node0)
+
+    plaintext = "plaintext"
+    ciphertext = onetimepad.encrypt(plaintext, key1node0)
 
     count = 0
     for n in sim_nodes.values():
         for srnode in n.srqkdnodes:
             # this sets up the messagin events on the classical channels
-            process = Process(srnode.senderp, "start", ["PLAINTEXT SEND"])
+            process = Process(srnode.senderp, "start", [ciphertext])
             event = Event(tl.time + count * 1e9, process)
             count += 1000
             tl.schedule(event)
@@ -256,11 +266,12 @@ def runSim(tl, network, sim_nodes, keysize):
                     print("\tkey {}:\t{}%".format(i + 1, e * 100))
 
     if print_keys:
+        key_format = "{0:0"+str(key_size)+"b}"
         # print keys for each sender
         for s in senders:
             print("[", s, "] keys:")
             for i, key in enumerate(key_managers[s].keys):
-                print("\t{0:0128b}".format(key))
+                print(key_format.format(key))
 
 
 def main(argv):
