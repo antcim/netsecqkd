@@ -8,6 +8,7 @@ from sequence.protocol import Protocol
 from sequence.message import Message
 
 import onetimepad
+from colorama import Fore
 
 class MessagingProtocol(Protocol):
     def __init__(self, own: Node, name: str, other_name: str, other_node: str):
@@ -29,4 +30,7 @@ class MessagingProtocol(Protocol):
 
     def received_message(self, src: str, message: Message):
         assert message.msg_type == MsgType.TEXT_MESS
-        print("node '{}' received TEXT message at time {}: {}".format(self.own.name, self.own.timeline.now(), message.payload))
+        print(Fore.LIGHTMAGENTA_EX + "[" + self.own.name + "]" + Fore.RESET)
+        print("Received: " + Fore.LIGHTGREEN_EX + "TEXT Message " + Fore.RESET)
+        print("At Time: " + Fore.LIGHTCYAN_EX + str(self.own.timeline.now()) + Fore.RESET)
+        print("Message: " + Fore.LIGHTYELLOW_EX + message.payload + Fore.RESET + "\n")

@@ -142,6 +142,9 @@ def genTopology(network, tl):
 
 
 def runSim(tl, network, sim_nodes, keysize):
+    print(Fore.LIGHTMAGENTA_EX, "-----------------", Fore.RESET)
+    print(Fore.LIGHTMAGENTA_EX, "| PAIRING NODES |", Fore.RESET)
+    print(Fore.LIGHTMAGENTA_EX, "-----------------", Fore.RESET)
     for i, node in enumerate(network.get_nodes_by_type(QKDTopo.QKD_NODE)):
         neighbors = node.qchannels.keys()
         for k in neighbors:
@@ -165,7 +168,8 @@ def runSim(tl, network, sim_nodes, keysize):
             B.set_seed(1)
 
             pair_bb84_protocols(A.protocol_stack[0], B.protocol_stack[0])
-            print(Fore.GREEN, "[PAIR]", Fore.RESET, Fore.LIGHTCYAN_EX, A.name , Fore.RESET, "and", Fore.LIGHTBLUE_EX, B.name, Fore.RESET)
+            print(Fore.GREEN, "[PAIR]", Fore.RESET, Fore.LIGHTCYAN_EX, "[",
+                  A.name, "]", Fore.RESET, Fore.LIGHTBLUE_EX, "[", B.name, "]",Fore.RESET)
 
     key_managers = {}
 
@@ -212,13 +216,17 @@ def runSim(tl, network, sim_nodes, keysize):
             key_managers[srnode.sender.name].keys[0]
 
     key_format = "{0:0"+str(key_size)+"b}"
-    key1node0 = key_format.format(key_managers["node0 to node1.sender"].keys[0])
+    key1node0 = key_format.format(
+        key_managers["node0 to node1.sender"].keys[0])
 
-    print("KEY = ", key1node0)
+    print(Fore.LIGHTYELLOW_EX, "\nKEY = ", key1node0, Fore.RESET)
 
     plaintext = "plaintext"
 
     # send messages encrypted with QKD keys on classical channels
+    print(Fore.LIGHTMAGENTA_EX, "-----------------", Fore.RESET)
+    print(Fore.LIGHTMAGENTA_EX, "| SENT MESSAGES |", Fore.RESET)
+    print(Fore.LIGHTMAGENTA_EX, "-----------------", Fore.RESET)
     count = 0
     for n in sim_nodes.values():
         for srnode in n.srqkdnodes:
@@ -231,7 +239,7 @@ def runSim(tl, network, sim_nodes, keysize):
     tl.init()
     tl.run()
 
-    print("execution time %.2f sec" % (time.time() - tick))
+    print(Fore.LIGHTGREEN_EX, "[Execution Time]", Fore.RESET, "%.2f sec" % (time.time() - tick))
 
     # print error rate for each sender
     if print_error:
@@ -291,7 +299,7 @@ def main(argv):
         genNetwork(filepath)
         netparse(filepath, parsepath)
     network = readConfig(parsepath)
-
+    
     # tl = Timeline(5000 * 1e9)
     tl = Timeline()
     sim_nodes = genTopology(network, tl)
