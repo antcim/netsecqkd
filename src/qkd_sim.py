@@ -214,19 +214,9 @@ def runSim(tl, network, sim_nodes, keysize):
     while tl.schedule_counter > tl.run_counter:
         continue
 
-    for n in sim_nodes.values():
-        for srnode in n.srqkdnodes:
-            key_managers[srnode.sender.name].keys[0]
-
-    key_format = "{0:0"+str(key_size)+"b}"
-    key1node0 = key_format.format(
-        key_managers["node0 to node1.sender"].keys[0])
-
-    # print(Fore.LIGHTYELLOW_EX, "\nKEY = ", key1node0, Fore.RESET)
-
+    # send messages encrypted with QKD keys on classical channels
     plaintext = "this is a qkd project for network security"
 
-    # send messages encrypted with QKD keys on classical channels
     print(Fore.LIGHTMAGENTA_EX, "-----------------", Fore.RESET)
     print(Fore.LIGHTMAGENTA_EX, "| SENT MESSAGES |", Fore.RESET)
     print(Fore.LIGHTMAGENTA_EX, "-----------------", Fore.RESET)
