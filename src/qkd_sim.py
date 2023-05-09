@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import networkx as nx
 import json
 from colorama import Fore
+import random
 
 # sequence lib
 from sequence.kernel.timeline import Timeline
@@ -74,7 +75,7 @@ def genNetwork(filepath):
         nx.draw_networkx_labels(G, pos)
         nx.draw_networkx_edges(G, pos, edge_color='r', arrows=True)
         nx.draw_networkx_edges(G, pos, arrows=False)
-        plt.savefig("src/graph.png", dpi=500,
+        plt.savefig("graph.png", dpi=500,
                     orientation='landscape', bbox_inches='tight')
 
 
@@ -124,9 +125,9 @@ def genTopology(network, tl):
             qchannel.set_ends(receiver, destSender)
 
             senderp = MessagingProtocol(
-                sender, "msgp", "msgp", destReceiver)
+                sender, "msgp", "msgp", destReceiver, sim_nodes[node.name], tl)
             receiverp = MessagingProtocol(
-                receiver, "msgp", "msgp", destSender)
+                receiver, "msgp", "msgp", destSender, sim_nodes[node.name], tl)
 
             sim_nodes[node.name].addSRQKDNode(
                 SRQKDNode(sender, receiver, senderp, receiverp))
@@ -221,9 +222,24 @@ def runSim(tl, network, sim_nodes, keysize):
     print(Fore.LIGHTMAGENTA_EX, "| SENT MESSAGES |", Fore.RESET)
     print(Fore.LIGHTMAGENTA_EX, "-----------------", Fore.RESET)
 
-    for n in sim_nodes.values():
-        for srnode in n.srqkdnodes:
-            srnode.sendMessage(tl, plaintext)
+    # Scegliamo un sender casuale
+    random_sender_node = random.randint(0,len(list(sim_nodes))-1)
+    random_sender_node = list(sim_nodes.keys())[random_sender_node]
+
+    # Scegliamo un receiver casuale
+    random_receiver_node = random.randint(0,len(list(sim_nodes))-1)
+    while random_receiver_node == random_sender_node:
+        random_receiver_node = list(sim_nodes.keys())[random_receiver_node]
+    random_receiver_node = list(sim_nodes.keys())[random_receiver_node]
+
+    print(random_sender_node," ",random_receiver_node)
+
+    # Inizio QKD Multi-hop
+    sim_nodes[random_sender_node].sendMessage(tl, random_receiver_node, random_receiver_node + ":" + plaintext)
+
+    # for n in sim_nodes.values():
+    #     for srnode in n.srqkdnodes:
+    #         srnode.sendMessage(tl, plaintext)
 
     tl.init()
     tl.run()
