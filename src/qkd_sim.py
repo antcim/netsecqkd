@@ -37,9 +37,7 @@ draw = True
 
 ################# KEY MANAGER #########################
 
-
 class KeyManager():
-
     def __init__(self, timeline, keysize, num_keys):
         self.timeline = timeline
         self.lower_protocols = []
@@ -57,8 +55,11 @@ class KeyManager():
         self.keys.append(info)
         self.times.append(self.timeline.now() * 1e-9)
 
-######################################################
+    def consume(self) -> str:
+        key_format = "{0:0"+str(key_size)+"b}"
+        return key_format.format(self.keys.pop(0))
 
+######################################################
 
 def genNetwork(filepath):
     # generate random graph
@@ -73,7 +74,7 @@ def genNetwork(filepath):
         nx.draw_networkx_labels(G, pos)
         nx.draw_networkx_edges(G, pos, edge_color='r', arrows=True)
         nx.draw_networkx_edges(G, pos, arrows=False)
-        plt.savefig("graph.png", dpi=500,
+        plt.savefig("src/graph.png", dpi=500,
                     orientation='landscape', bbox_inches='tight')
 
 
@@ -187,6 +188,8 @@ def runSim(tl, network, sim_nodes, keysize):
             key_managers[srnode.sender.name] = km1
             key_managers[srnode.receiver.name] = km2
 
+            srnode.addKeyManagers(km1, km2)
+
     # generate routing tables
     aux = NewQKDTopo(parsepath, sim_nodes)
 
@@ -219,22 +222,18 @@ def runSim(tl, network, sim_nodes, keysize):
     key1node0 = key_format.format(
         key_managers["node0 to node1.sender"].keys[0])
 
-    print(Fore.LIGHTYELLOW_EX, "\nKEY = ", key1node0, Fore.RESET)
+    # print(Fore.LIGHTYELLOW_EX, "\nKEY = ", key1node0, Fore.RESET)
 
-    plaintext = "plaintext"
+    plaintext = "this is a qkd project for network security"
 
     # send messages encrypted with QKD keys on classical channels
     print(Fore.LIGHTMAGENTA_EX, "-----------------", Fore.RESET)
     print(Fore.LIGHTMAGENTA_EX, "| SENT MESSAGES |", Fore.RESET)
     print(Fore.LIGHTMAGENTA_EX, "-----------------", Fore.RESET)
-    count = 0
+
     for n in sim_nodes.values():
         for srnode in n.srqkdnodes:
-            # this sets up the messagin events on the classical channels
-            process = Process(srnode.senderp, "start", [plaintext, key1node0])
-            event = Event(tl.time + count * 1e9, process)
-            count += 1000
-            tl.schedule(event)
+            srnode.sendMessage(tl, plaintext)
 
     tl.init()
     tl.run()

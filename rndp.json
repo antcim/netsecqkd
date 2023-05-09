@@ -235,6 +235,24 @@
             "type": "QKDNode",
             "seed": 0,
             "memo_size": 50
+        },
+        {
+            "name": "node39",
+            "type": "QKDNode",
+            "seed": 0,
+            "memo_size": 50
+        },
+        {
+            "name": "node40",
+            "type": "QKDNode",
+            "seed": 0,
+            "memo_size": 50
+        },
+        {
+            "name": "node41",
+            "type": "QKDNode",
+            "seed": 0,
+            "memo_size": 50
         }
     ],
     "qchannels": [
@@ -253,324 +271,324 @@
             "distance": 1000
         },
         {
-            "name": "qchannel1_0to20",
+            "name": "qchannel1_0to9",
             "source": "node0",
-            "destination": "node20",
+            "destination": "node9",
             "attenuation": 1e-05,
             "distance": 1000
         },
         {
-            "name": "qchannel1_20to0",
-            "source": "node20",
+            "name": "qchannel1_9to0",
+            "source": "node9",
             "destination": "node0",
             "attenuation": 1e-05,
             "distance": 1000
         },
         {
-            "name": "qchannel2_0to24",
+            "name": "qchannel2_0to11",
             "source": "node0",
-            "destination": "node24",
+            "destination": "node11",
             "attenuation": 1e-05,
             "distance": 1000
         },
         {
-            "name": "qchannel2_24to0",
-            "source": "node24",
+            "name": "qchannel2_11to0",
+            "source": "node11",
             "destination": "node0",
             "attenuation": 1e-05,
             "distance": 1000
         },
         {
-            "name": "qchannel3_1to2",
+            "name": "qchannel3_0to14",
+            "source": "node0",
+            "destination": "node14",
+            "attenuation": 1e-05,
+            "distance": 1000
+        },
+        {
+            "name": "qchannel3_14to0",
+            "source": "node14",
+            "destination": "node0",
+            "attenuation": 1e-05,
+            "distance": 1000
+        },
+        {
+            "name": "qchannel4_1to2",
             "source": "node1",
             "destination": "node2",
             "attenuation": 1e-05,
             "distance": 1000
         },
         {
-            "name": "qchannel3_2to1",
+            "name": "qchannel4_2to1",
             "source": "node2",
             "destination": "node1",
             "attenuation": 1e-05,
             "distance": 1000
         },
         {
-            "name": "qchannel4_2to3",
+            "name": "qchannel5_1to17",
+            "source": "node1",
+            "destination": "node17",
+            "attenuation": 1e-05,
+            "distance": 1000
+        },
+        {
+            "name": "qchannel5_17to1",
+            "source": "node17",
+            "destination": "node1",
+            "attenuation": 1e-05,
+            "distance": 1000
+        },
+        {
+            "name": "qchannel6_1to21",
+            "source": "node1",
+            "destination": "node21",
+            "attenuation": 1e-05,
+            "distance": 1000
+        },
+        {
+            "name": "qchannel6_21to1",
+            "source": "node21",
+            "destination": "node1",
+            "attenuation": 1e-05,
+            "distance": 1000
+        },
+        {
+            "name": "qchannel7_2to3",
             "source": "node2",
             "destination": "node3",
             "attenuation": 1e-05,
             "distance": 1000
         },
         {
-            "name": "qchannel4_3to2",
+            "name": "qchannel7_3to2",
             "source": "node3",
             "destination": "node2",
             "attenuation": 1e-05,
             "distance": 1000
         },
         {
-            "name": "qchannel5_3to4",
+            "name": "qchannel8_3to4",
             "source": "node3",
             "destination": "node4",
             "attenuation": 1e-05,
             "distance": 1000
         },
         {
-            "name": "qchannel5_4to3",
+            "name": "qchannel8_4to3",
             "source": "node4",
             "destination": "node3",
             "attenuation": 1e-05,
             "distance": 1000
         },
         {
-            "name": "qchannel6_4to5",
+            "name": "qchannel9_4to5",
             "source": "node4",
             "destination": "node5",
             "attenuation": 1e-05,
             "distance": 1000
         },
         {
-            "name": "qchannel6_5to4",
+            "name": "qchannel9_5to4",
             "source": "node5",
             "destination": "node4",
             "attenuation": 1e-05,
             "distance": 1000
         },
         {
-            "name": "qchannel7_4to25",
-            "source": "node4",
+            "name": "qchannel10_5to6",
+            "source": "node5",
+            "destination": "node6",
+            "attenuation": 1e-05,
+            "distance": 1000
+        },
+        {
+            "name": "qchannel10_6to5",
+            "source": "node6",
+            "destination": "node5",
+            "attenuation": 1e-05,
+            "distance": 1000
+        },
+        {
+            "name": "qchannel11_5to22",
+            "source": "node5",
+            "destination": "node22",
+            "attenuation": 1e-05,
+            "distance": 1000
+        },
+        {
+            "name": "qchannel11_22to5",
+            "source": "node22",
+            "destination": "node5",
+            "attenuation": 1e-05,
+            "distance": 1000
+        },
+        {
+            "name": "qchannel12_6to7",
+            "source": "node6",
+            "destination": "node7",
+            "attenuation": 1e-05,
+            "distance": 1000
+        },
+        {
+            "name": "qchannel12_7to6",
+            "source": "node7",
+            "destination": "node6",
+            "attenuation": 1e-05,
+            "distance": 1000
+        },
+        {
+            "name": "qchannel13_6to25",
+            "source": "node6",
             "destination": "node25",
             "attenuation": 1e-05,
             "distance": 1000
         },
         {
-            "name": "qchannel7_25to4",
+            "name": "qchannel13_25to6",
             "source": "node25",
-            "destination": "node4",
-            "attenuation": 1e-05,
-            "distance": 1000
-        },
-        {
-            "name": "qchannel8_5to6",
-            "source": "node5",
             "destination": "node6",
             "attenuation": 1e-05,
             "distance": 1000
         },
         {
-            "name": "qchannel8_6to5",
+            "name": "qchannel14_6to28",
             "source": "node6",
-            "destination": "node5",
+            "destination": "node28",
             "attenuation": 1e-05,
             "distance": 1000
         },
         {
-            "name": "qchannel9_6to7",
-            "source": "node6",
-            "destination": "node7",
-            "attenuation": 1e-05,
-            "distance": 1000
-        },
-        {
-            "name": "qchannel9_7to6",
-            "source": "node7",
+            "name": "qchannel14_28to6",
+            "source": "node28",
             "destination": "node6",
             "attenuation": 1e-05,
             "distance": 1000
         },
         {
-            "name": "qchannel10_7to8",
+            "name": "qchannel15_7to8",
             "source": "node7",
             "destination": "node8",
             "attenuation": 1e-05,
             "distance": 1000
         },
         {
-            "name": "qchannel10_8to7",
+            "name": "qchannel15_8to7",
             "source": "node8",
             "destination": "node7",
             "attenuation": 1e-05,
             "distance": 1000
         },
         {
-            "name": "qchannel11_8to9",
-            "source": "node8",
-            "destination": "node9",
-            "attenuation": 1e-05,
-            "distance": 1000
-        },
-        {
-            "name": "qchannel11_9to8",
-            "source": "node9",
-            "destination": "node8",
-            "attenuation": 1e-05,
-            "distance": 1000
-        },
-        {
-            "name": "qchannel12_9to10",
-            "source": "node9",
-            "destination": "node10",
-            "attenuation": 1e-05,
-            "distance": 1000
-        },
-        {
-            "name": "qchannel12_10to9",
-            "source": "node10",
-            "destination": "node9",
-            "attenuation": 1e-05,
-            "distance": 1000
-        },
-        {
-            "name": "qchannel13_10to11",
-            "source": "node10",
-            "destination": "node11",
-            "attenuation": 1e-05,
-            "distance": 1000
-        },
-        {
-            "name": "qchannel13_11to10",
-            "source": "node11",
-            "destination": "node10",
-            "attenuation": 1e-05,
-            "distance": 1000
-        },
-        {
-            "name": "qchannel14_11to12",
-            "source": "node11",
-            "destination": "node12",
-            "attenuation": 1e-05,
-            "distance": 1000
-        },
-        {
-            "name": "qchannel14_12to11",
-            "source": "node12",
-            "destination": "node11",
-            "attenuation": 1e-05,
-            "distance": 1000
-        },
-        {
-            "name": "qchannel15_11to27",
-            "source": "node11",
-            "destination": "node27",
-            "attenuation": 1e-05,
-            "distance": 1000
-        },
-        {
-            "name": "qchannel15_27to11",
-            "source": "node27",
-            "destination": "node11",
-            "attenuation": 1e-05,
-            "distance": 1000
-        },
-        {
-            "name": "qchannel16_12to13",
-            "source": "node12",
-            "destination": "node13",
-            "attenuation": 1e-05,
-            "distance": 1000
-        },
-        {
-            "name": "qchannel16_13to12",
-            "source": "node13",
-            "destination": "node12",
-            "attenuation": 1e-05,
-            "distance": 1000
-        },
-        {
-            "name": "qchannel17_12to30",
-            "source": "node12",
+            "name": "qchannel16_7to30",
+            "source": "node7",
             "destination": "node30",
             "attenuation": 1e-05,
             "distance": 1000
         },
         {
-            "name": "qchannel17_30to12",
+            "name": "qchannel16_30to7",
             "source": "node30",
+            "destination": "node7",
+            "attenuation": 1e-05,
+            "distance": 1000
+        },
+        {
+            "name": "qchannel17_8to34",
+            "source": "node8",
+            "destination": "node34",
+            "attenuation": 1e-05,
+            "distance": 1000
+        },
+        {
+            "name": "qchannel17_34to8",
+            "source": "node34",
+            "destination": "node8",
+            "attenuation": 1e-05,
+            "distance": 1000
+        },
+        {
+            "name": "qchannel18_8to36",
+            "source": "node8",
+            "destination": "node36",
+            "attenuation": 1e-05,
+            "distance": 1000
+        },
+        {
+            "name": "qchannel18_36to8",
+            "source": "node36",
+            "destination": "node8",
+            "attenuation": 1e-05,
+            "distance": 1000
+        },
+        {
+            "name": "qchannel19_9to10",
+            "source": "node9",
+            "destination": "node10",
+            "attenuation": 1e-05,
+            "distance": 1000
+        },
+        {
+            "name": "qchannel19_10to9",
+            "source": "node10",
+            "destination": "node9",
+            "attenuation": 1e-05,
+            "distance": 1000
+        },
+        {
+            "name": "qchannel20_11to12",
+            "source": "node11",
             "destination": "node12",
             "attenuation": 1e-05,
             "distance": 1000
         },
         {
-            "name": "qchannel18_13to14",
-            "source": "node13",
-            "destination": "node14",
+            "name": "qchannel20_12to11",
+            "source": "node12",
+            "destination": "node11",
             "attenuation": 1e-05,
             "distance": 1000
         },
         {
-            "name": "qchannel18_14to13",
-            "source": "node14",
+            "name": "qchannel21_11to13",
+            "source": "node11",
             "destination": "node13",
             "attenuation": 1e-05,
             "distance": 1000
         },
         {
-            "name": "qchannel19_14to15",
+            "name": "qchannel21_13to11",
+            "source": "node13",
+            "destination": "node11",
+            "attenuation": 1e-05,
+            "distance": 1000
+        },
+        {
+            "name": "qchannel22_14to15",
             "source": "node14",
             "destination": "node15",
             "attenuation": 1e-05,
             "distance": 1000
         },
         {
-            "name": "qchannel19_15to14",
+            "name": "qchannel22_15to14",
             "source": "node15",
             "destination": "node14",
             "attenuation": 1e-05,
             "distance": 1000
         },
         {
-            "name": "qchannel20_14to31",
+            "name": "qchannel23_14to16",
             "source": "node14",
-            "destination": "node31",
+            "destination": "node16",
             "attenuation": 1e-05,
             "distance": 1000
         },
         {
-            "name": "qchannel20_31to14",
-            "source": "node31",
+            "name": "qchannel23_16to14",
+            "source": "node16",
             "destination": "node14",
-            "attenuation": 1e-05,
-            "distance": 1000
-        },
-        {
-            "name": "qchannel21_15to16",
-            "source": "node15",
-            "destination": "node16",
-            "attenuation": 1e-05,
-            "distance": 1000
-        },
-        {
-            "name": "qchannel21_16to15",
-            "source": "node16",
-            "destination": "node15",
-            "attenuation": 1e-05,
-            "distance": 1000
-        },
-        {
-            "name": "qchannel22_16to17",
-            "source": "node16",
-            "destination": "node17",
-            "attenuation": 1e-05,
-            "distance": 1000
-        },
-        {
-            "name": "qchannel22_17to16",
-            "source": "node17",
-            "destination": "node16",
-            "attenuation": 1e-05,
-            "distance": 1000
-        },
-        {
-            "name": "qchannel23_16to33",
-            "source": "node16",
-            "destination": "node33",
-            "attenuation": 1e-05,
-            "distance": 1000
-        },
-        {
-            "name": "qchannel23_33to16",
-            "source": "node33",
-            "destination": "node16",
             "attenuation": 1e-05,
             "distance": 1000
         },
@@ -589,184 +607,226 @@
             "distance": 1000
         },
         {
-            "name": "qchannel25_17to35",
+            "name": "qchannel25_17to19",
             "source": "node17",
-            "destination": "node35",
-            "attenuation": 1e-05,
-            "distance": 1000
-        },
-        {
-            "name": "qchannel25_35to17",
-            "source": "node35",
-            "destination": "node17",
-            "attenuation": 1e-05,
-            "distance": 1000
-        },
-        {
-            "name": "qchannel26_18to19",
-            "source": "node18",
             "destination": "node19",
             "attenuation": 1e-05,
             "distance": 1000
         },
         {
-            "name": "qchannel26_19to18",
+            "name": "qchannel25_19to17",
             "source": "node19",
-            "destination": "node18",
+            "destination": "node17",
             "attenuation": 1e-05,
             "distance": 1000
         },
         {
-            "name": "qchannel27_20to21",
-            "source": "node20",
-            "destination": "node21",
-            "attenuation": 1e-05,
-            "distance": 1000
-        },
-        {
-            "name": "qchannel27_21to20",
-            "source": "node21",
+            "name": "qchannel26_17to20",
+            "source": "node17",
             "destination": "node20",
             "attenuation": 1e-05,
             "distance": 1000
         },
         {
-            "name": "qchannel28_20to22",
+            "name": "qchannel26_20to17",
             "source": "node20",
-            "destination": "node22",
+            "destination": "node17",
             "attenuation": 1e-05,
             "distance": 1000
         },
         {
-            "name": "qchannel28_22to20",
+            "name": "qchannel27_22to23",
             "source": "node22",
-            "destination": "node20",
-            "attenuation": 1e-05,
-            "distance": 1000
-        },
-        {
-            "name": "qchannel29_20to23",
-            "source": "node20",
             "destination": "node23",
             "attenuation": 1e-05,
             "distance": 1000
         },
         {
-            "name": "qchannel29_23to20",
+            "name": "qchannel27_23to22",
             "source": "node23",
-            "destination": "node20",
+            "destination": "node22",
             "attenuation": 1e-05,
             "distance": 1000
         },
         {
-            "name": "qchannel30_25to26",
+            "name": "qchannel28_22to24",
+            "source": "node22",
+            "destination": "node24",
+            "attenuation": 1e-05,
+            "distance": 1000
+        },
+        {
+            "name": "qchannel28_24to22",
+            "source": "node24",
+            "destination": "node22",
+            "attenuation": 1e-05,
+            "distance": 1000
+        },
+        {
+            "name": "qchannel29_25to26",
             "source": "node25",
             "destination": "node26",
             "attenuation": 1e-05,
             "distance": 1000
         },
         {
-            "name": "qchannel30_26to25",
+            "name": "qchannel29_26to25",
             "source": "node26",
             "destination": "node25",
             "attenuation": 1e-05,
             "distance": 1000
         },
         {
-            "name": "qchannel31_27to28",
-            "source": "node27",
-            "destination": "node28",
-            "attenuation": 1e-05,
-            "distance": 1000
-        },
-        {
-            "name": "qchannel31_28to27",
-            "source": "node28",
+            "name": "qchannel30_25to27",
+            "source": "node25",
             "destination": "node27",
             "attenuation": 1e-05,
             "distance": 1000
         },
         {
-            "name": "qchannel32_27to29",
+            "name": "qchannel30_27to25",
             "source": "node27",
+            "destination": "node25",
+            "attenuation": 1e-05,
+            "distance": 1000
+        },
+        {
+            "name": "qchannel31_28to29",
+            "source": "node28",
             "destination": "node29",
             "attenuation": 1e-05,
             "distance": 1000
         },
         {
-            "name": "qchannel32_29to27",
+            "name": "qchannel31_29to28",
             "source": "node29",
-            "destination": "node27",
+            "destination": "node28",
             "attenuation": 1e-05,
             "distance": 1000
         },
         {
-            "name": "qchannel33_31to32",
-            "source": "node31",
-            "destination": "node32",
-            "attenuation": 1e-05,
-            "distance": 1000
-        },
-        {
-            "name": "qchannel33_32to31",
-            "source": "node32",
+            "name": "qchannel32_30to31",
+            "source": "node30",
             "destination": "node31",
             "attenuation": 1e-05,
             "distance": 1000
         },
         {
-            "name": "qchannel34_33to34",
-            "source": "node33",
-            "destination": "node34",
+            "name": "qchannel32_31to30",
+            "source": "node31",
+            "destination": "node30",
             "attenuation": 1e-05,
             "distance": 1000
         },
         {
-            "name": "qchannel34_34to33",
-            "source": "node34",
+            "name": "qchannel33_30to32",
+            "source": "node30",
+            "destination": "node32",
+            "attenuation": 1e-05,
+            "distance": 1000
+        },
+        {
+            "name": "qchannel33_32to30",
+            "source": "node32",
+            "destination": "node30",
+            "attenuation": 1e-05,
+            "distance": 1000
+        },
+        {
+            "name": "qchannel34_30to33",
+            "source": "node30",
             "destination": "node33",
             "attenuation": 1e-05,
             "distance": 1000
         },
         {
-            "name": "qchannel35_35to36",
-            "source": "node35",
-            "destination": "node36",
+            "name": "qchannel34_33to30",
+            "source": "node33",
+            "destination": "node30",
             "attenuation": 1e-05,
             "distance": 1000
         },
         {
-            "name": "qchannel35_36to35",
-            "source": "node36",
+            "name": "qchannel35_34to35",
+            "source": "node34",
             "destination": "node35",
             "attenuation": 1e-05,
             "distance": 1000
         },
         {
-            "name": "qchannel36_35to37",
+            "name": "qchannel35_35to34",
             "source": "node35",
+            "destination": "node34",
+            "attenuation": 1e-05,
+            "distance": 1000
+        },
+        {
+            "name": "qchannel36_36to37",
+            "source": "node36",
             "destination": "node37",
             "attenuation": 1e-05,
             "distance": 1000
         },
         {
-            "name": "qchannel36_37to35",
+            "name": "qchannel36_37to36",
             "source": "node37",
-            "destination": "node35",
+            "destination": "node36",
             "attenuation": 1e-05,
             "distance": 1000
         },
         {
-            "name": "qchannel37_35to38",
-            "source": "node35",
+            "name": "qchannel37_36to38",
+            "source": "node36",
             "destination": "node38",
             "attenuation": 1e-05,
             "distance": 1000
         },
         {
-            "name": "qchannel37_38to35",
+            "name": "qchannel37_38to36",
             "source": "node38",
-            "destination": "node35",
+            "destination": "node36",
+            "attenuation": 1e-05,
+            "distance": 1000
+        },
+        {
+            "name": "qchannel38_36to39",
+            "source": "node36",
+            "destination": "node39",
+            "attenuation": 1e-05,
+            "distance": 1000
+        },
+        {
+            "name": "qchannel38_39to36",
+            "source": "node39",
+            "destination": "node36",
+            "attenuation": 1e-05,
+            "distance": 1000
+        },
+        {
+            "name": "qchannel39_36to40",
+            "source": "node36",
+            "destination": "node40",
+            "attenuation": 1e-05,
+            "distance": 1000
+        },
+        {
+            "name": "qchannel39_40to36",
+            "source": "node40",
+            "destination": "node36",
+            "attenuation": 1e-05,
+            "distance": 1000
+        },
+        {
+            "name": "qchannel40_36to41",
+            "source": "node36",
+            "destination": "node41",
+            "attenuation": 1e-05,
+            "distance": 1000
+        },
+        {
+            "name": "qchannel40_41to36",
+            "source": "node41",
+            "destination": "node36",
             "attenuation": 1e-05,
             "distance": 1000
         }
@@ -785,279 +845,279 @@
             "distance": 1000
         },
         {
-            "name": "cchannel1_0to20",
+            "name": "cchannel1_0to9",
             "source": "node0",
-            "destination": "node20",
+            "destination": "node9",
             "distance": 1000
         },
         {
-            "name": "cchannel1_20to0",
-            "source": "node20",
+            "name": "cchannel1_9to0",
+            "source": "node9",
             "destination": "node0",
             "distance": 1000
         },
         {
-            "name": "cchannel2_0to24",
+            "name": "cchannel2_0to11",
             "source": "node0",
-            "destination": "node24",
+            "destination": "node11",
             "distance": 1000
         },
         {
-            "name": "cchannel2_24to0",
-            "source": "node24",
+            "name": "cchannel2_11to0",
+            "source": "node11",
             "destination": "node0",
             "distance": 1000
         },
         {
-            "name": "cchannel3_1to2",
+            "name": "cchannel3_0to14",
+            "source": "node0",
+            "destination": "node14",
+            "distance": 1000
+        },
+        {
+            "name": "cchannel3_14to0",
+            "source": "node14",
+            "destination": "node0",
+            "distance": 1000
+        },
+        {
+            "name": "cchannel4_1to2",
             "source": "node1",
             "destination": "node2",
             "distance": 1000
         },
         {
-            "name": "cchannel3_2to1",
+            "name": "cchannel4_2to1",
             "source": "node2",
             "destination": "node1",
             "distance": 1000
         },
         {
-            "name": "cchannel4_2to3",
+            "name": "cchannel5_1to17",
+            "source": "node1",
+            "destination": "node17",
+            "distance": 1000
+        },
+        {
+            "name": "cchannel5_17to1",
+            "source": "node17",
+            "destination": "node1",
+            "distance": 1000
+        },
+        {
+            "name": "cchannel6_1to21",
+            "source": "node1",
+            "destination": "node21",
+            "distance": 1000
+        },
+        {
+            "name": "cchannel6_21to1",
+            "source": "node21",
+            "destination": "node1",
+            "distance": 1000
+        },
+        {
+            "name": "cchannel7_2to3",
             "source": "node2",
             "destination": "node3",
             "distance": 1000
         },
         {
-            "name": "cchannel4_3to2",
+            "name": "cchannel7_3to2",
             "source": "node3",
             "destination": "node2",
             "distance": 1000
         },
         {
-            "name": "cchannel5_3to4",
+            "name": "cchannel8_3to4",
             "source": "node3",
             "destination": "node4",
             "distance": 1000
         },
         {
-            "name": "cchannel5_4to3",
+            "name": "cchannel8_4to3",
             "source": "node4",
             "destination": "node3",
             "distance": 1000
         },
         {
-            "name": "cchannel6_4to5",
+            "name": "cchannel9_4to5",
             "source": "node4",
             "destination": "node5",
             "distance": 1000
         },
         {
-            "name": "cchannel6_5to4",
+            "name": "cchannel9_5to4",
             "source": "node5",
             "destination": "node4",
             "distance": 1000
         },
         {
-            "name": "cchannel7_4to25",
-            "source": "node4",
+            "name": "cchannel10_5to6",
+            "source": "node5",
+            "destination": "node6",
+            "distance": 1000
+        },
+        {
+            "name": "cchannel10_6to5",
+            "source": "node6",
+            "destination": "node5",
+            "distance": 1000
+        },
+        {
+            "name": "cchannel11_5to22",
+            "source": "node5",
+            "destination": "node22",
+            "distance": 1000
+        },
+        {
+            "name": "cchannel11_22to5",
+            "source": "node22",
+            "destination": "node5",
+            "distance": 1000
+        },
+        {
+            "name": "cchannel12_6to7",
+            "source": "node6",
+            "destination": "node7",
+            "distance": 1000
+        },
+        {
+            "name": "cchannel12_7to6",
+            "source": "node7",
+            "destination": "node6",
+            "distance": 1000
+        },
+        {
+            "name": "cchannel13_6to25",
+            "source": "node6",
             "destination": "node25",
             "distance": 1000
         },
         {
-            "name": "cchannel7_25to4",
+            "name": "cchannel13_25to6",
             "source": "node25",
-            "destination": "node4",
-            "distance": 1000
-        },
-        {
-            "name": "cchannel8_5to6",
-            "source": "node5",
             "destination": "node6",
             "distance": 1000
         },
         {
-            "name": "cchannel8_6to5",
+            "name": "cchannel14_6to28",
             "source": "node6",
-            "destination": "node5",
+            "destination": "node28",
             "distance": 1000
         },
         {
-            "name": "cchannel9_6to7",
-            "source": "node6",
-            "destination": "node7",
-            "distance": 1000
-        },
-        {
-            "name": "cchannel9_7to6",
-            "source": "node7",
+            "name": "cchannel14_28to6",
+            "source": "node28",
             "destination": "node6",
             "distance": 1000
         },
         {
-            "name": "cchannel10_7to8",
+            "name": "cchannel15_7to8",
             "source": "node7",
             "destination": "node8",
             "distance": 1000
         },
         {
-            "name": "cchannel10_8to7",
+            "name": "cchannel15_8to7",
             "source": "node8",
             "destination": "node7",
             "distance": 1000
         },
         {
-            "name": "cchannel11_8to9",
-            "source": "node8",
-            "destination": "node9",
-            "distance": 1000
-        },
-        {
-            "name": "cchannel11_9to8",
-            "source": "node9",
-            "destination": "node8",
-            "distance": 1000
-        },
-        {
-            "name": "cchannel12_9to10",
-            "source": "node9",
-            "destination": "node10",
-            "distance": 1000
-        },
-        {
-            "name": "cchannel12_10to9",
-            "source": "node10",
-            "destination": "node9",
-            "distance": 1000
-        },
-        {
-            "name": "cchannel13_10to11",
-            "source": "node10",
-            "destination": "node11",
-            "distance": 1000
-        },
-        {
-            "name": "cchannel13_11to10",
-            "source": "node11",
-            "destination": "node10",
-            "distance": 1000
-        },
-        {
-            "name": "cchannel14_11to12",
-            "source": "node11",
-            "destination": "node12",
-            "distance": 1000
-        },
-        {
-            "name": "cchannel14_12to11",
-            "source": "node12",
-            "destination": "node11",
-            "distance": 1000
-        },
-        {
-            "name": "cchannel15_11to27",
-            "source": "node11",
-            "destination": "node27",
-            "distance": 1000
-        },
-        {
-            "name": "cchannel15_27to11",
-            "source": "node27",
-            "destination": "node11",
-            "distance": 1000
-        },
-        {
-            "name": "cchannel16_12to13",
-            "source": "node12",
-            "destination": "node13",
-            "distance": 1000
-        },
-        {
-            "name": "cchannel16_13to12",
-            "source": "node13",
-            "destination": "node12",
-            "distance": 1000
-        },
-        {
-            "name": "cchannel17_12to30",
-            "source": "node12",
+            "name": "cchannel16_7to30",
+            "source": "node7",
             "destination": "node30",
             "distance": 1000
         },
         {
-            "name": "cchannel17_30to12",
+            "name": "cchannel16_30to7",
             "source": "node30",
+            "destination": "node7",
+            "distance": 1000
+        },
+        {
+            "name": "cchannel17_8to34",
+            "source": "node8",
+            "destination": "node34",
+            "distance": 1000
+        },
+        {
+            "name": "cchannel17_34to8",
+            "source": "node34",
+            "destination": "node8",
+            "distance": 1000
+        },
+        {
+            "name": "cchannel18_8to36",
+            "source": "node8",
+            "destination": "node36",
+            "distance": 1000
+        },
+        {
+            "name": "cchannel18_36to8",
+            "source": "node36",
+            "destination": "node8",
+            "distance": 1000
+        },
+        {
+            "name": "cchannel19_9to10",
+            "source": "node9",
+            "destination": "node10",
+            "distance": 1000
+        },
+        {
+            "name": "cchannel19_10to9",
+            "source": "node10",
+            "destination": "node9",
+            "distance": 1000
+        },
+        {
+            "name": "cchannel20_11to12",
+            "source": "node11",
             "destination": "node12",
             "distance": 1000
         },
         {
-            "name": "cchannel18_13to14",
-            "source": "node13",
-            "destination": "node14",
+            "name": "cchannel20_12to11",
+            "source": "node12",
+            "destination": "node11",
             "distance": 1000
         },
         {
-            "name": "cchannel18_14to13",
-            "source": "node14",
+            "name": "cchannel21_11to13",
+            "source": "node11",
             "destination": "node13",
             "distance": 1000
         },
         {
-            "name": "cchannel19_14to15",
+            "name": "cchannel21_13to11",
+            "source": "node13",
+            "destination": "node11",
+            "distance": 1000
+        },
+        {
+            "name": "cchannel22_14to15",
             "source": "node14",
             "destination": "node15",
             "distance": 1000
         },
         {
-            "name": "cchannel19_15to14",
+            "name": "cchannel22_15to14",
             "source": "node15",
             "destination": "node14",
             "distance": 1000
         },
         {
-            "name": "cchannel20_14to31",
+            "name": "cchannel23_14to16",
             "source": "node14",
-            "destination": "node31",
+            "destination": "node16",
             "distance": 1000
         },
         {
-            "name": "cchannel20_31to14",
-            "source": "node31",
+            "name": "cchannel23_16to14",
+            "source": "node16",
             "destination": "node14",
-            "distance": 1000
-        },
-        {
-            "name": "cchannel21_15to16",
-            "source": "node15",
-            "destination": "node16",
-            "distance": 1000
-        },
-        {
-            "name": "cchannel21_16to15",
-            "source": "node16",
-            "destination": "node15",
-            "distance": 1000
-        },
-        {
-            "name": "cchannel22_16to17",
-            "source": "node16",
-            "destination": "node17",
-            "distance": 1000
-        },
-        {
-            "name": "cchannel22_17to16",
-            "source": "node17",
-            "destination": "node16",
-            "distance": 1000
-        },
-        {
-            "name": "cchannel23_16to33",
-            "source": "node16",
-            "destination": "node33",
-            "distance": 1000
-        },
-        {
-            "name": "cchannel23_33to16",
-            "source": "node33",
-            "destination": "node16",
             "distance": 1000
         },
         {
@@ -1073,159 +1133,195 @@
             "distance": 1000
         },
         {
-            "name": "cchannel25_17to35",
+            "name": "cchannel25_17to19",
             "source": "node17",
-            "destination": "node35",
-            "distance": 1000
-        },
-        {
-            "name": "cchannel25_35to17",
-            "source": "node35",
-            "destination": "node17",
-            "distance": 1000
-        },
-        {
-            "name": "cchannel26_18to19",
-            "source": "node18",
             "destination": "node19",
             "distance": 1000
         },
         {
-            "name": "cchannel26_19to18",
+            "name": "cchannel25_19to17",
             "source": "node19",
-            "destination": "node18",
+            "destination": "node17",
             "distance": 1000
         },
         {
-            "name": "cchannel27_20to21",
-            "source": "node20",
-            "destination": "node21",
-            "distance": 1000
-        },
-        {
-            "name": "cchannel27_21to20",
-            "source": "node21",
+            "name": "cchannel26_17to20",
+            "source": "node17",
             "destination": "node20",
             "distance": 1000
         },
         {
-            "name": "cchannel28_20to22",
+            "name": "cchannel26_20to17",
             "source": "node20",
-            "destination": "node22",
+            "destination": "node17",
             "distance": 1000
         },
         {
-            "name": "cchannel28_22to20",
+            "name": "cchannel27_22to23",
             "source": "node22",
-            "destination": "node20",
-            "distance": 1000
-        },
-        {
-            "name": "cchannel29_20to23",
-            "source": "node20",
             "destination": "node23",
             "distance": 1000
         },
         {
-            "name": "cchannel29_23to20",
+            "name": "cchannel27_23to22",
             "source": "node23",
-            "destination": "node20",
+            "destination": "node22",
             "distance": 1000
         },
         {
-            "name": "cchannel30_25to26",
+            "name": "cchannel28_22to24",
+            "source": "node22",
+            "destination": "node24",
+            "distance": 1000
+        },
+        {
+            "name": "cchannel28_24to22",
+            "source": "node24",
+            "destination": "node22",
+            "distance": 1000
+        },
+        {
+            "name": "cchannel29_25to26",
             "source": "node25",
             "destination": "node26",
             "distance": 1000
         },
         {
-            "name": "cchannel30_26to25",
+            "name": "cchannel29_26to25",
             "source": "node26",
             "destination": "node25",
             "distance": 1000
         },
         {
-            "name": "cchannel31_27to28",
-            "source": "node27",
-            "destination": "node28",
-            "distance": 1000
-        },
-        {
-            "name": "cchannel31_28to27",
-            "source": "node28",
+            "name": "cchannel30_25to27",
+            "source": "node25",
             "destination": "node27",
             "distance": 1000
         },
         {
-            "name": "cchannel32_27to29",
+            "name": "cchannel30_27to25",
             "source": "node27",
+            "destination": "node25",
+            "distance": 1000
+        },
+        {
+            "name": "cchannel31_28to29",
+            "source": "node28",
             "destination": "node29",
             "distance": 1000
         },
         {
-            "name": "cchannel32_29to27",
+            "name": "cchannel31_29to28",
             "source": "node29",
-            "destination": "node27",
+            "destination": "node28",
             "distance": 1000
         },
         {
-            "name": "cchannel33_31to32",
-            "source": "node31",
-            "destination": "node32",
-            "distance": 1000
-        },
-        {
-            "name": "cchannel33_32to31",
-            "source": "node32",
+            "name": "cchannel32_30to31",
+            "source": "node30",
             "destination": "node31",
             "distance": 1000
         },
         {
-            "name": "cchannel34_33to34",
-            "source": "node33",
-            "destination": "node34",
+            "name": "cchannel32_31to30",
+            "source": "node31",
+            "destination": "node30",
             "distance": 1000
         },
         {
-            "name": "cchannel34_34to33",
-            "source": "node34",
+            "name": "cchannel33_30to32",
+            "source": "node30",
+            "destination": "node32",
+            "distance": 1000
+        },
+        {
+            "name": "cchannel33_32to30",
+            "source": "node32",
+            "destination": "node30",
+            "distance": 1000
+        },
+        {
+            "name": "cchannel34_30to33",
+            "source": "node30",
             "destination": "node33",
             "distance": 1000
         },
         {
-            "name": "cchannel35_35to36",
-            "source": "node35",
-            "destination": "node36",
+            "name": "cchannel34_33to30",
+            "source": "node33",
+            "destination": "node30",
             "distance": 1000
         },
         {
-            "name": "cchannel35_36to35",
-            "source": "node36",
+            "name": "cchannel35_34to35",
+            "source": "node34",
             "destination": "node35",
             "distance": 1000
         },
         {
-            "name": "cchannel36_35to37",
+            "name": "cchannel35_35to34",
             "source": "node35",
+            "destination": "node34",
+            "distance": 1000
+        },
+        {
+            "name": "cchannel36_36to37",
+            "source": "node36",
             "destination": "node37",
             "distance": 1000
         },
         {
-            "name": "cchannel36_37to35",
+            "name": "cchannel36_37to36",
             "source": "node37",
-            "destination": "node35",
+            "destination": "node36",
             "distance": 1000
         },
         {
-            "name": "cchannel37_35to38",
-            "source": "node35",
+            "name": "cchannel37_36to38",
+            "source": "node36",
             "destination": "node38",
             "distance": 1000
         },
         {
-            "name": "cchannel37_38to35",
+            "name": "cchannel37_38to36",
             "source": "node38",
-            "destination": "node35",
+            "destination": "node36",
+            "distance": 1000
+        },
+        {
+            "name": "cchannel38_36to39",
+            "source": "node36",
+            "destination": "node39",
+            "distance": 1000
+        },
+        {
+            "name": "cchannel38_39to36",
+            "source": "node39",
+            "destination": "node36",
+            "distance": 1000
+        },
+        {
+            "name": "cchannel39_36to40",
+            "source": "node36",
+            "destination": "node40",
+            "distance": 1000
+        },
+        {
+            "name": "cchannel39_40to36",
+            "source": "node40",
+            "destination": "node36",
+            "distance": 1000
+        },
+        {
+            "name": "cchannel40_36to41",
+            "source": "node36",
+            "destination": "node41",
+            "distance": 1000
+        },
+        {
+            "name": "cchannel40_41to36",
+            "source": "node41",
+            "destination": "node36",
             "distance": 1000
         }
     ]
