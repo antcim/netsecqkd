@@ -165,7 +165,7 @@ def runSim(tl, network, sim_nodes, keysize):
             B.set_seed(1)
 
             pair_bb84_protocols(A.protocol_stack[0], B.protocol_stack[0])
-            print(Fore.GREEN, "[PAIR]", Fore.RESET, A.name, "and", B.name)
+            print(Fore.GREEN, "[PAIR]", Fore.RESET, Fore.LIGHTCYAN_EX, A.name , Fore.RESET, "and", Fore.LIGHTBLUE_EX, B.name, Fore.RESET)
 
     key_managers = {}
 
