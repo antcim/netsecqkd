@@ -123,9 +123,9 @@ def genTopology(network, tl):
             qchannel.set_ends(receiver, destSender)
 
             senderp = MessagingProtocol(
-                sender, "senderp", "receiverp", destReceiver)
+                sender, "msgp", "msgp", destReceiver)
             receiverp = MessagingProtocol(
-                receiver, "receiverp", "senderp", destSender)
+                receiver, "msgp", "msgp", destSender)
 
             sim_nodes[node.name].addSRQKDNode(
                 SRQKDNode(sender, receiver, senderp, receiverp))
