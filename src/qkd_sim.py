@@ -20,9 +20,7 @@ from srqkdnode import SRQKDNode
 
 from NewQKDTopo import NewQKDTopo
 
-from messaging import SenderProtocol, ReceiverProtocol
-
-import onetimepad
+from messaging import MessagingProtocol
 
 # defalut simulation values
 num_keys = 3
@@ -126,8 +124,11 @@ def genTopology(network, tl):
             qchannel = QuantumChannel(qchannelName, tl, 0.0001, 1000, fidelity)
             qchannel.set_ends(receiver, destSender)
 
-            senderp = SenderProtocol(sender, "senderp", "receiverp", destReceiver)
-            receiverp = ReceiverProtocol(receiver, "receiverp", "senderp", destSender)
+            # senderp = SenderProtocol(sender, "senderp", "receiverp", destReceiver)
+            # receiverp = ReceiverProtocol(receiver, "receiverp", "senderp", destSender)
+
+            senderp = MessagingProtocol(sender, "senderp", "receiverp", destReceiver)
+            receiverp = MessagingProtocol(receiver, "receiverp", "senderp", destSender)
 
             sim_nodes[node.name].addSRQKDNode(SRQKDNode(sender, receiver, senderp, receiverp))
 
@@ -186,12 +187,6 @@ def runSim(tl, network, sim_nodes, keysize):
 
             key_managers[srnode.sender.name] = km1
             key_managers[srnode.receiver.name] = km2
-
-            # # this sets up the messagin events on the classical channels
-            # process = Process(srnode.senderp, "start", ["PLAINTEXT SEND"])
-            # event = Event(count * 1e9, process)
-            # count += 1000
-            # tl.schedule(event)
         
     # generate routing tables
     aux = NewQKDTopo(parsepath, sim_nodes)
@@ -222,27 +217,25 @@ def runSim(tl, network, sim_nodes, keysize):
             key_managers[srnode.sender.name].keys[0]
             
 
-    #key1node0 =  "{0:0128b}".format(key_managers["node0 to node1.sender"].keys[0])
     key_format = "{0:0"+str(key_size)+"b}"
     key1node0 = key_format.format(key_managers["node0 to node1.sender"].keys[0])
 
     print("KEY = ", key1node0)
 
     plaintext = "plaintext"
-    ciphertext = onetimepad.encrypt(plaintext, key1node0)
 
+    # send messages encrypted with QKD keys on classical channels
     count = 0
     for n in sim_nodes.values():
         for srnode in n.srqkdnodes:
             # this sets up the messagin events on the classical channels
-            process = Process(srnode.senderp, "start", [ciphertext])
+            process = Process(srnode.senderp, "start", [plaintext, key1node0])
             event = Event(tl.time + count * 1e9, process)
             count += 1000
             tl.schedule(event)
 
     tl.init()
     tl.run()
-
 
     # print(tl.schedule_counter)
     # print(tl.run_counter)
