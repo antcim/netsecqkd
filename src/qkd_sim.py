@@ -2,7 +2,11 @@ import sys
 import getopt
 import time
 import matplotlib.pyplot as plt
+import networkx as nx
+import json
+from colorama import Fore
 
+# sequence lib
 from sequence.kernel.timeline import Timeline
 from sequence.topology.node import QKDNode
 from sequence.components.optical_channel import QuantumChannel, ClassicalChannel
@@ -11,15 +15,11 @@ from sequence.topology.qkd_topo import QKDTopo
 from sequence.kernel.process import Process
 from sequence.kernel.event import Event
 
-import networkx as nx
-import json
-
+# netsecqkd lib
 from netparser import netparse
 from superqkdnode import SuperQKDNode
 from srqkdnode import SRQKDNode
-
 from NewQKDTopo import NewQKDTopo
-
 from messaging import MessagingProtocol
 
 # defalut simulation values
@@ -36,6 +36,7 @@ fidelity = 1
 draw = True
 
 ################# KEY MANAGER #########################
+
 
 class KeyManager():
 
@@ -58,25 +59,22 @@ class KeyManager():
 
 ######################################################
 
+
 def genNetwork(filepath):
     # generate random graph
     G = nx.random_lobster(10, 0.53, 0.60)
-    # G = nx.star_graph(10)
-    # G = nx.ladder_graph(10)
-    # G = nx.path_graph(10)
-    # G = nx.cycle_graph(10)
-    # JSON representation
     jsonG = nx.node_link_data(G)
     with open(filepath, 'w') as f:
         json.dump(jsonG, f, ensure_ascii=False)
 
     if draw:
         pos = nx.spring_layout(G)
-        nx.draw_networkx_nodes(G, pos, cmap=plt.get_cmap('jet'), node_size = 200)
+        nx.draw_networkx_nodes(G, pos, cmap=plt.get_cmap('jet'), node_size=200)
         nx.draw_networkx_labels(G, pos)
         nx.draw_networkx_edges(G, pos, edge_color='r', arrows=True)
         nx.draw_networkx_edges(G, pos, arrows=False)
-        plt.savefig("graph.png", dpi=500, orientation = 'landscape', bbox_inches='tight')
+        plt.savefig("graph.png", dpi=500,
+                    orientation='landscape', bbox_inches='tight')
 
 
 def readConfig(filepath):
@@ -124,16 +122,13 @@ def genTopology(network, tl):
             qchannel = QuantumChannel(qchannelName, tl, 0.0001, 1000, fidelity)
             qchannel.set_ends(receiver, destSender)
 
-            # senderp = SenderProtocol(sender, "senderp", "receiverp", destReceiver)
-            # receiverp = ReceiverProtocol(receiver, "receiverp", "senderp", destSender)
+            senderp = MessagingProtocol(
+                sender, "senderp", "receiverp", destReceiver)
+            receiverp = MessagingProtocol(
+                receiver, "receiverp", "senderp", destSender)
 
-            senderp = MessagingProtocol(sender, "senderp", "receiverp", destReceiver)
-            receiverp = MessagingProtocol(receiver, "receiverp", "senderp", destSender)
-
-            sim_nodes[node.name].addSRQKDNode(SRQKDNode(sender, receiver, senderp, receiverp))
-
-    #print('sim_nodes["node0"].srqkdnodes[0].sender.protocols', sim_nodes['node0'].srqkdnodes[0].sender.protocols)
-    #print('sim_nodes["node1"].srqkdnodes[0].receiver.protocols', sim_nodes['node1'].srqkdnodes[0].receiver.protocols)
+            sim_nodes[node.name].addSRQKDNode(
+                SRQKDNode(sender, receiver, senderp, receiverp))
 
     if verbose:
         for key, node in sim_nodes.items():
@@ -170,7 +165,7 @@ def runSim(tl, network, sim_nodes, keysize):
             B.set_seed(1)
 
             pair_bb84_protocols(A.protocol_stack[0], B.protocol_stack[0])
-            print("[PAIR]", A.name, "and", B.name)
+            print(Fore.GREEN, "[PAIR]", Fore.RESET, A.name, "and", B.name)
 
     key_managers = {}
 
@@ -187,19 +182,19 @@ def runSim(tl, network, sim_nodes, keysize):
 
             key_managers[srnode.sender.name] = km1
             key_managers[srnode.receiver.name] = km2
-        
+
     # generate routing tables
     aux = NewQKDTopo(parsepath, sim_nodes)
 
     if print_routing:
         for n in sim_nodes:
             print("ROUTING TABLE ", n)
-            for i,k in sim_nodes[n].routing_table.items():
-                print("\tTO ",i,", Path: ", k)
+            for i, k in sim_nodes[n].routing_table.items():
+                print("\tTO ", i, ", Path: ", k)
 
     # start simulation and record timing
     tl.init()
-    
+
     # send QKD requests
     senders = list(filter(lambda KM: KM.endswith('.sender'), key_managers))
     for km in senders:
@@ -211,11 +206,10 @@ def runSim(tl, network, sim_nodes, keysize):
 
     while tl.schedule_counter > tl.run_counter:
         continue
-        
+
     for n in sim_nodes.values():
         for srnode in n.srqkdnodes:
             key_managers[srnode.sender.name].keys[0]
-            
 
     key_format = "{0:0"+str(key_size)+"b}"
     key1node0 = key_format.format(key_managers["node0 to node1.sender"].keys[0])
@@ -237,9 +231,7 @@ def runSim(tl, network, sim_nodes, keysize):
     tl.init()
     tl.run()
 
-    # print(tl.schedule_counter)
-    # print(tl.run_counter)
-    # print("execution time %.2f sec" % (time.time() - tick))
+    print("execution time %.2f sec" % (time.time() - tick))
 
     # print error rate for each sender
     if print_error:
@@ -299,12 +291,11 @@ def main(argv):
         genNetwork(filepath)
         netparse(filepath, parsepath)
     network = readConfig(parsepath)
-    
-    tl = Timeline(5000 * 1e9)
+
+    # tl = Timeline(5000 * 1e9)
     tl = Timeline()
     sim_nodes = genTopology(network, tl)
     runSim(tl, network, sim_nodes, key_size)
-    #NewQKDTopo("network_topo.json")
 
 
 if __name__ == "__main__":
