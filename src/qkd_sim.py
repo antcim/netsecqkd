@@ -337,6 +337,6 @@ def main(argv):
 
     sys.stdout.flush()
     os.system("cat " + current_sim + "sim_output.txt" + " | aha --black > " + current_sim + "sim_output.html")
-
+    os.system("cat " + current_sim + "sim_output.txt")
 if __name__ == "__main__":
     main(sys.argv[1:])
