@@ -41,7 +41,7 @@ class MessagingProtocol(Protocol):
         if packet["dest"] == self.superQKD.name:
             print(Fore.LIGHTMAGENTA_EX + "[" + self.own.name + "]" + Fore.RESET)
             print("Received: " + Fore.LIGHTGREEN_EX + "TEXT Message " + Fore.RESET)
-            print("At Time: " + Fore.LIGHTCYAN_EX + str(self.own.timeline.now()) + Fore.RESET)
+            print("At Time: " + Fore.LIGHTCYAN_EX + str(self.own.timeline.now()) + " ps" + Fore.RESET)
             print("Encrypted Message: " + Fore.LIGHTYELLOW_EX + packet["payload"] + Fore.RESET)
             print("Decrypted Message: " + Fore.LIGHTYELLOW_EX + plaintext + Fore.RESET + "\n")
 
@@ -50,7 +50,7 @@ class MessagingProtocol(Protocol):
             packet["payload"] = plaintext
             print(Fore.LIGHTMAGENTA_EX + "[" + self.own.name + "]" + Fore.RESET)
             print("Received: " + Fore.LIGHTGREEN_EX + "TEXT Message " + Fore.RESET)
-            print("At Time: " + Fore.LIGHTCYAN_EX + str(self.own.timeline.now()) + Fore.RESET)
+            print("At Time: " + Fore.LIGHTCYAN_EX + str(self.own.timeline.now()) + " ps"+ Fore.RESET)
             print(Fore.LIGHTBLUE_EX + "[Forwarding...]\n" + Fore.RESET)
             self.superQKD.sendMessage(self.own.timeline, packet["dest"], json.dumps(packet))
 

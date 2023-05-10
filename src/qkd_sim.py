@@ -44,6 +44,7 @@ def genNetwork(filepath):
         json.dump(jsonG, f, ensure_ascii=False)
     return G
 
+
 def drawToFile(graph, filepath):
     pos = nx.kamada_kawai_layout(graph)
     nx.draw_networkx_nodes(graph, pos, node_size=50, margins=0.01)
@@ -54,6 +55,7 @@ def drawToFile(graph, filepath):
 
 def readConfig(filepath):
     return QKDTopo(filepath)
+
 
 def genTopology(network, tl):
     sim_nodes = {}
@@ -183,9 +185,11 @@ def runSim(tl, network, sim_nodes, keysize):
     tick = time.time()
     tl.run()
 
+    # this is to avoid clashes on classical channels when multiple messages are sent
     while tl.schedule_counter > tl.run_counter:
         continue
-
+    
+    tl.init()
     # send messages encrypted with QKD keys on classical channels
     plaintext = "this is a qkd project for network security"
 
@@ -208,7 +212,6 @@ def runSim(tl, network, sim_nodes, keysize):
 
     sim_nodes[random_sender_node].sendMessage(tl, random_receiver_node, message)
 
-    tl.init()
     tl.run()
 
     print(Fore.LIGHTGREEN_EX, "[Execution Time]", Fore.RESET, "%.2f sec" % (time.time() - tick))
