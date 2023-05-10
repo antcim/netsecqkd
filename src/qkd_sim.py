@@ -26,6 +26,15 @@ from NewQKDTopo import NewQKDTopo
 from messaging import MessagingProtocol
 
 # defalut simulation values
+''' simulation folder structure
+sim
+    sim#####
+        graph_networkx.json
+        graph_sequence.json
+        network_graph.png
+        sim_output.html
+'''
+
 current_sim = "sim/sim_" + str(datetime.now()) +"/"
 num_keys = 3
 key_size = 128
@@ -276,8 +285,8 @@ def main(argv):
     global do_gen
     global print_keys
     global print_error
-    global filepath
-    global parsepath
+    global filename
+    global parsename
     global verbose
     global fidelity
     global draw
@@ -287,7 +296,7 @@ def main(argv):
     for opt, arg in opts:
         if opt == '-f':
             do_gen = False
-            parsepath = arg
+            filename = arg
         elif opt in ['-n']:
             num_keys = int(arg)
         elif opt in ['-s']:
@@ -308,10 +317,19 @@ def main(argv):
 
     os.makedirs(os.path.dirname(current_sim), exist_ok=True)
 
-    if do_gen:
+    if do_gen: 
         graph = genNetwork(current_sim + filename)
-        drawToFile(graph, current_sim + "network_graph.png")
-        netparse(current_sim + filename, current_sim + parsename)
+    else:
+        print("FILENAME: " , filename)
+        with open(filename, 'r') as f:
+            js_graph = json.load(f)
+        graph = nx.readwrite.json_graph.node_link_graph(js_graph)
+        filename = 'graph_networkx.json'
+        with open(current_sim + filename, 'w') as f:
+            json.dump(js_graph, f, ensure_ascii=False)
+
+    drawToFile(graph, current_sim + "network_graph.png")
+    netparse(current_sim + filename, current_sim + parsename)
     network = readConfig(current_sim + parsename)
     
     # tl = Timeline(5000 * 1e9)
@@ -322,13 +340,3 @@ def main(argv):
 
 if __name__ == "__main__":
     main(sys.argv[1:])
-
-
-'''
-sim
-    sim#####
-        graph_networkx.json
-        graph_sequence.json
-        network_graph.png
-        sim_output.html
-'''
