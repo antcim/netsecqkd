@@ -32,10 +32,11 @@ sim
         graph_networkx.json
         graph_sequence.json
         network_graph.png
+        sim_output.txt
         sim_output.html
 '''
 
-current_sim = "sim/sim_" + str(datetime.now()) +"/"
+current_sim = "sim/sim_" + str(datetime.now().strftime("%Y-%m-%d_%H:%M:%S")) +"/"
 num_keys = 3
 key_size = 128
 do_gen = True
@@ -312,6 +313,7 @@ def main(argv):
             print_routing = True
 
     os.makedirs(os.path.dirname(current_sim), exist_ok=True)
+    sys.stdout = open(current_sim + "sim_output.txt", 'w')
 
     if do_gen: 
         graph = genNetwork(current_sim + filename)
@@ -333,6 +335,8 @@ def main(argv):
     sim_nodes = genTopology(network, tl)
     runSim(tl, network, sim_nodes, key_size)
 
+    sys.stdout.flush()
+    os.system("cat " + current_sim + "sim_output.txt" + " | aha --black > " + current_sim + "sim_output.html")
 
 if __name__ == "__main__":
     main(sys.argv[1:])
