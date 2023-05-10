@@ -77,6 +77,7 @@ class KeyManager():
 def genNetwork(filepath):
     # generate random graph
     G = nx.random_lobster(10, 0.53, 0.60)
+    # G = nx.random_geometric_graph(20, 0.25)
     jsonG = nx.node_link_data(G)
     with open(filepath, 'w') as f:
         json.dump(jsonG, f, ensure_ascii=False)
@@ -84,7 +85,7 @@ def genNetwork(filepath):
 
 def drawToFile(graph, filepath):
     pos = nx.spring_layout(graph)
-    nx.draw_networkx_nodes(graph, pos, cmap=plt.get_cmap('jet'), node_size=200)
+    nx.draw_networkx_nodes(graph, pos, cmap=plt.get_cmap('jet'), node_size=200, margins=0.01)
     nx.draw_networkx_labels(graph, pos)
     nx.draw_networkx_edges(graph, pos, edge_color='r', arrows=True)
     nx.draw_networkx_edges(graph, pos, arrows=False)
@@ -338,5 +339,6 @@ def main(argv):
     sys.stdout.flush()
     os.system("cat " + current_sim + "sim_output.txt" + " | aha --black > " + current_sim + "sim_output.html")
     os.system("cat " + current_sim + "sim_output.txt")
+
 if __name__ == "__main__":
     main(sys.argv[1:])
