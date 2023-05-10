@@ -52,7 +52,7 @@ class MessagingProtocol(Protocol):
             print("At Time: " + Fore.LIGHTCYAN_EX + str(self.own.timeline.now()) + Fore.RESET)
             print("Encrypted Message: " + Fore.LIGHTYELLOW_EX + message.payload + Fore.RESET)
             print("Decrypted Message: " + Fore.LIGHTYELLOW_EX + plaintext + Fore.RESET)
-            print("Forwarding ...\n")
+            print(Fore.LIGHTBLUE_EX + "[Forwarding...]\n" + Fore.RESET)
             self.superQKD.sendMessage(self.tl, dst, plaintext)
 
 
