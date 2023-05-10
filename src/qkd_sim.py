@@ -196,9 +196,9 @@ def runSim(tl, network, sim_nodes, keysize):
 
     if print_routing:
         for n in sim_nodes:
-            print("ROUTING TABLE ", n)
+            print(Fore.LIGHTMAGENTA_EX , "\nROUTING TABLE ", n, Fore.RESET)
             for i, k in sim_nodes[n].routing_table.items():
-                print("\tTO ", i, ", Path: ", k)
+                print("TO ", Fore.LIGHTBLUE_EX , i, Fore.RESET, "Path: ", Fore.LIGHTCYAN_EX , k, Fore.RESET)
 
     # start simulation and record timing
     tl.init()
