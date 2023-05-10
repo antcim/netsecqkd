@@ -199,7 +199,8 @@ def runSim(tl, network, sim_nodes, keysize):
 
     tl.init()
     # send messages encrypted with QKD keys on classical channels
-    plaintext = "this is a qkd project for network security"
+    plaintext = "11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111"
+    
 
     print(Fore.LIGHTMAGENTA_EX, "-----------------", Fore.RESET)
     print(Fore.LIGHTMAGENTA_EX, "| SENT MESSAGES |", Fore.RESET)
