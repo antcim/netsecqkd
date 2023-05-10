@@ -1,6 +1,8 @@
 import sys
+import os
 import getopt
 import time
+from datetime import datetime
 import matplotlib.pyplot as plt
 import networkx as nx
 import json
@@ -24,14 +26,15 @@ from NewQKDTopo import NewQKDTopo
 from messaging import MessagingProtocol
 
 # defalut simulation values
+current_sim = "sim/sim_" + str(datetime.now()) +"/"
 num_keys = 3
 key_size = 128
 do_gen = True
 print_keys = False
 print_error = False
 print_routing = False
-filepath = 'rnd.json'
-parsepath = 'rndp.json'
+filename = 'graph_networkx.json'
+parsename = 'graph_sequence.json'
 verbose = False
 fidelity = 1
 draw = True
@@ -68,20 +71,19 @@ def genNetwork(filepath):
     jsonG = nx.node_link_data(G)
     with open(filepath, 'w') as f:
         json.dump(jsonG, f, ensure_ascii=False)
+    return G
 
-    if draw:
-        pos = nx.spring_layout(G)
-        nx.draw_networkx_nodes(G, pos, cmap=plt.get_cmap('jet'), node_size=200)
-        nx.draw_networkx_labels(G, pos)
-        nx.draw_networkx_edges(G, pos, edge_color='r', arrows=True)
-        nx.draw_networkx_edges(G, pos, arrows=False)
-        plt.savefig("graph.png", dpi=500,
-                    orientation='landscape', bbox_inches='tight')
+def drawToFile(graph, filepath):
+    pos = nx.spring_layout(graph)
+    nx.draw_networkx_nodes(graph, pos, cmap=plt.get_cmap('jet'), node_size=200)
+    nx.draw_networkx_labels(graph, pos)
+    nx.draw_networkx_edges(graph, pos, edge_color='r', arrows=True)
+    nx.draw_networkx_edges(graph, pos, arrows=False)
+    plt.savefig(filepath, dpi=500, orientation='landscape', bbox_inches='tight')
 
 
 def readConfig(filepath):
     return QKDTopo(filepath)
-
 
 def genTopology(network, tl):
     sim_nodes = {}
@@ -192,7 +194,7 @@ def runSim(tl, network, sim_nodes, keysize):
             srnode.addKeyManagers(km1, km2)
 
     # generate routing tables
-    aux = NewQKDTopo(parsepath, sim_nodes)
+    aux = NewQKDTopo(current_sim + parsename, sim_nodes)
 
     if print_routing:
         for n in sim_nodes:
@@ -268,6 +270,7 @@ def runSim(tl, network, sim_nodes, keysize):
 
 
 def main(argv):
+    global current_sim
     global num_keys
     global key_size
     global do_gen
@@ -303,10 +306,13 @@ def main(argv):
         elif opt in ['-r']:
             print_routing = True
 
+    os.makedirs(os.path.dirname(current_sim), exist_ok=True)
+
     if do_gen:
-        genNetwork(filepath)
-        netparse(filepath, parsepath)
-    network = readConfig(parsepath)
+        graph = genNetwork(current_sim + filename)
+        drawToFile(graph, current_sim + "network_graph.png")
+        netparse(current_sim + filename, current_sim + parsename)
+    network = readConfig(current_sim + parsename)
     
     # tl = Timeline(5000 * 1e9)
     tl = Timeline()
@@ -316,3 +322,13 @@ def main(argv):
 
 if __name__ == "__main__":
     main(sys.argv[1:])
+
+
+'''
+sim
+    sim#####
+        graph_networkx.json
+        graph_sequence.json
+        network_graph.png
+        sim_output.html
+'''

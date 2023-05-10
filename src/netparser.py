@@ -81,8 +81,6 @@ def netparse(filepath, savepath):
     dict['qchannels'] = qchannels_list
     dict['cchannels'] = cchannels_list
 
-    # print(json.dumps(dict, indent = 4))
-
     # WRITE JSON
     with open(savepath, 'w') as f:
         f.write(json.dumps(dict, indent=4))
