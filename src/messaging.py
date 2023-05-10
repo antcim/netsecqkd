@@ -12,14 +12,13 @@ import onetimepad
 from colorama import Fore
 
 class MessagingProtocol(Protocol):
-    def __init__(self, own: Node, name: str, other_name: str, other_node: str, superQKD, tl):
+    def __init__(self, own: Node, name: str, other_name: str, other_node: str, superQKD):
         super().__init__(own, name)
         self.own = own
         own.protocols.append(self)
         self.other_name = other_name
         self.other_node = other_node
         self.superQKD = superQKD
-        self.tl = tl
 
     def init(self):
         pass
@@ -35,7 +34,6 @@ class MessagingProtocol(Protocol):
         assert message.msg_type == MsgType.TEXT_MESS
         plaintext = onetimepad.decrypt(message.payload, self.km.consume())
 
-        # Se è la destinazione
         if plaintext.startswith(self.superQKD.name + ":"):
 
             print(Fore.LIGHTMAGENTA_EX + "[" + self.own.name + "]" + Fore.RESET)
@@ -53,7 +51,7 @@ class MessagingProtocol(Protocol):
             print("Encrypted Message: " + Fore.LIGHTYELLOW_EX + message.payload + Fore.RESET)
             print("Decrypted Message: " + Fore.LIGHTYELLOW_EX + plaintext + Fore.RESET)
             print(Fore.LIGHTBLUE_EX + "[Forwarding...]\n" + Fore.RESET)
-            self.superQKD.sendMessage(self.tl, dst, plaintext)
+            self.superQKD.sendMessage(self.own.timeline, dst, plaintext)
 
 
     def addkm(self, km):

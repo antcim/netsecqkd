@@ -8,6 +8,7 @@ Chiavi generate diverse se la fidelity dei canali quantistici < 1.
 ```
 $ sudo apt-get install aha
 ```
+
 ```
 python3 src/qkd_sim.py | aha --black > output.html
 ```
