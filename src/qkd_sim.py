@@ -22,7 +22,7 @@ from sequence.kernel.event import Event
 from netparser import netparse
 from superqkdnode import SuperQKDNode
 from srqkdnode import SRQKDNode
-from NewQKDTopo import NewQKDTopo
+from newqkdtopo import NewQKDTopo
 from messaging import MessagingProtocol
 
 # defalut simulation values
