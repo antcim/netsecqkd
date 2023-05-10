@@ -46,7 +46,6 @@ filename = 'graph_networkx.json'
 parsename = 'graph_sequence.json'
 verbose = False
 fidelity = 1
-draw = True
 
 ################# KEY MANAGER #########################
 
@@ -289,10 +288,9 @@ def main(argv):
     global parsename
     global verbose
     global fidelity
-    global draw
     global print_routing
 
-    opts, args = getopt.getopt(argv, "f:n:s:ekvq:dr")
+    opts, args = getopt.getopt(argv, "f:n:s:ekvq:r")
     for opt, arg in opts:
         if opt == '-f':
             do_gen = False
@@ -310,8 +308,6 @@ def main(argv):
         elif opt in ['-q']:
             print_error = True
             fidelity = float(arg)
-        elif opt in ['-d']:
-            draw = True
         elif opt in ['-r']:
             print_routing = True
 
