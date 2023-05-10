@@ -121,6 +121,10 @@ def runSim(tl, network, sim_nodes, keysize):
     print(Fore.LIGHTMAGENTA_EX, "-----------------", Fore.RESET)
     print(Fore.LIGHTMAGENTA_EX, "| PAIRING NODES |", Fore.RESET)
     print(Fore.LIGHTMAGENTA_EX, "-----------------", Fore.RESET)
+
+    tick = time.time()
+    pairTick = time.time()
+
     for i, node in enumerate(network.get_nodes_by_type(QKDTopo.QKD_NODE)):
         neighbors = node.qchannels.keys()
         for k in neighbors:
@@ -146,6 +150,8 @@ def runSim(tl, network, sim_nodes, keysize):
             pair_bb84_protocols(A.protocol_stack[0], B.protocol_stack[0])
             print(Fore.GREEN, "[PAIR]", Fore.RESET, Fore.LIGHTCYAN_EX, "[",
                   A.name, "]", Fore.RESET, Fore.LIGHTBLUE_EX, "[", B.name, "]",Fore.RESET)
+
+    print(Fore.YELLOW, "[Pairing Time]", Fore.RESET, "%.4f sec" % (time.time() - pairTick))
 
     key_managers = {}
 
@@ -178,17 +184,19 @@ def runSim(tl, network, sim_nodes, keysize):
 
     # send QKD requests
     senders = list(filter(lambda KM: KM.endswith('.sender'), key_managers))
+    qkdTick = time.time()
     for km in senders:
         key_managers[km].send_request()
 
     tl.show_progress = False
-    tick = time.time()
     tl.run()
 
     # this is to avoid clashes on classical channels when multiple messages are sent
     while tl.schedule_counter > tl.run_counter:
         continue
-    
+
+    print(Fore.YELLOW, "[QKD Time]", Fore.RESET, "%.4f sec" % (time.time() - qkdTick))
+
     tl.init()
     # send messages encrypted with QKD keys on classical channels
     plaintext = "this is a qkd project for network security"
@@ -205,16 +213,18 @@ def runSim(tl, network, sim_nodes, keysize):
         random_receiver_node_num = random.randint(0,len(list(sim_nodes))-1)
     random_receiver_node = list(sim_nodes.keys())[random_receiver_node_num]   
 
-    print(Fore.LIGHTMAGENTA_EX, "[Message from ", random_sender_node, " to ",random_receiver_node , "]", Fore.RESET)
+    print(Fore.YELLOW, "[Message from ", random_sender_node, " to ",random_receiver_node , "]", Fore.RESET)
 
     message = {"dest":random_receiver_node, "payload":plaintext}
     message = json.dumps(message)
 
+    messageTick = time.time()
     sim_nodes[random_sender_node].sendMessage(tl, random_receiver_node, message)
 
     tl.run()
 
-    print(Fore.LIGHTGREEN_EX, "[Execution Time]", Fore.RESET, "%.2f sec" % (time.time() - tick))
+    print(Fore.YELLOW, "[Message Time]", Fore.RESET, "%.4f sec" % (time.time() - messageTick))
+    print(Fore.YELLOW, "[Execution Time]", Fore.RESET, "%.4f sec" % (time.time() - tick))
 
     # print error rate for each sender
     if print_error:
