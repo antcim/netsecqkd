@@ -235,7 +235,10 @@ def runSim(tl, network, sim_nodes, keysize):
     print(random_sender_node," ",random_receiver_node)
 
     # Inizio QKD Multi-hop
-    sim_nodes[random_sender_node].sendMessage(tl, random_receiver_node, random_receiver_node + ":" + plaintext)
+    message = {"dest":random_receiver_node, "payload":plaintext}
+    message = json.dumps(message)
+
+    sim_nodes[random_sender_node].sendMessage(tl, random_receiver_node, message)
 
     # for n in sim_nodes.values():
     #     for srnode in n.srqkdnodes:
