@@ -2,11 +2,14 @@ import plotly.graph_objects as go
 import networkx as nx
 import json
 
-filename = "sim/sim_2023-05-10_14:05:26/graph_networkx.json"
+filename = "sim/sim_2023-05-10_1/graph_networkx.json"
 
 with open(filename, 'r') as f:
     js_graph = json.load(f)
     graph = nx.readwrite.json_graph.node_link_graph(js_graph)
+
+pos = nx.random_layout(graph)
+print(pos)
 
 edge_x = []
 edge_y = []
@@ -29,7 +32,7 @@ edge_trace = go.Scatter(
 node_x = []
 node_y = []
 for node in graph.nodes():
-    x, y = graph.nodes[node]['pos']
+    x, y = pos[node]['pos']
     node_x.append(x)
     node_y.append(y)
 

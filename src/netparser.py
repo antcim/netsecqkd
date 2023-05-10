@@ -1,13 +1,9 @@
 import json
 
 def netparse(filepath, savepath):
-    # READ JSON INTO DICT
     with open(filepath, 'r') as f:
         dict = json.load(f)
 
-    # print(json.dumps(dict, indent = 4))
-
-    # NODE
     nodes = dict['nodes']
     nodes_list = []
     for n in nodes:
@@ -19,16 +15,11 @@ def netparse(filepath, savepath):
         }
         nodes_list.append(node_dict)
 
-    # for x in nodes_list:
-    # print(x)
-
-    # LINK
     links = dict['links']
     qchannels_list = []
     cchannels_list = []
     count = 0
     for l in links:
-
         # sx to dx
         qchannel_dict = {
             'name': 'qchannel'+str(count)+'_'+str(l['source'])+'to'+ str(l['target']),
@@ -67,13 +58,6 @@ def netparse(filepath, savepath):
 
         count += 1
 
-    # for x in qchannels_list:
-    #  print(x)
-
-    # for x in cchannels_list:
-    #  print(x)
-
-    # CREATE NEW DICT
     dict = {}
     dict['is_parallel'] = False
     dict['stop_time'] = 5000000000000
@@ -81,6 +65,5 @@ def netparse(filepath, savepath):
     dict['qchannels'] = qchannels_list
     dict['cchannels'] = cchannels_list
 
-    # WRITE JSON
     with open(savepath, 'w') as f:
         f.write(json.dumps(dict, indent=4))

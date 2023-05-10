@@ -1,5 +1,4 @@
 from enum import Enum, auto
-import re
 import json
 
 class MsgType(Enum):
@@ -11,17 +10,6 @@ from sequence.message import Message
 
 import onetimepad
 from colorama import Fore
-
-''' OLD
-MSGP HEADER
-DEST:PAYLOAD
-'''
-
-''' OLD
-MSGP HEADER
-DEST 
-PAYLOAD
-'''
 
 class MessagingProtocol(Protocol):
     def __init__(self, own: Node, name: str, other_name: str, other_node: str, superQKD):
@@ -57,7 +45,7 @@ class MessagingProtocol(Protocol):
             print("Encrypted Message: " + Fore.LIGHTYELLOW_EX + packet["payload"] + Fore.RESET)
             print("Decrypted Message: " + Fore.LIGHTYELLOW_EX + plaintext + Fore.RESET + "\n")
 
-        # Forwarding del messaggio
+        # message forwarding
         else:
             packet["payload"] = plaintext
             print(Fore.LIGHTMAGENTA_EX + "[" + self.own.name + "]" + Fore.RESET)

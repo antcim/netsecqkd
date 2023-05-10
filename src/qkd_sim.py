@@ -15,8 +15,6 @@ from sequence.topology.node import QKDNode
 from sequence.components.optical_channel import QuantumChannel, ClassicalChannel
 from sequence.qkd.BB84 import pair_bb84_protocols
 from sequence.topology.qkd_topo import QKDTopo
-from sequence.kernel.process import Process
-from sequence.kernel.event import Event
 
 # netsecqkd lib
 from netparser import netparse
@@ -24,18 +22,9 @@ from superqkdnode import SuperQKDNode
 from srqkdnode import SRQKDNode
 from newqkdtopo import NewQKDTopo
 from messaging import MessagingProtocol
+from keymanager import KeyManager
 
 # defalut simulation values
-''' simulation folder structure
-sim
-    sim#####
-        graph_networkx.json
-        graph_sequence.json
-        network_graph.png
-        sim_output.txt
-        sim_output.html
-'''
-
 current_sim = "sim/sim_" + str(datetime.now().strftime("%Y-%m-%d_%H:%M:%S")) +"/"
 num_keys = 3
 key_size = 128
@@ -48,47 +37,18 @@ parsename = 'graph_sequence.json'
 verbose = False
 fidelity = 1
 
-################# KEY MANAGER #########################
-
-class KeyManager():
-    def __init__(self, timeline, keysize, num_keys):
-        self.timeline = timeline
-        self.lower_protocols = []
-        self.keysize = keysize
-        self.num_keys = num_keys
-        self.keys = []
-        self.times = []
-
-    def send_request(self):
-        for p in self.lower_protocols:
-            # interface for BB84 to generate key
-            p.push(self.keysize, self.num_keys)
-
-    def pop(self, info):  # interface for BB84 to return generated keys
-        self.keys.append(info)
-        self.times.append(self.timeline.now() * 1e-9)
-
-    def consume(self) -> str:
-        key_format = "{0:0"+str(key_size)+"b}"
-        return key_format.format(self.keys.pop(0))
-
-######################################################
-
 def genNetwork(filepath):
-    # generate random graph
-    G = nx.random_lobster(10, 0.53, 0.60)
-    # G = nx.random_geometric_graph(20, 0.25)
+    G = nx.random_internet_as_graph(50)
     jsonG = nx.node_link_data(G)
     with open(filepath, 'w') as f:
         json.dump(jsonG, f, ensure_ascii=False)
     return G
 
 def drawToFile(graph, filepath):
-    pos = nx.spring_layout(graph)
-    nx.draw_networkx_nodes(graph, pos, cmap=plt.get_cmap('jet'), node_size=200, margins=0.01)
-    nx.draw_networkx_labels(graph, pos)
-    nx.draw_networkx_edges(graph, pos, edge_color='r', arrows=True)
-    nx.draw_networkx_edges(graph, pos, arrows=False)
+    pos = nx.kamada_kawai_layout(graph)
+    nx.draw_networkx_nodes(graph, pos, node_size=50, margins=0.01)
+    nx.draw_networkx_labels(graph, pos, font_size = 5, font_color='w')
+    nx.draw_networkx_edges(graph, pos, width=0.5)
     plt.savefig(filepath, dpi=500, orientation='landscape', bbox_inches='tight')
 
 
@@ -187,7 +147,6 @@ def runSim(tl, network, sim_nodes, keysize):
 
     key_managers = {}
 
-    count = 0
     for n in sim_nodes.values():
         for srnode in n.srqkdnodes:
             km1 = KeyManager(tl, keysize, num_keys)
@@ -204,7 +163,7 @@ def runSim(tl, network, sim_nodes, keysize):
             srnode.addKeyManagers(km1, km2)
 
     # generate routing tables
-    aux = NewQKDTopo(current_sim + parsename, sim_nodes)
+    NewQKDTopo(current_sim + parsename, sim_nodes)
 
     if print_routing:
         for n in sim_nodes:
@@ -234,27 +193,20 @@ def runSim(tl, network, sim_nodes, keysize):
     print(Fore.LIGHTMAGENTA_EX, "| SENT MESSAGES |", Fore.RESET)
     print(Fore.LIGHTMAGENTA_EX, "-----------------", Fore.RESET)
 
-    # Scegliamo un sender casuale
-    random_sender_node = random.randint(0,len(list(sim_nodes))-1)
-    random_sender_node = list(sim_nodes.keys())[random_sender_node]
+    random_sender_node_num = random.randint(0,len(list(sim_nodes))-1)
+    random_sender_node = list(sim_nodes.keys())[random_sender_node_num]
 
-    # Scegliamo un receiver casuale
-    random_receiver_node = random.randint(0,len(list(sim_nodes))-1)
-    while random_receiver_node == random_sender_node:
-        random_receiver_node = list(sim_nodes.keys())[random_receiver_node]
-    random_receiver_node = list(sim_nodes.keys())[random_receiver_node]
+    random_receiver_node_num = random.randint(0,len(list(sim_nodes))-1)
+    while random_sender_node_num == random_receiver_node_num:
+        random_receiver_node_num = random.randint(0,len(list(sim_nodes))-1)
+    random_receiver_node = list(sim_nodes.keys())[random_receiver_node_num]   
 
-    print(random_sender_node," ",random_receiver_node)
+    print(Fore.LIGHTMAGENTA_EX, "[Message from ", random_sender_node, " to ",random_receiver_node , "]", Fore.RESET)
 
-    # Inizio QKD Multi-hop
     message = {"dest":random_receiver_node, "payload":plaintext}
     message = json.dumps(message)
 
     sim_nodes[random_sender_node].sendMessage(tl, random_receiver_node, message)
-
-    # for n in sim_nodes.values():
-    #     for srnode in n.srqkdnodes:
-    #         srnode.sendMessage(tl, plaintext)
 
     tl.init()
     tl.run()
@@ -316,8 +268,10 @@ def main(argv):
     os.makedirs(os.path.dirname(current_sim), exist_ok=True)
     sys.stdout = open(current_sim + "sim_output.txt", 'w')
 
-    if do_gen: 
+    if do_gen:
         graph = genNetwork(current_sim + filename)
+        while len(graph.nodes()) < 2: 
+            graph = genNetwork(current_sim + filename)
     else:
         print("FILENAME: " , filename)
         with open(filename, 'r') as f:
@@ -331,7 +285,6 @@ def main(argv):
     netparse(current_sim + filename, current_sim + parsename)
     network = readConfig(current_sim + parsename)
     
-    # tl = Timeline(5000 * 1e9)
     tl = Timeline()
     sim_nodes = genTopology(network, tl)
     runSim(tl, network, sim_nodes, key_size)

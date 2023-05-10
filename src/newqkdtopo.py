@@ -1,10 +1,7 @@
 import json
 
 from sequence.topology.topology import Topology as Topo
-from sequence.topology.node import QKDNode
-from sequence.kernel.timeline import Timeline
 from networkx import Graph, dijkstra_path, exception
-from sequence.components.optical_channel import QuantumChannel, ClassicalChannel
 
 class NewQKDTopo(Topo):
 
@@ -41,7 +38,6 @@ class NewQKDTopo(Topo):
                     path = dijkstra_path(graph, src_name, dst_name)
                     sim_nodes[src_name].routing_table[dst_name] = path
                     
-                    #print("PATH from ",src_name," to ",dst_name," : ", path)
                 except exception.NetworkXNoPath:
                     pass
 

@@ -1,6 +1,8 @@
-from sequence.topology.node import QKDNode
 from sequence.kernel.process import Process
 from sequence.kernel.event import Event
+
+from colorama import Fore
+
 
 class SRQKDNode:
     def __init__(self, sender, receiver, senderp, receiverp):
@@ -24,5 +26,5 @@ class SRQKDNode:
             event = Event(tl.time * 1e9, process)
             tl.schedule(event)
         else:
-            print("NO MORE KEYS TO USE!!!")
+            print(Fore.RED, "[No More Keys To Use]", Fore.RESET)
             

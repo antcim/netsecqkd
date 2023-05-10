@@ -13,6 +13,14 @@ The `netparser.py` parses a random network generated with networkx to a sequance
 
 `bb84sequence.py` is a reference script from the sequence repo.
 
+sim
+    sim num...
+        graph_networkx.json
+        graph_sequence.json
+        network_graph.png
+        sim_output.txt
+        sim_output.html
+
 ## CLI Argument
 - \-f read network graph topology from json file
 - \-n the number of key to generate per each QKD instance
