@@ -1,6 +1,8 @@
 from colorama import Fore
 
+
 class SuperQKDNode:
+
     def __init__(self, name):
         self.name = name
         self.srqkdnodes = []

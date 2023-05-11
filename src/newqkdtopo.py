@@ -1,7 +1,7 @@
 import json
-
 from sequence.topology.topology import Topology as Topo
 from networkx import Graph, dijkstra_path, exception
+
 
 class NewQKDTopo(Topo):
 
@@ -16,7 +16,6 @@ class NewQKDTopo(Topo):
         self._generate_forwarding_table(topo_config, self.sim_nodes)
     
     def _generate_forwarding_table(self, config, sim_nodes):
-        
         graph = Graph()
         for node in config[Topo.ALL_NODE]:
             if node[Topo.TYPE] == self.QKD_NODE:
@@ -25,7 +24,8 @@ class NewQKDTopo(Topo):
         costs = []
         for cc in config[Topo.ALL_C_CHANNEL]:
             
-            entry = (cc['source'], cc['destination'], {"price": cc['distance']})
+            entry = (cc['source'], cc['destination'],
+                        {"price": cc['distance']})
             costs.append(entry)
 
         graph.add_edges_from(costs)

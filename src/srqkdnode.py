@@ -1,15 +1,16 @@
 from sequence.kernel.process import Process
 from sequence.kernel.event import Event
-
 from colorama import Fore
 
 
 class SRQKDNode:
+
     def __init__(self, sender, receiver, senderp, receiverp):
-        # nodes
+        # Nodes
         self.sender = sender
         self.receiver = receiver
-        # messaging protocols for the nodes
+
+        # Messaging protocols for the nodes
         self.senderp = senderp
         self.receiverp = receiverp
         

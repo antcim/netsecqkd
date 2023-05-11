@@ -1,18 +1,22 @@
 from enum import Enum, auto
 import json
-
-class MsgType(Enum):
-    TEXT_MESS = auto()
-
 from sequence.topology.node import Node
 from sequence.protocol import Protocol
 from sequence.message import Message
-
 import onetimepad
 from colorama import Fore
 
+
+class MsgType(Enum):
+
+    TEXT_MESS = auto()
+
+
 class MessagingProtocol(Protocol):
-    def __init__(self, own: Node, name: str, other_name: str, other_node: str, superQKD):
+    
+    def __init__(
+            self, own: Node, name: str,
+            other_name: str, other_node: str, superQKD):
         super().__init__(own, name)
         self.own = own
         own.protocols.append(self)
@@ -40,19 +44,25 @@ class MessagingProtocol(Protocol):
 
         if packet["dest"] == self.superQKD.name:
             print(Fore.LIGHTMAGENTA_EX + "[" + self.own.name + "]" + Fore.RESET)
-            print("Received: " + Fore.LIGHTGREEN_EX + "TEXT Message " + Fore.RESET)
-            print("At Simulation Time: " + Fore.LIGHTCYAN_EX + str(self.own.timeline.now()) + " ps" + Fore.RESET)
-            print("Encrypted Message: " + Fore.LIGHTYELLOW_EX + packet["payload"] + Fore.RESET)
-            print("Decrypted Message: " + Fore.LIGHTYELLOW_EX + plaintext + Fore.RESET + "\n")
+            print("Received: " + Fore.LIGHTGREEN_EX + 
+                "TEXT Message " + Fore.RESET)
+            print("At Simulation Time: " + Fore.LIGHTCYAN_EX + 
+                str(self.own.timeline.now()) + " ps" + Fore.RESET)
+            print("Encrypted Message: " + Fore.LIGHTYELLOW_EX + 
+                packet["payload"] + Fore.RESET)
+            print("Decrypted Message: " + Fore.LIGHTYELLOW_EX + 
+                plaintext + Fore.RESET + "\n")
 
-        # message forwarding
+        # Message forwarding
         else:
             packet["payload"] = plaintext
             print(Fore.LIGHTMAGENTA_EX + "[" + self.own.name + "]" + Fore.RESET)
             print("Received: " + Fore.LIGHTGREEN_EX + "TEXT Message " + Fore.RESET)
-            print("At Simulation Time: " + Fore.LIGHTCYAN_EX + str(self.own.timeline.now()) + " ps"+ Fore.RESET)
+            print("At Simulation Time: " + Fore.LIGHTCYAN_EX + 
+                str(self.own.timeline.now()) + " ps"+ Fore.RESET)
             print(Fore.LIGHTBLUE_EX + "[Forwarding...]\n" + Fore.RESET)
-            self.superQKD.sendMessage(self.own.timeline, packet["dest"], json.dumps(packet))
+            self.superQKD.sendMessage(self.own.timeline, packet["dest"], 
+                json.dumps(packet))
 
 
     def addkm(self, km):

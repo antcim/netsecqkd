@@ -49,6 +49,9 @@ python3 src/qkd_sim.py
 - \-v 
     - verbose printing of the network and pairing setup
     - default: false
+- \-d
+    - the number of nodes composing the network we want to test
+    - default: 50
 
 ## Dependencies List
 ### Python Libs
