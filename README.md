@@ -51,5 +51,13 @@ python3 src/qkd_sim.py
     - default: false
 
 ## Dependencies List
+### Python Libs
 - networkx
-- sequence
+- [sequence](https://github.com/sequence-toolbox/SeQUeNCe)
+- [one time pad](https://github.com/albohlabs/one-time-pad)
+- colorama
+
+### Ascii to Html Adapter
+```
+$ sudo apt-get install aha
+```
