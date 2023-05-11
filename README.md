@@ -11,7 +11,7 @@ The used cipher is the One Time Pad.
 
 For the message exchange we randomly pick two nodes among the available one and send a message from the first of these to the second.
 
-Each run will generate a a folder in the `sim directory`.
+Each run will generate a folder in the `sim directory`.
 
 **How to run the project**
 ```
