@@ -26,6 +26,7 @@ class SRQKDNode:
             process = Process(self.senderp, "start", [plaintext, key])
             event = Event(tl.now(), process)
             tl.schedule(event)
-        else:
-            print(Fore.RED, "[No More Keys To Use]", Fore.RESET)
+            return True
+        print(Fore.RED, "[No More Keys To Use]", Fore.RESET)
+        return False
             

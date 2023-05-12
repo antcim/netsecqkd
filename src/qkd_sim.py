@@ -188,21 +188,10 @@ def runSim(tl, network, sim_nodes, keysize):
     tl.show_progress = False
     tl.run()
 
-    # for n in sim_nodes['node3'].srqkdnodes:
-    #     if n.sender.name == "node3 to node0.sender":
-    #         n.senderkm.keys = []
-
-    # for n in sim_nodes['node0'].srqkdnodes:
-    #     if n.sender.name == "node0 to node1.sender":
-    #         n.senderkm.keys = []
-
-    # for n in sim_nodes['node2'].srqkdnodes:
-    #     if n.sender.name == "node2 to node3.sender":
-    #         n.senderkm.keys = []
-
     # Generate routing tables
-    NewQKDTopo(current_sim + parsename, sim_nodes)
+    topo_manager = NewQKDTopo(current_sim + parsename, sim_nodes)
 
+    print("TABLES BEFORE DELETE")
     if print_routing:
         for n in sim_nodes:
             print(Fore.LIGHTMAGENTA_EX, "\nROUTING TABLE ", n, Fore.RESET)
@@ -210,9 +199,22 @@ def runSim(tl, network, sim_nodes, keysize):
                 print("TO ", Fore.LIGHTBLUE_EX, i, Fore.RESET,
                       "Path: ", Fore.LIGHTCYAN_EX, k, Fore.RESET)
 
+    for n in sim_nodes['node3'].srqkdnodes:
+        if n.sender.name == "node3 to node0.sender":
+            n.senderkm.keys = []
+
+    for n in sim_nodes['node0'].srqkdnodes:
+        if n.sender.name == "node0 to node1.sender":
+            n.senderkm.keys = []
+
+    for n in sim_nodes['node2'].srqkdnodes:
+        if n.sender.name == "node2 to node3.sender":
+            n.senderkm.keys = []
+
     # This is to avoid clashes on classical channels when
     # multiple messages are sent
     print(f"SCHEDULED EVENT {tl.schedule_counter}")
+
     # while tl.schedule_counter > tl.run_counter:
     #     continue
 
@@ -246,8 +248,13 @@ def runSim(tl, network, sim_nodes, keysize):
     # manually pick nodes to send messages
     message = {"dest": 'node9', "payload": plaintext}
     message = json.dumps(message)
-    sim_nodes['node5'].sendMessage(
+    result = sim_nodes['node5'].sendMessage(
         tl, 'node9', message)
+
+    # if not result:
+    #     topo_manager.update_tables()
+    #     result = sim_nodes['node5'].sendMessage(
+    #     tl, 'node9', message)
 
     tl.run()
 
