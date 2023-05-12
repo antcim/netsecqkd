@@ -20,8 +20,3 @@ class SuperQKDNode:
             for srn in self.srqkdnodes:
                 if srn.sender.name.endswith(next_hop_name + ".sender"):
                     srn.sendMessage(tl, plaintext_msg)
-
-    
-
-
-

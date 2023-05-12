@@ -2,9 +2,9 @@ import json
 
 def netparse(filepath, savepath):
     with open(filepath, 'r') as f:
-        dict = json.load(f)
+        topo = json.load(f)
 
-    nodes = dict['nodes']
+    nodes = topo['nodes']
     nodes_list = []
     for n in nodes:
         node_dict = {
@@ -15,7 +15,7 @@ def netparse(filepath, savepath):
         }
         nodes_list.append(node_dict)
 
-    links = dict['links']
+    links = topo['links']
     qchannels_list = []
     cchannels_list = []
     count = 0
@@ -62,12 +62,12 @@ def netparse(filepath, savepath):
 
         count += 1
 
-    dict = {}
-    dict['is_parallel'] = False
-    dict['stop_time'] = 5000000000000
-    dict['nodes'] = nodes_list
-    dict['qchannels'] = qchannels_list
-    dict['cchannels'] = cchannels_list
+    topo = {}
+    topo['is_parallel'] = False
+    topo['stop_time'] = 5000000000000
+    topo['nodes'] = nodes_list
+    topo['qchannels'] = qchannels_list
+    topo['cchannels'] = cchannels_list
 
     with open(savepath, 'w') as f:
-        f.write(json.dumps(dict, indent=4))
+        f.write(json.dumps(topo, indent=4))

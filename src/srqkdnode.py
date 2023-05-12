@@ -13,7 +13,7 @@ class SRQKDNode:
         # Messaging protocols for the nodes
         self.senderp = senderp
         self.receiverp = receiverp
-        
+
     def addKeyManagers(self, senderkm, receiverkm):
         self.senderkm = senderkm
         self.receiverkm  = receiverkm

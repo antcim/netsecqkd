@@ -10,11 +10,11 @@ class NewQKDTopo(Topo):
     def __init__(self, filename, sim_nodes):
         self.sim_nodes = sim_nodes
         Topo.__init__(self, filename)
-     
+
     def _load(self, filename):
         topo_config = json.load(open(filename))
         self._generate_forwarding_table(topo_config, self.sim_nodes)
-    
+
     def _generate_forwarding_table(self, config, sim_nodes):
         graph = Graph()
         for node in config[Topo.ALL_NODE]:
@@ -23,7 +23,6 @@ class NewQKDTopo(Topo):
 
         costs = []
         for cc in config[Topo.ALL_C_CHANNEL]:
-            
             entry = (cc['source'], cc['destination'],
                         {"price": cc['distance']})
             costs.append(entry)
@@ -37,7 +36,6 @@ class NewQKDTopo(Topo):
                 try:
                     path = dijkstra_path(graph, src_name, dst_name)
                     sim_nodes[src_name].routing_table[dst_name] = path
-                    
+
                 except exception.NetworkXNoPath:
                     pass
-

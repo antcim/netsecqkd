@@ -13,7 +13,7 @@ class MsgType(Enum):
 
 
 class MessagingProtocol(Protocol):
-    
+
     def __init__(
             self, own: Node, name: str,
             other_name: str, other_node: str, superQKD):
@@ -22,7 +22,8 @@ class MessagingProtocol(Protocol):
         own.protocols.append(self)
         self.other_name = other_name
         self.other_node = other_node
-        self.superQKD = superQKD
+        self.super_qkd = superQKD
+        self.km = None
 
     def init(self):
         pass
@@ -36,34 +37,32 @@ class MessagingProtocol(Protocol):
         new_msg.protocol_type = type(self)
         self.own.send_message(self.other_node, new_msg)
 
-    def received_message(self, src: str, message: Message):
-        assert message.msg_type == MsgType.TEXT_MESS
+    def received_message(self, src: str, msg: Message):
+        assert msg.msg_type == MsgType.TEXT_MESS
 
-        packet = json.loads(message.payload)
+        packet = json.loads(msg.payload)
         plaintext = onetimepad.decrypt(packet["payload"], self.km.consume())
 
-        if packet["dest"] == self.superQKD.name:
-            print(Fore.LIGHTMAGENTA_EX + "[" + self.own.name + "]" + Fore.RESET)
-            print("Received: " + Fore.LIGHTGREEN_EX + 
-                "TEXT Message " + Fore.RESET)
-            print("At Simulation Time: " + Fore.LIGHTCYAN_EX + 
-                str(self.own.timeline.now()) + " ps" + Fore.RESET)
-            print("Encrypted Message: " + Fore.LIGHTYELLOW_EX + 
-                packet["payload"] + Fore.RESET)
-            print("Decrypted Message: " + Fore.LIGHTYELLOW_EX + 
-                plaintext + Fore.RESET + "\n")
+        if packet["dest"] == self.super_qkd.name:
+            print(f"{Fore.LIGHTMAGENTA_EX}[{self.own.name}]{Fore.RESET}")
+            print(f"Received: {Fore.LIGHTGREEN_EX}TEXT Message{Fore.RESET}")
+            print(
+                f"At Simulation Time: {Fore.LIGHTCYAN_EX}{self.own.timeline.now()} ps{Fore.RESET}")
+            print(
+                f"Encrypted Message: {Fore.LIGHTYELLOW_EX}{packet['payload']}{Fore.RESET}")
+            print(
+                f"Decrypted Message: {Fore.LIGHTYELLOW_EX}{plaintext}{Fore.RESET}")
 
         # Message forwarding
         else:
             packet["payload"] = plaintext
-            print(Fore.LIGHTMAGENTA_EX + "[" + self.own.name + "]" + Fore.RESET)
-            print("Received: " + Fore.LIGHTGREEN_EX + "TEXT Message " + Fore.RESET)
-            print("At Simulation Time: " + Fore.LIGHTCYAN_EX + 
-                str(self.own.timeline.now()) + " ps"+ Fore.RESET)
-            print(Fore.LIGHTBLUE_EX + "[Forwarding...]\n" + Fore.RESET)
-            self.superQKD.sendMessage(self.own.timeline, packet["dest"], 
-                json.dumps(packet))
-
+            print(f"{Fore.LIGHTMAGENTA_EX}[{self.own.name}]{Fore.RESET}")
+            print(f"Received: {Fore.LIGHTGREEN_EX}TEXT Message{Fore.RESET}")
+            print(
+                f"At Simulation Time: {Fore.LIGHTCYAN_EX}{self.own.timeline.now()} ps{Fore.RESET}")
+            print(f"{Fore.LIGHTBLUE_EX}[Forwarding...]{Fore.RESET}\n")
+            self.super_qkd.sendMessage(self.own.timeline, packet["dest"],
+                                       json.dumps(packet))
 
     def addkm(self, km):
         self.km = km
