@@ -1,0 +1,4 @@
+./sequence
+colorama==0.4.4
+networkx==3.1
+onetimepad==1.4
