@@ -191,7 +191,6 @@ def runSim(tl, network, sim_nodes, keysize):
     # Generate routing tables
     topo_manager = NewQKDTopo(current_sim + parsename, sim_nodes)
 
-    print("TABLES BEFORE DELETE")
     if print_routing:
         for n in sim_nodes:
             print(Fore.LIGHTMAGENTA_EX, "\nROUTING TABLE ", n, Fore.RESET)
@@ -199,17 +198,10 @@ def runSim(tl, network, sim_nodes, keysize):
                 print("TO ", Fore.LIGHTBLUE_EX, i, Fore.RESET,
                       "Path: ", Fore.LIGHTCYAN_EX, k, Fore.RESET)
 
-    for n in sim_nodes['node3'].srqkdnodes:
-        if n.sender.name == "node3 to node0.sender":
-            n.senderkm.keys = []
-
-    for n in sim_nodes['node0'].srqkdnodes:
-        if n.sender.name == "node0 to node1.sender":
-            n.senderkm.keys = []
-
     for n in sim_nodes['node2'].srqkdnodes:
-        if n.sender.name == "node2 to node3.sender":
+        if n.sender.name == "node2 to node4.sender":
             n.senderkm.keys = []
+
 
     # This is to avoid clashes on classical channels when
     # multiple messages are sent
@@ -218,8 +210,7 @@ def runSim(tl, network, sim_nodes, keysize):
     # while tl.schedule_counter > tl.run_counter:
     #     continue
 
-    print(
-        f"{Fore.YELLOW}[QKD Time]{Fore.RESET}{(time.time() - qkd_tick):0.4f} s")
+    print(f"{Fore.YELLOW}[QKD Time]{Fore.RESET}{(time.time() - qkd_tick):0.4f} s")
 
     tl.init()
     # Send messages encrypted with QKD keys on classical channels
@@ -246,16 +237,19 @@ def runSim(tl, network, sim_nodes, keysize):
     message_tick = time.time()
 
     # manually pick nodes to send messages
-    message = {"dest": 'node9', "payload": plaintext}
+    message = {"dest": 'node7', "payload": plaintext}
     message = json.dumps(message)
-    result = sim_nodes['node5'].sendMessage(
-        tl, 'node9', message)
+    result = sim_nodes['node9'].sendMessage(
+        tl, 'node7', message)
 
-    # if not result:
-    #     topo_manager.update_tables()
-    #     result = sim_nodes['node5'].sendMessage(
-    #     tl, 'node9', message)
+    tl.run()
 
+    tl.init()
+    
+    if not result:
+        topo_manager.update_tables()
+        sim_nodes['node9'].sendMessage(tl, 'node7', message)
+    
     tl.run()
 
     print(
