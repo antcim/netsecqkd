@@ -38,6 +38,19 @@ verbose = False
 fidelity = 1
 nodes_number = 50
 
+class Logger(object):
+    def __init__(self, file):
+        self.terminal = sys.stdout
+        self.log = open(file, "a")
+    
+    def write(self, msg):
+        self.terminal.write(msg)
+        self.log.write(msg)
+    
+    def flush(self):
+        pass
+        
+
 def genNetwork(filepath):
     G = nx.random_internet_as_graph(nodes_number)
     jsonG = nx.node_link_data(G)
@@ -292,7 +305,7 @@ def main(argv):
 
 
     os.makedirs(os.path.dirname(current_sim), exist_ok=True)
-    sys.stdout = open(current_sim + "sim_output.txt", 'w')
+    sys.stdout = Logger(current_sim + "sim_output.txt")
 
     if do_gen:
         graph = genNetwork(current_sim + filename)
@@ -318,7 +331,6 @@ def main(argv):
     sys.stdout.flush()
     os.system("cat " + current_sim + "sim_output.txt" + 
             " | aha --black > " + current_sim + "sim_output.html")
-    os.system("cat " + current_sim + "sim_output.txt")
-
+    
 if __name__ == "__main__":
     main(sys.argv[1:])
