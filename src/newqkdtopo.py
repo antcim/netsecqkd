@@ -6,20 +6,11 @@ from networkx import DiGraph, exception, shortest_path
 
 class NewQKDTopo():
 
-    QKD_NODE = "QKDNode"
-
-    def __init__(self, filename, sim_nodes):
+    def __init__(self, sim_nodes):
         self.sim_nodes = sim_nodes
-        self._load()
-        
+        self.gen_forward_tables()
 
-    def _load(self):
-        self._generate_forwarding_table()
-
-    def update_tables(self):
-        self._generate_forwarding_table()
-
-    def _generate_forwarding_table(self):
+    def gen_forward_tables(self):
         graph = DiGraph()
         for n in self.sim_nodes.keys():
             graph.add_node(n)

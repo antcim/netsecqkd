@@ -189,7 +189,7 @@ def runSim(tl, network, sim_nodes, keysize):
     tl.run()
 
     # Generate routing tables
-    topo_manager = NewQKDTopo(current_sim + parsename, sim_nodes)
+    topo_manager = NewQKDTopo(sim_nodes)
 
     if print_routing:
         for n in sim_nodes:
@@ -247,7 +247,7 @@ def runSim(tl, network, sim_nodes, keysize):
     tl.init()
     
     if not result:
-        topo_manager.update_tables()
+        topo_manager.gen_forward_tables()
         sim_nodes['node9'].sendMessage(tl, 'node7', message)
     
     tl.run()
