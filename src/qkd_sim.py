@@ -176,16 +176,6 @@ def runSim(tl, network, sim_nodes, keysize):
 
             srnode.addKeyManagers(km1, km2)
 
-    # Generate routing tables
-    NewQKDTopo(current_sim + parsename, sim_nodes)
-
-    if print_routing:
-        for n in sim_nodes:
-            print(Fore.LIGHTMAGENTA_EX, "\nROUTING TABLE ", n, Fore.RESET)
-            for i, k in sim_nodes[n].routing_table.items():
-                print("TO ", Fore.LIGHTBLUE_EX, i, Fore.RESET,
-                      "Path: ", Fore.LIGHTCYAN_EX, k, Fore.RESET)
-
     # Start simulation and record timing
     tl.init()
 
@@ -198,10 +188,33 @@ def runSim(tl, network, sim_nodes, keysize):
     tl.show_progress = False
     tl.run()
 
+    # for n in sim_nodes['node3'].srqkdnodes:
+    #     if n.sender.name == "node3 to node0.sender":
+    #         n.senderkm.keys = []
+
+    # for n in sim_nodes['node0'].srqkdnodes:
+    #     if n.sender.name == "node0 to node1.sender":
+    #         n.senderkm.keys = []
+
+    # for n in sim_nodes['node2'].srqkdnodes:
+    #     if n.sender.name == "node2 to node3.sender":
+    #         n.senderkm.keys = []
+
+    # Generate routing tables
+    NewQKDTopo(current_sim + parsename, sim_nodes)
+
+    if print_routing:
+        for n in sim_nodes:
+            print(Fore.LIGHTMAGENTA_EX, "\nROUTING TABLE ", n, Fore.RESET)
+            for i, k in sim_nodes[n].routing_table.items():
+                print("TO ", Fore.LIGHTBLUE_EX, i, Fore.RESET,
+                      "Path: ", Fore.LIGHTCYAN_EX, k, Fore.RESET)
+
     # This is to avoid clashes on classical channels when
     # multiple messages are sent
-    while tl.schedule_counter > tl.run_counter:
-        continue
+    print(f"SCHEDULED EVENT {tl.schedule_counter}")
+    # while tl.schedule_counter > tl.run_counter:
+    #     continue
 
     print(
         f"{Fore.YELLOW}[QKD Time]{Fore.RESET}{(time.time() - qkd_tick):0.4f} s")
@@ -214,23 +227,27 @@ def runSim(tl, network, sim_nodes, keysize):
     print(Fore.LIGHTMAGENTA_EX, "| SENT MESSAGES |", Fore.RESET)
     print(Fore.LIGHTMAGENTA_EX, "-----------------", Fore.RESET)
 
-    random_sender_node_num = random.randint(0, len(list(sim_nodes))-1)
-    random_sender_node = list(sim_nodes.keys())[random_sender_node_num]
+    # random_sender_node_num = random.randint(0, len(list(sim_nodes))-1)
+    # random_sender_node = list(sim_nodes.keys())[random_sender_node_num]
 
-    random_receiver_node_num = random.randint(0, len(list(sim_nodes))-1)
-    while random_sender_node_num == random_receiver_node_num:
-        random_receiver_node_num = random.randint(0, len(list(sim_nodes))-1)
-    random_receiver_node = list(sim_nodes.keys())[random_receiver_node_num]
+    # random_receiver_node_num = random.randint(0, len(list(sim_nodes))-1)
+    # while random_sender_node_num == random_receiver_node_num:
+    #     random_receiver_node_num = random.randint(0, len(list(sim_nodes))-1)
+    # random_receiver_node = list(sim_nodes.keys())[random_receiver_node_num]
 
-    print(Fore.YELLOW, "[Message from ", random_sender_node, " to ",
-          random_receiver_node, "]", Fore.RESET)
+    # print(Fore.YELLOW, "[Message from ", random_sender_node, " to ",
+    #       random_receiver_node, "]", Fore.RESET)
 
-    message = {"dest": random_receiver_node, "payload": plaintext}
-    message = json.dumps(message)
+    # message = {"dest": random_receiver_node, "payload": plaintext}
+    # message = json.dumps(message)
 
     message_tick = time.time()
-    sim_nodes[random_sender_node].sendMessage(
-        tl, random_receiver_node, message)
+
+    # manually pick nodes to send messages
+    message = {"dest": 'node9', "payload": plaintext}
+    message = json.dumps(message)
+    sim_nodes['node5'].sendMessage(
+        tl, 'node9', message)
 
     tl.run()
 

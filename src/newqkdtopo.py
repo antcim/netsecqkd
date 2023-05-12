@@ -22,10 +22,17 @@ class NewQKDTopo(Topo):
                 graph.add_node(node[Topo.NAME])
 
         costs = []
+
         for cc in config[Topo.ALL_C_CHANNEL]:
-            entry = (cc['source'], cc['destination'],
-                        {"price": cc['distance']})
-            costs.append(entry)
+            for n in sim_nodes[cc['source']].srqkdnodes:
+                if n.sender.name == cc['source'] + " to " + cc['destination'] + ".sender":
+                    for rn in sim_nodes[cc['destination']].srqkdnodes:
+                        if rn.sender.name == cc['destination'] + " to " + cc['source'] + ".sender":
+                            keys = rn.senderkm.keys
+                    if len(n.senderkm.keys) > 0 and len(keys) > 0:
+                        entry = (cc['source'], cc['destination'],
+                            {"price": cc['distance']})
+                        costs.append(entry)
 
         graph.add_edges_from(costs)
 
