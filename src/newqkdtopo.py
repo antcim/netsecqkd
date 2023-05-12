@@ -1,6 +1,4 @@
-import json
 import re
-from sequence.topology.topology import Topology as Topo
 from networkx import DiGraph, exception, shortest_path
 
 
