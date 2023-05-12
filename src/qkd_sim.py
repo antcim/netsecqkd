@@ -23,6 +23,7 @@ from srqkdnode import SRQKDNode
 from newqkdtopo import NewQKDTopo
 from messaging import MessagingProtocol
 from keymanager import KeyManager
+from logger import Logger
 
 # Defalut simulation values
 current_sim = "sim/sim_" + str(datetime.now().strftime("%Y-%m-%d_%H:%M:%S")) +"/"
@@ -37,18 +38,6 @@ parsename = 'graph_sequence.json'
 verbose = False
 fidelity = 1
 nodes_number = 50
-
-class Logger(object):
-    def __init__(self, file):
-        self.terminal = sys.stdout
-        self.log = open(file, "a")
-    
-    def write(self, msg):
-        self.terminal.write(msg)
-        self.log.write(msg)
-    
-    def flush(self):
-        pass
         
 
 def genNetwork(filepath):
@@ -329,8 +318,8 @@ def main(argv):
     runSim(tl, network, sim_nodes, key_size)
 
     sys.stdout.flush()
-    os.system("cat " + current_sim + "sim_output.txt" + 
-            " | aha --black > " + current_sim + "sim_output.html")
+    os.system("cat " + current_sim + "sim_output.txt" 
+        + " | aha --black > " + current_sim + "sim_output.html")
     
 if __name__ == "__main__":
     main(sys.argv[1:])
