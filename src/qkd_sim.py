@@ -27,7 +27,8 @@ from keymanager import KeyManager
 from logger import Logger
 
 # Defalut simulation values
-current_sim = "simulations/sim_" + str(datetime.now().strftime("%Y-%m-%d_%H:%M:%S")) + "/"
+current_sim = "simulations/sim_" + \
+    str(datetime.now().strftime("%Y-%m-%d_%H:%M:%S")) + "/"
 num_keys = 3
 key_size = 128
 do_gen = True
@@ -91,7 +92,8 @@ def genTopology(network, tl):
             cchannel.set_ends(sender, dest_receiver)
 
             qchannel_name = "qchannel[" + source + " to " + dest + ".sender]"
-            qchannel = QuantumChannel(qchannel_name, tl, 0.0001, 1000, fidelity)
+            qchannel = QuantumChannel(
+                qchannel_name, tl, 0.0001, 1000, fidelity)
             qchannel.set_ends(sender, dest_receiver)
 
             # Receiver channels
@@ -100,7 +102,8 @@ def genTopology(network, tl):
             cchannel.set_ends(receiver, dest_sender)
 
             qchannel_name = "qchannel[" + source + " to " + dest + ".receiver]"
-            qchannel = QuantumChannel(qchannel_name, tl, 0.0001, 1000, fidelity)
+            qchannel = QuantumChannel(
+                qchannel_name, tl, 0.0001, 1000, fidelity)
             qchannel.set_ends(receiver, dest_sender)
 
             senderp = MessagingProtocol(
@@ -155,7 +158,7 @@ def runSim(tl, network, sim_nodes, keysize):
             pair_bb84_protocols(A.protocol_stack[0], B.protocol_stack[0])
             # pair_cascade_protocols(A.protocol_stack[1], B.protocol_stack[1])
             print(
-                f"{Fore.GREEN}[PAIR]{Fore.RESET}" 
+                f"{Fore.GREEN}[PAIR]{Fore.RESET}"
                 f"{Fore.LIGHTCYAN_EX}[{A.name}]{Fore.RESET}"
                 f"{Fore.LIGHTBLUE_EX}[{B.name}]{Fore.RESET}")
 
@@ -206,7 +209,6 @@ def runSim(tl, network, sim_nodes, keysize):
         if n.sender.name == "node2 to node4.sender":
             n.senderkm.keys = []
 
-
     # This is to avoid clashes on classical channels when
     # multiple messages are sent
     print(f"SCHEDULED EVENT {tl.schedule_counter}")
@@ -214,7 +216,8 @@ def runSim(tl, network, sim_nodes, keysize):
     # while tl.schedule_counter > tl.run_counter:
     #     continue
 
-    print(f"{Fore.YELLOW}[QKD Time]{Fore.RESET}{(time.time() - qkd_tick):0.4f} s")
+    print(
+        f"{Fore.YELLOW}[QKD Time]{Fore.RESET}{(time.time() - qkd_tick):0.4f} s")
 
     tl.init()
     # Send messages encrypted with QKD keys on classical channels
@@ -249,11 +252,11 @@ def runSim(tl, network, sim_nodes, keysize):
     tl.run()
 
     tl.init()
-    
+
     if not result:
         topo_manager.gen_forward_tables()
         sim_nodes['node9'].sendMessage(tl, 'node7', message)
-    
+
     tl.run()
 
     print(
@@ -325,7 +328,8 @@ def main(argv):
         while len(graph.nodes()) < 2:
             graph = genNetwork(current_sim + filename)
     else:
-        print(f"{Fore.LIGHTCYAN_EX}[Loaded Network Graph From File: {filename}]{Fore.CYAN}")
+        print(
+            f"{Fore.LIGHTCYAN_EX}[Loaded Network Graph From File: {filename}]{Fore.CYAN}")
         with open(filename, 'r') as f:
             js_graph = json.load(f)
         graph = nx.readwrite.json_graph.node_link_graph(js_graph)
