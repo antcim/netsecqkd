@@ -240,7 +240,7 @@ def runSim(tl, network, sim_nodes, keysize):
 
     # message = {"dest": random_receiver_node, "payload": plaintext}
     # message = json.dumps(message)
-
+    
     message_tick = time.time()
 
     # manually pick nodes to send messages
@@ -250,7 +250,6 @@ def runSim(tl, network, sim_nodes, keysize):
         tl, 'node7', message)
 
     tl.run()
-
     tl.init()
 
     if not result:

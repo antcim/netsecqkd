@@ -1,8 +1,3 @@
-import math
-
-from sequence.kernel.event import Event
-from sequence.kernel.process import Process
-
 class KeyManager():
 
     def __init__(self, timeline, keysize, num_keys):
