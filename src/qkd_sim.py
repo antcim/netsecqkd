@@ -38,7 +38,7 @@ print_routing = False
 filename = 'graph_networkx.json'
 parsename = 'graph_sequence.json'
 verbose = False
-fidelity = 1
+fidelity = 0.97
 nodes_number = 50
 
 
@@ -156,7 +156,7 @@ def runSim(tl, network, sim_nodes, keysize):
             B.set_seed(1)
 
             pair_bb84_protocols(A.protocol_stack[0], B.protocol_stack[0])
-            # pair_cascade_protocols(A.protocol_stack[1], B.protocol_stack[1])
+            pair_cascade_protocols(A.protocol_stack[1], B.protocol_stack[1])
             print(
                 f"{Fore.GREEN}[PAIR]{Fore.RESET}"
                 f"{Fore.LIGHTCYAN_EX}[{A.name}]{Fore.RESET}"
@@ -171,12 +171,12 @@ def runSim(tl, network, sim_nodes, keysize):
     for n in sim_nodes.values():
         for srnode in n.srqkdnodes:
             km1 = KeyManager(tl, keysize, num_keys)
-            km1.lower_protocols.append(srnode.sender.protocol_stack[0])
-            srnode.sender.protocol_stack[0].upper_protocols.append(km1)
+            km1.lower_protocols.append(srnode.sender.protocol_stack[1])
+            srnode.sender.protocol_stack[1].upper_protocols.append(km1)
 
             km2 = KeyManager(tl, keysize, num_keys)
-            km2.lower_protocols.append(srnode.receiver.protocol_stack[0])
-            srnode.receiver.protocol_stack[0].upper_protocols.append(km2)
+            km2.lower_protocols.append(srnode.receiver.protocol_stack[1])
+            srnode.receiver.protocol_stack[1].upper_protocols.append(km2)
 
             key_managers[srnode.sender.name] = km1
             key_managers[srnode.receiver.name] = km2
