@@ -27,7 +27,7 @@ from keymanager import KeyManager
 from logger import Logger
 
 # Defalut simulation values
-current_sim = "sim/sim_" + str(datetime.now().strftime("%Y-%m-%d_%H:%M:%S")) + "/"
+current_sim = "simulations/sim_" + str(datetime.now().strftime("%Y-%m-%d_%H:%M:%S")) + "/"
 num_keys = 3
 key_size = 128
 do_gen = True
@@ -70,7 +70,7 @@ def genTopology(network, tl):
         sim_nodes[node.name] = SuperQKDNode(node.name)
 
     # Make network topology
-    for i, node in enumerate(network.get_nodes_by_type(QKDTopo.QKD_NODE)):
+    for _, node in enumerate(network.get_nodes_by_type(QKDTopo.QKD_NODE)):
         for key in node.cchannels.keys():
 
             source = node.name
@@ -164,6 +164,7 @@ def runSim(tl, network, sim_nodes, keysize):
 
     key_managers = {}
 
+    # this might be unnecessary with the cascade protocol
     for n in sim_nodes.values():
         for srnode in n.srqkdnodes:
             km1 = KeyManager(tl, keysize, num_keys)
