@@ -14,6 +14,7 @@ from sequence.kernel.timeline import Timeline
 from sequence.topology.node import QKDNode
 from sequence.components.optical_channel import QuantumChannel, ClassicalChannel
 from sequence.qkd.BB84 import pair_bb84_protocols
+from sequence.qkd.cascade import pair_cascade_protocols
 from sequence.topology.qkd_topo import QKDTopo
 
 # Netsecqkd lib
@@ -76,10 +77,10 @@ def genTopology(network, tl):
             dest = node.cchannels[key].receiver
 
             sender_name = source + " to " + dest + ".sender"
-            sender = QKDNode(sender_name, tl, stack_size=1)
+            sender = QKDNode(sender_name, tl)
 
             receiver_name = source + " to " + dest + ".receiver"
-            receiver = QKDNode(receiver_name, tl, stack_size=1)
+            receiver = QKDNode(receiver_name, tl)
 
             dest_receiver = dest + " to " + source + ".receiver"
             dest_sender = dest + " to " + source + ".sender"
@@ -152,9 +153,11 @@ def runSim(tl, network, sim_nodes, keysize):
             B.set_seed(1)
 
             pair_bb84_protocols(A.protocol_stack[0], B.protocol_stack[0])
-            print(Fore.GREEN, "[PAIR]", Fore.RESET, Fore.LIGHTCYAN_EX,
-                  "[", A.name, "]", Fore.RESET, Fore.LIGHTBLUE_EX,
-                  "[", B.name, "]", Fore.RESET)
+            # pair_cascade_protocols(A.protocol_stack[1], B.protocol_stack[1])
+            print(
+                f"{Fore.GREEN}[PAIR]{Fore.RESET}" 
+                f"{Fore.LIGHTCYAN_EX}[{A.name}]{Fore.RESET}"
+                f"{Fore.LIGHTBLUE_EX}[{B.name}]{Fore.RESET}")
 
     print(
         f"{Fore.YELLOW}[Pairing Time]{Fore.RESET}{(time.time() - pair_tick):0.4f} s")
@@ -321,7 +324,7 @@ def main(argv):
         while len(graph.nodes()) < 2:
             graph = genNetwork(current_sim + filename)
     else:
-        print("FILENAME: ", filename)
+        print(f"{Fore.LIGHTCYAN_EX}[Loaded Network Graph From File: {filename}]{Fore.CYAN}")
         with open(filename, 'r') as f:
             js_graph = json.load(f)
         graph = nx.readwrite.json_graph.node_link_graph(js_graph)
