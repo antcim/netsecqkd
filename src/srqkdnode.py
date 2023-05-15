@@ -1,6 +1,7 @@
 from sequence.kernel.process import Process
 from sequence.kernel.event import Event
 from colorama import Fore
+from keys_exception import NoMoreKeysException
 
 
 class SRQKDNode:
@@ -26,7 +27,7 @@ class SRQKDNode:
             process = Process(self.senderp, "start", [plaintext, key])
             event = Event(tl.now(), process)
             tl.schedule(event)
-            return True
+            return
         print(Fore.RED, "[No More Keys To Use]", Fore.RESET)
-        return False
+        raise NoMoreKeysException
             

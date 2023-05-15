@@ -25,6 +25,7 @@ from newqkdtopo import NewQKDTopo
 from messaging import MessagingProtocol
 from keymanager import KeyManager
 from logger import Logger
+from keys_exception import NoMoreKeysException
 
 # Defalut simulation values
 current_sim = "simulations/sim_" + \
@@ -207,8 +208,8 @@ def runSim(tl, network, sim_nodes, keysize):
                       "Path: ", Fore.LIGHTCYAN_EX, k, Fore.RESET)
 
     # manually delete all a link
-    for n in sim_nodes['node2'].srqkdnodes:
-        if n.sender.name == "node2 to node4.sender":
+    for n in sim_nodes['node3'].srqkdnodes:
+        if n.sender.name == "node3 to node0.sender":
             n.senderkm.keys = []
 
     # This is to avoid clashes on classical channels when
@@ -248,16 +249,16 @@ def runSim(tl, network, sim_nodes, keysize):
     # manually pick nodes to send messages
     message = {"dest": 'node7', "payload": plaintext}
     message = json.dumps(message)
-    sim_nodes['node9'].sendMessage(
-        tl, 'node7', message)
-
-    tl.run()
-    tl.init()
-
-    if not SuperQKDNode.msg_sent:
+    
+    try:
+        sim_nodes['node9'].sendMessage(tl, 'node7', message)
+        tl.run()
+    except NoMoreKeysException:
         print(f"TABLE REGEN")
         topo_manager.gen_forward_tables()
         sim_nodes['node9'].sendMessage(tl, 'node7', message)
+
+    tl.init()
 
     if print_routing:
         for n in sim_nodes:
