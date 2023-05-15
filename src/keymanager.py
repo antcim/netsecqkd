@@ -13,7 +13,6 @@ class KeyManager():
             p.push(self.keysize, self.num_keys)
 
     def pop(self, key):
-        print(f"km pop info: {key}")
         self.keys.append(key)
         self.times.append(self.timeline.now() * 1e-9)
 

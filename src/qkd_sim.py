@@ -205,8 +205,9 @@ def runSim(tl, network, sim_nodes, keysize):
                 print("TO ", Fore.LIGHTBLUE_EX, i, Fore.RESET,
                       "Path: ", Fore.LIGHTCYAN_EX, k, Fore.RESET)
 
-    for n in sim_nodes['node2'].srqkdnodes:
-        if n.sender.name == "node2 to node4.sender":
+    # manually delete all a link
+    for n in sim_nodes['node3'].srqkdnodes:
+        if n.sender.name == "node3 to node0.sender":
             n.senderkm.keys = []
 
     # This is to avoid clashes on classical channels when
@@ -246,6 +247,7 @@ def runSim(tl, network, sim_nodes, keysize):
     # manually pick nodes to send messages
     message = {"dest": 'node7', "payload": plaintext}
     message = json.dumps(message)
+    result = False
     result = sim_nodes['node9'].sendMessage(
         tl, 'node7', message)
 
@@ -253,8 +255,9 @@ def runSim(tl, network, sim_nodes, keysize):
     tl.init()
 
     if not result:
+        print(f"TABLE REGEN")
         topo_manager.gen_forward_tables()
-        sim_nodes['node9'].sendMessage(tl, 'node7', message)
+        result = sim_nodes['node9'].sendMessage(tl, 'node7', message)
 
     tl.run()
 
@@ -262,6 +265,7 @@ def runSim(tl, network, sim_nodes, keysize):
         f"{Fore.YELLOW}[Message Time]{Fore.RESET}{(time.time() - message_tick):0.4f} s")
     print(
         f"{Fore.YELLOW}[Execution Time]{Fore.RESET}{(time.time() - tick):0.4f} s")
+
 
     # Print error rate for each sender
     if print_error:
