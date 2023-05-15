@@ -25,24 +25,9 @@
             "id": 4
         },
         {
-            "type": "M",
-            "peers": 1,
-            "id": 5
-        },
-        {
-            "type": "C",
-            "peers": 0,
-            "id": 6
-        },
-        {
             "type": "C",
             "peers": 0,
             "id": 7
-        },
-        {
-            "type": "C",
-            "peers": 0,
-            "id": 8
         },
         {
             "type": "C",
@@ -82,18 +67,6 @@
             "target": 3
         },
         {
-            "type": "transit",
-            "customer": "5",
-            "source": 1,
-            "target": 5
-        },
-        {
-            "type": "transit",
-            "customer": "6",
-            "source": 1,
-            "target": 6
-        },
-        {
             "type": "peer",
             "customer": "none",
             "source": 2,
@@ -104,12 +77,6 @@
             "customer": "4",
             "source": 2,
             "target": 4
-        },
-        {
-            "type": "transit",
-            "customer": "8",
-            "source": 2,
-            "target": 8
         },
         {
             "type": "transit",
@@ -125,21 +92,9 @@
         },
         {
             "type": "transit",
-            "customer": "5",
-            "source": 3,
-            "target": 5
-        },
-        {
-            "type": "transit",
             "customer": "7",
             "source": 4,
             "target": 7
-        },
-        {
-            "type": "peer",
-            "customer": "none",
-            "source": 4,
-            "target": 5
         }
     ]
 }

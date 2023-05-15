@@ -207,8 +207,8 @@ def runSim(tl, network, sim_nodes, keysize):
                       "Path: ", Fore.LIGHTCYAN_EX, k, Fore.RESET)
 
     # manually delete all a link
-    for n in sim_nodes['node3'].srqkdnodes:
-        if n.sender.name == "node3 to node0.sender":
+    for n in sim_nodes['node2'].srqkdnodes:
+        if n.sender.name == "node2 to node4.sender":
             n.senderkm.keys = []
 
     # This is to avoid clashes on classical channels when
@@ -248,17 +248,16 @@ def runSim(tl, network, sim_nodes, keysize):
     # manually pick nodes to send messages
     message = {"dest": 'node7', "payload": plaintext}
     message = json.dumps(message)
-    result = sim_nodes['node9'].sendMessage(
+    sim_nodes['node9'].sendMessage(
         tl, 'node7', message)
 
     tl.run()
     tl.init()
 
-    print(f"RESULT: {result}")
-    if not sim_nodes['node9'].regen_routing:
+    if not SuperQKDNode.msg_sent:
         print(f"TABLE REGEN")
         topo_manager.gen_forward_tables()
-        result = sim_nodes['node9'].sendMessage(tl, 'node7', message)
+        sim_nodes['node9'].sendMessage(tl, 'node7', message)
 
     if print_routing:
         for n in sim_nodes:

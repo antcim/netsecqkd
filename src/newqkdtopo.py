@@ -1,5 +1,6 @@
 import re
 from networkx import DiGraph, exception, shortest_path
+from superqkdnode import SuperQKDNode
 
 
 class NewQKDTopo():
@@ -9,6 +10,7 @@ class NewQKDTopo():
         self.gen_forward_tables()
 
     def gen_forward_tables(self):
+        SuperQKDNode.msg_sent = True
         graph = DiGraph()
         for n in self.sim_nodes.keys():
             graph.add_node(n)
