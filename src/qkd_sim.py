@@ -198,6 +198,7 @@ def runSim(tl, network, sim_nodes, keysize):
     # Generate routing tables
     topo_manager = NewQKDTopo(sim_nodes)
 
+    print("ROUTING BEFORE DELETE")
     if print_routing:
         for n in sim_nodes:
             print(Fore.LIGHTMAGENTA_EX, "\nROUTING TABLE ", n, Fore.RESET)
@@ -247,17 +248,24 @@ def runSim(tl, network, sim_nodes, keysize):
     # manually pick nodes to send messages
     message = {"dest": 'node7', "payload": plaintext}
     message = json.dumps(message)
-    result = False
     result = sim_nodes['node9'].sendMessage(
         tl, 'node7', message)
 
     tl.run()
     tl.init()
 
-    if not result:
+    print(f"RESULT: {result}")
+    if not sim_nodes['node9'].regen_routing:
         print(f"TABLE REGEN")
         topo_manager.gen_forward_tables()
         result = sim_nodes['node9'].sendMessage(tl, 'node7', message)
+
+    if print_routing:
+        for n in sim_nodes:
+            print(Fore.LIGHTMAGENTA_EX, "\nROUTING TABLE ", n, Fore.RESET)
+            for i, k in sim_nodes[n].routing_table.items():
+                print("TO ", Fore.LIGHTBLUE_EX, i, Fore.RESET,
+                      "Path: ", Fore.LIGHTCYAN_EX, k, Fore.RESET)
 
     tl.run()
 
