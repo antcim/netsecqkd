@@ -14,7 +14,7 @@ class NewQKDTopo():
         for n in self.sim_nodes.keys():
             graph.add_node(n)
         
-        print(graph.nodes)
+        # print(graph.nodes)
         
         edges = []
         

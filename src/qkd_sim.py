@@ -185,11 +185,8 @@ def runSim(tl, network, sim_nodes, keysize):
             srnode.addKeyManagers(km1, km2)
 
     # Start simulation and record timing
-    tl.init()
-
     # Generate routing tables
     topo_manager = NewQKDTopo(sim_nodes)
-    print(sim_nodes["node9"].routing_table)
 
     plaintext = keysize * '1'
     message_tick = time.time()
@@ -201,23 +198,25 @@ def runSim(tl, network, sim_nodes, keysize):
     
     # Send QKD requests
     senders = list(filter(lambda KM: KM.endswith('.sender'), key_managers))
-    print(senders)
     qkd_tick = time.time()
-    print(f"SENDER LENGTH: {len(senders)}")
 
-    msg_to_send = 1
+    msg_to_send = 3
 
     while msg_to_send > 0:
-        for km in senders:
-            if len(key_managers[km].keys) == 0 :
-                key_managers[km].send_request()
-            try:
-                sim_nodes['node9'].sendMessage(tl, 'node7', message)
-                msg_to_send -= 1
-            except NoMoreKeysException:
-                topo_manager.gen_forward_tables()
-
-    tl.run()
+        try:
+            tl.init()
+            sim_nodes['node9'].sendMessage(tl, 'node7', message)
+            tl.run()
+        except NoMoreKeysException:
+            for km in senders:
+                if len(key_managers[km].keys) == 0:
+                    tl.init()
+                    key_managers[km].send_request()
+                    senders.remove(km)
+                    tl.run()
+            topo_manager.gen_forward_tables()
+        else:
+            msg_to_send -= 1
 
     # This is to avoid clashes on classical channels when
     # multiple messages are sent
@@ -228,10 +227,6 @@ def runSim(tl, network, sim_nodes, keysize):
 
     # Send messages encrypted with QKD keys on classical channels
     #plaintext = keysize * '1'
-
-    print(Fore.LIGHTMAGENTA_EX, "-----------------", Fore.RESET)
-    print(Fore.LIGHTMAGENTA_EX, "| SENT MESSAGES |", Fore.RESET)
-    print(Fore.LIGHTMAGENTA_EX, "-----------------", Fore.RESET)
 
     # random_sender_node_num = random.randint(0, len(list(sim_nodes))-1)
     # random_sender_node = list(sim_nodes.keys())[random_sender_node_num]
