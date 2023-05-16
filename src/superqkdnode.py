@@ -15,6 +15,7 @@ class SuperQKDNode:
         if dest_node not in self.routing_table.keys():
             print(Fore.RED, "[No Path towards Destination]", Fore.RESET)
             print(Fore.RED, "[Run Another Simulation]", Fore.RESET)
+            raise NoMoreKeysException
         else:
             next_hop_name = self.routing_table[dest_node][1]
             for srn in self.srqkdnodes:

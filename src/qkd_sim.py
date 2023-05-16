@@ -187,44 +187,47 @@ def runSim(tl, network, sim_nodes, keysize):
     # Start simulation and record timing
     tl.init()
 
-    # Send QKD requests
-    senders = list(filter(lambda KM: KM.endswith('.sender'), key_managers))
-    qkd_tick = time.time()
-    for km in senders:
-        key_managers[km].send_request()
-
-    tl.show_progress = False
-    tl.run()
-
     # Generate routing tables
     topo_manager = NewQKDTopo(sim_nodes)
+    print(sim_nodes["node9"].routing_table)
 
-    print("ROUTING BEFORE DELETE")
-    if print_routing:
-        for n in sim_nodes:
-            print(Fore.LIGHTMAGENTA_EX, "\nROUTING TABLE ", n, Fore.RESET)
-            for i, k in sim_nodes[n].routing_table.items():
-                print("TO ", Fore.LIGHTBLUE_EX, i, Fore.RESET,
-                      "Path: ", Fore.LIGHTCYAN_EX, k, Fore.RESET)
+    plaintext = keysize * '1'
+    message_tick = time.time()
+    message = {"dest": 'node7', "payload": plaintext}
+    message = json.dumps(message)
 
-    # manually delete all a link
-    for n in sim_nodes['node3'].srqkdnodes:
-        if n.sender.name == "node3 to node0.sender":
-            n.senderkm.keys = []
+    # Decide when to send a message
+    tl.show_progress = False
+    
+    # Send QKD requests
+    senders = list(filter(lambda KM: KM.endswith('.sender'), key_managers))
+    print(senders)
+    qkd_tick = time.time()
+    print(f"SENDER LENGTH: {len(senders)}")
+
+    msg_to_send = 1
+
+    while msg_to_send > 0:
+        for km in senders:
+            if len(key_managers[km].keys) == 0 :
+                key_managers[km].send_request()
+            try:
+                sim_nodes['node9'].sendMessage(tl, 'node7', message)
+                msg_to_send -= 1
+            except NoMoreKeysException:
+                topo_manager.gen_forward_tables()
+
+    tl.run()
 
     # This is to avoid clashes on classical channels when
     # multiple messages are sent
     print(f"SCHEDULED EVENT {tl.schedule_counter}")
 
-    # while tl.schedule_counter > tl.run_counter:
-    #     continue
-
     print(
         f"{Fore.YELLOW}[QKD Time]{Fore.RESET}{(time.time() - qkd_tick):0.4f} s")
 
-    tl.init()
     # Send messages encrypted with QKD keys on classical channels
-    plaintext = keysize * '1'
+    #plaintext = keysize * '1'
 
     print(Fore.LIGHTMAGENTA_EX, "-----------------", Fore.RESET)
     print(Fore.LIGHTMAGENTA_EX, "| SENT MESSAGES |", Fore.RESET)
@@ -244,31 +247,6 @@ def runSim(tl, network, sim_nodes, keysize):
     # message = {"dest": random_receiver_node, "payload": plaintext}
     # message = json.dumps(message)
     
-    message_tick = time.time()
-
-    # manually pick nodes to send messages
-    message = {"dest": 'node7', "payload": plaintext}
-    message = json.dumps(message)
-    
-    try:
-        sim_nodes['node9'].sendMessage(tl, 'node7', message)
-        tl.run()
-    except NoMoreKeysException:
-        print(f"TABLE REGEN")
-        topo_manager.gen_forward_tables()
-        sim_nodes['node9'].sendMessage(tl, 'node7', message)
-
-    tl.init()
-
-    if print_routing:
-        for n in sim_nodes:
-            print(Fore.LIGHTMAGENTA_EX, "\nROUTING TABLE ", n, Fore.RESET)
-            for i, k in sim_nodes[n].routing_table.items():
-                print("TO ", Fore.LIGHTBLUE_EX, i, Fore.RESET,
-                      "Path: ", Fore.LIGHTCYAN_EX, k, Fore.RESET)
-
-    tl.run()
-
     print(
         f"{Fore.YELLOW}[Message Time]{Fore.RESET}{(time.time() - message_tick):0.4f} s")
     print(
@@ -292,8 +270,9 @@ def runSim(tl, network, sim_nodes, keysize):
             for i, key in enumerate(key_managers[s].keys):
                 print(key_format.format(key))
 
-    sim_nodes['node9'].srqkdnodes[0].senderMetrics()
-    sim_nodes['node9'].srqkdnodes[0].receiverMetrics()
+    for super_node in sim_nodes.values():
+        for sr_node in super_node.srqkdnodes:
+            sr_node.senderMetrics()
 
 
 def main(argv):

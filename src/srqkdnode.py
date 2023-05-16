@@ -31,7 +31,7 @@ class SRQKDNode:
         print(Fore.RED, "[No More Keys To Use]", Fore.RESET)
         raise NoMoreKeysException
 
-    def printMetrics(self, node):
+    def _printMetrics(self, node):
         name = node.name
         bb84 = node.protocol_stack[0]
         cascade = node.protocol_stack[1]
@@ -39,19 +39,19 @@ class SRQKDNode:
         print(
             f"{Fore.LIGHTMAGENTA_EX}[Performance Metrics - {name}]{Fore.RESET}"
             f"\n{Fore.LIGHTCYAN_EX}Cascade Protocol{Fore.RESET}"
-            f"\n\tThroughput: {cascade.throughput}"
+            f"\n\tThroughput: {cascade.throughput}bits/sec"
             f"\n\tError Bit Rate: {cascade.error_bit_rate}"
             f"\n\tLatency: {cascade.latency}"
             f"\n\tSetup Time: {cascade.setup_time}"
             f"\n\tStart Time: {cascade.start_time}"
             f"\n{Fore.LIGHTCYAN_EX}BB84 Protocol{Fore.RESET}"
-            f"\n\tThroughput: {bb84.throughputs}"
-            f"\n\tError Bit Rate: {bb84.error_rates}"
-            f"\n\tLatency: {bb84.latency}"
+            f"\n\tThroughput: {bb84.throughputs}bits/sec"
+            f"\n\tError Rates: {bb84.error_rates}"
+            f"\n\tLatency: {bb84.latency}s"
         )
 
     def senderMetrics(self):
-        self.printMetrics(self.sender)
+        self._printMetrics(self.sender)
 
     def receiverMetrics(self):
-        self.printMetrics(self.receiver)
+        self._printMetrics(self.receiver)
