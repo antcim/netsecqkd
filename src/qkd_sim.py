@@ -190,8 +190,7 @@ def runSim(tl, network, sim_nodes, keysize):
 
     plaintext = keysize * '1'
     message_tick = time.time()
-    message = {"dest": 'node7', "payload": plaintext}
-    message = json.dumps(message)
+    
 
     # Decide when to send a message
     tl.show_progress = False
@@ -200,12 +199,31 @@ def runSim(tl, network, sim_nodes, keysize):
     senders = list(filter(lambda KM: KM.endswith('.sender'), key_managers))
     qkd_tick = time.time()
 
-    msg_to_send = 3
+    msg_to_send = 2
+
+    #Selecting a random sender and receiver node
+    random_sender_node_num = random.randint(0, len(list(sim_nodes))-1)
+    print(f"RANDOM_SENDER_NODE_NUM {random_sender_node_num}")
+    random_sender_node = list(sim_nodes.keys())[random_sender_node_num]
+
+    random_receiver_node_num = random.randint(0, len(list(sim_nodes))-1)
+    while random_sender_node_num == random_receiver_node_num:
+        random_receiver_node_num = random.randint(0, len(list(sim_nodes))-1)
+    print(F"RANDOM_RECEIVER_NODE_NUM {random_receiver_node_num}")
+    random_receiver_node = list(sim_nodes.keys())[random_receiver_node_num]
+
+    print(Fore.YELLOW, "[Message from ", random_sender_node, " to ",
+          random_receiver_node, "]", Fore.RESET)
+    
+    # Generate the message with the destination
+    message = {"dest": random_receiver_node, "payload": plaintext}
+    message = json.dumps(message)
 
     while msg_to_send > 0:
         try:
             tl.init()
-            sim_nodes['node9'].sendMessage(tl, 'node7', message)
+            sim_nodes[random_sender_node].sendMessage(
+                tl, random_receiver_node, message)
             tl.run()
         except NoMoreKeysException:
             for km in senders:
@@ -224,9 +242,6 @@ def runSim(tl, network, sim_nodes, keysize):
 
     print(
         f"{Fore.YELLOW}[QKD Time]{Fore.RESET}{(time.time() - qkd_tick):0.4f} s")
-
-    # Send messages encrypted with QKD keys on classical channels
-    #plaintext = keysize * '1'
 
     # random_sender_node_num = random.randint(0, len(list(sim_nodes))-1)
     # random_sender_node = list(sim_nodes.keys())[random_sender_node_num]
