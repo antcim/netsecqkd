@@ -292,6 +292,9 @@ def runSim(tl, network, sim_nodes, keysize):
             for i, key in enumerate(key_managers[s].keys):
                 print(key_format.format(key))
 
+    sim_nodes['node9'].srqkdnodes[0].senderMetrics()
+    sim_nodes['node9'].srqkdnodes[0].receiverMetrics()
+
 
 def main(argv):
 
@@ -308,7 +311,7 @@ def main(argv):
     global print_routing
     global nodes_number
 
-    opts, args = getopt.getopt(argv, "f:n:s:ekvq:rd:")
+    opts, _ = getopt.getopt(argv, "f:n:s:ekvq:rd:")
     for opt, arg in opts:
         if opt == '-f':
             do_gen = False
