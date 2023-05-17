@@ -28,7 +28,7 @@ class SRQKDNode:
             event = Event(tl.now(), process)
             tl.schedule(event)
             return
-        print(Fore.RED, "[No More Keys To Use]", Fore.RESET)
+        print(Fore.RED, "[No Keys Available To Use]", Fore.RESET)
         raise NoMoreKeysException
 
     def _printMetrics(self, node):

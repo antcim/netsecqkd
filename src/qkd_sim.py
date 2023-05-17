@@ -190,18 +190,17 @@ def runSim(tl, network, sim_nodes, keysize):
 
     plaintext = keysize * '1'
     message_tick = time.time()
-    
 
     # Decide when to send a message
     tl.show_progress = False
-    
+
     # Send QKD requests
     senders = list(filter(lambda KM: KM.endswith('.sender'), key_managers))
     qkd_tick = time.time()
 
     msg_to_send = 2
 
-    #Selecting a random sender and receiver node
+    # Selecting a random sender and receiver node
     random_sender_node_num = random.randint(0, len(list(sim_nodes))-1)
     print(f"RANDOM_SENDER_NODE_NUM {random_sender_node_num}")
     random_sender_node = list(sim_nodes.keys())[random_sender_node_num]
@@ -214,11 +213,12 @@ def runSim(tl, network, sim_nodes, keysize):
 
     print(Fore.YELLOW, "[Message from ", random_sender_node, " to ",
           random_receiver_node, "]", Fore.RESET)
-    
+
     # Generate the message with the destination
     message = {"dest": random_receiver_node, "payload": plaintext}
     message = json.dumps(message)
 
+    i = 0
     while msg_to_send > 0:
         try:
             tl.init()
@@ -226,15 +226,20 @@ def runSim(tl, network, sim_nodes, keysize):
                 tl, random_receiver_node, message)
             tl.run()
         except NoMoreKeysException:
-            for km in senders:
+            while i < len(senders):
+                km = senders[i]
+                print(f"Sender in for: {km}")
                 if len(key_managers[km].keys) == 0:
                     tl.init()
                     key_managers[km].send_request()
                     senders.remove(km)
                     tl.run()
+                    i -= 1
+                i += 1
             topo_manager.gen_forward_tables()
         else:
             msg_to_send -= 1
+
 
     # This is to avoid clashes on classical channels when
     # multiple messages are sent
@@ -243,26 +248,10 @@ def runSim(tl, network, sim_nodes, keysize):
     print(
         f"{Fore.YELLOW}[QKD Time]{Fore.RESET}{(time.time() - qkd_tick):0.4f} s")
 
-    # random_sender_node_num = random.randint(0, len(list(sim_nodes))-1)
-    # random_sender_node = list(sim_nodes.keys())[random_sender_node_num]
-
-    # random_receiver_node_num = random.randint(0, len(list(sim_nodes))-1)
-    # while random_sender_node_num == random_receiver_node_num:
-    #     random_receiver_node_num = random.randint(0, len(list(sim_nodes))-1)
-    # random_receiver_node = list(sim_nodes.keys())[random_receiver_node_num]
-
-    # print(Fore.YELLOW, "[Message from ", random_sender_node, " to ",
-    #       random_receiver_node, "]", Fore.RESET)
-
-    # message = {"dest": random_receiver_node, "payload": plaintext}
-    # message = json.dumps(message)
-    
     print(
         f"{Fore.YELLOW}[Message Time]{Fore.RESET}{(time.time() - message_tick):0.4f} s")
     print(
         f"{Fore.YELLOW}[Execution Time]{Fore.RESET}{(time.time() - tick):0.4f} s")
-
-
     # Print error rate for each sender
     if print_error:
         for sn in sim_nodes.values():
@@ -281,9 +270,8 @@ def runSim(tl, network, sim_nodes, keysize):
                 print(key_format.format(key))
 
     for super_node in sim_nodes.values():
-        for sr_node in super_node.srqkdnodes:
-            sr_node.senderMetrics()
-
+                for sr_node in super_node.srqkdnodes:
+                    sr_node.senderMetrics()
 
 def main(argv):
 
