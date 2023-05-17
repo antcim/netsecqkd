@@ -168,6 +168,7 @@ def runSim(tl, network, sim_nodes, num_keys, key_size, msg_to_send):
 
     # simulation scheduling
     while msg_to_send > 0:
+        print(f"msg_to_send = {msg_to_send}")
         tl.init()
         try:
             sim_nodes[random_sender_node].sendMessage(tl, random_receiver_node, message)
@@ -175,12 +176,21 @@ def runSim(tl, network, sim_nodes, num_keys, key_size, msg_to_send):
             for super_node in sim_nodes.values():
                 for sr_node in super_node.srqkdnodes.values():
                     if len(sr_node.senderkm.keys) == 0:
+                        send_node = re.search('(.+?) to (.+?).sender', sr_node.sender.name).group(1)
+                        rec_node = re.search('(.+?) to (.+?).sender', sr_node.sender.name).group(2)
+                        sim_nodes[rec_node].srqkdnodes[send_node].receiver.protocol_stack[1].frame_num = num_keys
+                        
+                        # for new_sr in sim_nodes[recv_node].srqkdnodes:
+                        #         if new_sr.receiver.name == recv_node + " to " + send_node + ".receiver":
+                        #             new_sr.receiver.protocol_stack[1].frame_num = new_sr.receiverkm.num_keys
+                        #             break
+
+                        sr_node.sender.protocol_stack[1].frame_num = num_keys
                         sr_node.senderkm.send_request()
+
             topo_manager.gen_forward_tables()
         else:
             msg_to_send -= 1
-            print(f"msg_to_send = {msg_to_send}")
-            topo_manager.gen_forward_tables()
         tl.run()
     
     print(
