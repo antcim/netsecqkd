@@ -97,8 +97,7 @@ def genTopology(network, tl, fidelity):
             receiverp = MessagingProtocol(
                 receiver, "msgp", "msgp", dest_sender, sim_nodes[node.name])
 
-            sim_nodes[node.name].addSRQKDNode(
-                SRQKDNode(sender, receiver, senderp, receiverp))
+            sim_nodes[node.name].srqkdnodes[dest] = SRQKDNode(sender, receiver, senderp, receiverp)
 
     return sim_nodes
 
@@ -110,24 +109,11 @@ def runSim(tl, network, sim_nodes, num_keys, key_size, msg_to_send):
 
     tick = time.time()
 
-    for i, node in enumerate(network.get_nodes_by_type(QKDTopo.QKD_NODE)):
+    for node in network.get_nodes_by_type(QKDTopo.QKD_NODE):
         neighbors = node.qchannels.keys()
         for k in neighbors:
-            s_name = node.name + " to " + k + ".sender"
-            d_name = k + " to " + node.name + ".receiver"
-
-            A = None
-            B = None
-
-            # Find right sender in node
-            for n in sim_nodes[node.name].srqkdnodes:
-                if n.sender.name == s_name:
-                    A = n.sender
-
-            # Find right receiver in neighbor
-            for n in sim_nodes[k].srqkdnodes:
-                if n.receiver.name == d_name:
-                    B = n.receiver
+            A = sim_nodes[node.name].srqkdnodes[k].sender
+            B = sim_nodes[k].srqkdnodes[node.name].receiver
 
             A.set_seed(0)
             B.set_seed(1)
@@ -142,8 +128,8 @@ def runSim(tl, network, sim_nodes, num_keys, key_size, msg_to_send):
     key_managers = {}
 
     # this might be unnecessary with the cascade protocol
-    for n in sim_nodes.values():
-        for srnode in n.srqkdnodes:
+    for super_node in sim_nodes.values():
+        for srnode in super_node.srqkdnodes.values():
             km1 = KeyManager(tl, key_size, num_keys)
             km1.lower_protocols.append(srnode.sender.protocol_stack[1])
             srnode.sender.protocol_stack[1].upper_protocols.append(km1)
@@ -163,7 +149,7 @@ def runSim(tl, network, sim_nodes, num_keys, key_size, msg_to_send):
 
     plaintext = key_size * '1'
 
-    senders = list(filter(lambda KM: KM.endswith('.sender'), key_managers))
+    senders_km = list(filter(lambda KM: KM.endswith('.sender'), key_managers))
 
     # Selecting a random sender and receiver node
     random_sender_node_num = random.randint(0, len(list(sim_nodes))-1)
@@ -182,47 +168,26 @@ def runSim(tl, network, sim_nodes, num_keys, key_size, msg_to_send):
 
     # simulation scheduling
     while msg_to_send > 0:
+        tl.init()
         try:
-            tl.init()
-            print(f"sim_nodes[{random_sender_node}] = {sim_nodes[random_sender_node].routing_table}")
-            sim_nodes[random_sender_node].sendMessage(
-                tl, random_receiver_node, message)
-            tl.run()
+            sim_nodes[random_sender_node].sendMessage(tl, random_receiver_node, message)
         except NoMoreKeysException:
-            if len(senders) == 0:
-                senders = list(filter(lambda KM: KM.endswith('.sender'), key_managers))
-            i = 0
-            print(f"len(senders) = {len(senders)}")
-
-            while i < len(senders) and i >= 0:
-                km = senders[i]
-                send_node = re.search('(.+?) to (.+?).sender', km).group(1)
-
-                keys_len = 0
-                for sr in sim_nodes[send_node].srqkdnodes:
-                    if sr.sender.name == km:
-                        keys_len = len(sr.senderkm.keys)
-                        if keys_len == 0:
-                            print(f"{Fore.LIGHTMAGENTA_EX}[QKD Request]:{Fore.RESET} {km}")
-                            tl.init()
-                            sr.senderkm.send_request()
-                            senders.remove(km)
-                            tl.run()
-                            i -= 1
-                        break
-                i += 1
-            print("ESCO DAL WHILE INNER")
+            for super_node in sim_nodes.values():
+                for sr_node in super_node.srqkdnodes.values():
+                    if len(sr_node.senderkm.keys) == 0:
+                        sr_node.senderkm.send_request()
             topo_manager.gen_forward_tables()
         else:
             msg_to_send -= 1
             print(f"msg_to_send = {msg_to_send}")
             topo_manager.gen_forward_tables()
+        tl.run()
     
     print(
         f"{Fore.YELLOW}[Message Time (Simulation)]{Fore.RESET}{tl.now()} ps")
 
     for super_node in sim_nodes.values():
-        for sr_node in super_node.srqkdnodes:
+        for sr_node in super_node.srqkdnodes.values():
             sr_node.senderMetrics()
 
     print(

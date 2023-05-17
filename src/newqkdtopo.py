@@ -19,7 +19,7 @@ class NewQKDTopo():
         edges = []
         
         for n in graph.nodes:
-            for srqkdnode in self.sim_nodes[n].srqkdnodes:
+            for srqkdnode in self.sim_nodes[n].srqkdnodes.values():
                 dst = re.search('to (.+?).sender', srqkdnode.sender.name).group(1)
                 cc = srqkdnode.sender.cchannels[dst + " to " + n + ".receiver"]
                 
