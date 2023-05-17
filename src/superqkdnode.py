@@ -13,7 +13,7 @@ class SuperQKDNode:
 
     def sendMessage(self, tl, dest_node, plaintext_msg):
         if dest_node not in self.routing_table.keys():
-            print(Fore.RED, "[No Path towards Destination]", Fore.RESET)
+            print(f"{Fore.RED}[No Path towards Destination]{Fore.RESET}")
             raise NoMoreKeysException
         else:
             next_hop_name = self.routing_table[dest_node][1]

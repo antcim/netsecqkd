@@ -28,6 +28,7 @@ class SRQKDNode:
             event = Event(tl.now(), process)
             tl.schedule(event)
             return
+        print(f"{Fore.RED} sender.name = {self.sender.name}{Fore.RESET}")
         print(Fore.RED, "[No Keys Available To Use]", Fore.RESET)
         raise NoMoreKeysException
 
