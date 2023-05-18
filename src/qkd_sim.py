@@ -215,8 +215,9 @@ def main(argv):
     fidelity = 0.97
     nodes_number = 10
     msg_to_send = 3
+    output_html = False
 
-    opts, _ = getopt.getopt(argv, "f:n:s:ekvq:rd:m:")
+    opts, _ = getopt.getopt(argv, "f:n:s:ekvq:rd:m:h")
     for opt, arg in opts:
         # network graph filepath
         if opt in ['-f']:
@@ -240,6 +241,9 @@ def main(argv):
         # number of messages to send
         elif opt in ['-m']:
             msg_to_send = int(arg)
+        # number of messages to send
+        elif opt in ['-h']:
+            output_html = True
 
     os.makedirs(os.path.dirname(current_sim), exist_ok=True)
     sys.stdout = Logger(current_sim + "sim_output.txt")
@@ -267,7 +271,8 @@ def main(argv):
     runSim(tl, network, sim_nodes, num_keys, key_size, msg_to_send, print_routing)
 
     sys.stdout.flush()
-    os.system("cat " + current_sim + "sim_output.txt"
+    if output_html:
+        os.system("cat " + current_sim + "sim_output.txt"
               + " | aha --black > " + current_sim + "sim_output.html")
 
 
