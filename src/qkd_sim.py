@@ -147,6 +147,9 @@ def runSim(tl, network, sim_nodes, num_keys, key_size, msg_to_send, print_routin
     while random_sender_node_num == random_receiver_node_num:
         random_receiver_node_num = random.randint(0, len(list(sim_nodes))-1)
     random_receiver_node = list(sim_nodes.keys())[random_receiver_node_num]
+    
+    random_sender_node = 'node7'
+    random_receiver_node = 'node9'
 
     print(f"{Fore.YELLOW}[Send Message]:{Fore.RESET} {random_sender_node} to {random_receiver_node}")
 
@@ -156,14 +159,15 @@ def runSim(tl, network, sim_nodes, num_keys, key_size, msg_to_send, print_routin
     message = json.dumps(message)
 
     # simulation scheduling
-    tl.init()
     first_qkd = True
 
     while msg_to_send > 0:
         
         print(f"{Fore.LIGHTCYAN_EX}[Messages To Send]:{Fore.RESET} {msg_to_send}")
         try:
+            tl.init()
             sim_nodes[random_sender_node].sendMessage(tl, random_receiver_node, message)
+            tl.run()
         except NoMoreKeysException:
             # schedule QKD requests
             for super_node in sim_nodes.values():
@@ -179,8 +183,10 @@ def runSim(tl, network, sim_nodes, num_keys, key_size, msg_to_send, print_routin
                             first_qkd = False
                             num_keys = 1
 
-                        print(f"{Fore.LIGHTCYAN_EX}[SEND QKD REQUEST]{Fore.RESET}")
+                        print(f"{Fore.LIGHTCYAN_EX}[SEND QKD REQUEST]{Fore.RESET} {sr_node.sender.name}")
+                        tl.init()
                         sr_node.senderkm.send_request()
+                        tl.run()
 
             if print_routing:
                 topo_manager.print_tables()
@@ -188,7 +194,6 @@ def runSim(tl, network, sim_nodes, num_keys, key_size, msg_to_send, print_routin
             msg_to_send -= 1
         
         topo_manager.gen_forward_tables()
-        tl.run()
 
     
     print(
