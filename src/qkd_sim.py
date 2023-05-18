@@ -182,11 +182,12 @@ def runSim(tl, network, sim_nodes, num_keys, key_size, msg_to_send, print_routin
                         print(f"{Fore.LIGHTCYAN_EX}[SEND QKD REQUEST]{Fore.RESET}")
                         sr_node.senderkm.send_request()
 
-            topo_manager.gen_forward_tables()
             if print_routing:
                 topo_manager.print_tables()
         else:
             msg_to_send -= 1
+        
+        topo_manager.gen_forward_tables()
         tl.run()
 
     
