@@ -103,12 +103,10 @@ def genTopology(network, tl, fidelity):
 
 
 def runSim(tl, network, sim_nodes, num_keys, key_size, msg_to_send):
-    print(Fore.LIGHTMAGENTA_EX, "-----------------", Fore.RESET)
-    print(Fore.LIGHTMAGENTA_EX, "| PAIRING NODES |", Fore.RESET)
-    print(Fore.LIGHTMAGENTA_EX, "-----------------", Fore.RESET)
 
     tick = time.time()
-
+    print(f"{Fore.LIGHTMAGENTA_EX}[PAIRED NODES]{Fore.RESET}")
+    
     for node in network.get_nodes_by_type(QKDTopo.QKD_NODE):
         neighbors = node.qchannels.keys()
         for k in neighbors:
@@ -121,11 +119,9 @@ def runSim(tl, network, sim_nodes, num_keys, key_size, msg_to_send):
             pair_bb84_protocols(A.protocol_stack[0], B.protocol_stack[0])
             pair_cascade_protocols(A.protocol_stack[1], B.protocol_stack[1])
             print(
-                f"{Fore.GREEN}[PAIR]{Fore.RESET}"
+                f"{Fore.GREEN}[PAIR]: {Fore.RESET}"
                 f"{Fore.LIGHTCYAN_EX}[{A.name}]{Fore.RESET}"
-                f"{Fore.LIGHTBLUE_EX}[{B.name}]{Fore.RESET}")
-
-    key_managers = {}
+                f" - {Fore.LIGHTBLUE_EX}[{B.name}]{Fore.RESET}")
 
     # this might be unnecessary with the cascade protocol
     for super_node in sim_nodes.values():
@@ -138,23 +134,15 @@ def runSim(tl, network, sim_nodes, num_keys, key_size, msg_to_send):
             km2.lower_protocols.append(srnode.receiver.protocol_stack[1])
             srnode.receiver.protocol_stack[1].upper_protocols.append(km2)
 
-            key_managers[srnode.sender.name] = km1
-            key_managers[srnode.receiver.name] = km2
-
             srnode.addKeyManagers(km1, km2)
 
     # Start simulation and record timing
     # Generate routing tables
     topo_manager = NewQKDTopo(sim_nodes)
 
-    plaintext = key_size * '1'
-
-    senders_km = list(filter(lambda KM: KM.endswith('.sender'), key_managers))
-
     # Selecting a random sender and receiver node
     random_sender_node_num = random.randint(0, len(list(sim_nodes))-1)
     random_sender_node = list(sim_nodes.keys())[random_sender_node_num]
-
     random_receiver_node_num = random.randint(0, len(list(sim_nodes))-1)
     while random_sender_node_num == random_receiver_node_num:
         random_receiver_node_num = random.randint(0, len(list(sim_nodes))-1)
@@ -163,12 +151,13 @@ def runSim(tl, network, sim_nodes, num_keys, key_size, msg_to_send):
     print(f"{Fore.YELLOW}[Send Message]:{Fore.RESET} {random_sender_node} to {random_receiver_node}")
 
     # Generate the message with the destination
+    plaintext = key_size * '1'
     message = {"dest": random_receiver_node, "payload": plaintext}
     message = json.dumps(message)
 
     # simulation scheduling
     while msg_to_send > 0:
-        print(f"msg_to_send = {msg_to_send}")
+        print(f"{Fore.LIGHTCYAN_EX}[Messages To Send]:{Fore.RESET} {msg_to_send}")
         tl.init()
         try:
             sim_nodes[random_sender_node].sendMessage(tl, random_receiver_node, message)
@@ -179,11 +168,6 @@ def runSim(tl, network, sim_nodes, num_keys, key_size, msg_to_send):
                         send_node = re.search('(.+?) to (.+?).sender', sr_node.sender.name).group(1)
                         rec_node = re.search('(.+?) to (.+?).sender', sr_node.sender.name).group(2)
                         sim_nodes[rec_node].srqkdnodes[send_node].receiver.protocol_stack[1].frame_num = num_keys
-                        
-                        # for new_sr in sim_nodes[recv_node].srqkdnodes:
-                        #         if new_sr.receiver.name == recv_node + " to " + send_node + ".receiver":
-                        #             new_sr.receiver.protocol_stack[1].frame_num = new_sr.receiverkm.num_keys
-                        #             break
 
                         sr_node.sender.protocol_stack[1].frame_num = num_keys
                         sr_node.senderkm.send_request()
