@@ -102,7 +102,7 @@ def genTopology(network, tl, fidelity):
     return sim_nodes
 
 
-def runSim(tl, network, sim_nodes, num_keys, key_size, msg_to_send):
+def runSim(tl, network, sim_nodes, num_keys, key_size, msg_to_send, print_routing):
 
     tick = time.time()
     print(f"{Fore.LIGHTMAGENTA_EX}[PAIRED NODES]{Fore.RESET}")
@@ -157,8 +157,10 @@ def runSim(tl, network, sim_nodes, num_keys, key_size, msg_to_send):
 
     # simulation scheduling
     tl.init()
+    first_qkd = True
 
     while msg_to_send > 0:
+        
         print(f"{Fore.LIGHTCYAN_EX}[Messages To Send]:{Fore.RESET} {msg_to_send}")
         try:
             sim_nodes[random_sender_node].sendMessage(tl, random_receiver_node, message)
@@ -169,13 +171,20 @@ def runSim(tl, network, sim_nodes, num_keys, key_size, msg_to_send):
                     if len(sr_node.senderkm.keys) == 0:
                         send_node = re.search('(.+?) to (.+?).sender', sr_node.sender.name).group(1)
                         rec_node = re.search('(.+?) to (.+?).sender', sr_node.sender.name).group(2)
-
+                        
                         sim_nodes[rec_node].srqkdnodes[send_node].receiver.protocol_stack[1].frame_num = num_keys
                         sr_node.sender.protocol_stack[1].frame_num = num_keys
-                        
+
+                        if first_qkd:
+                            first_qkd = False
+                            num_keys = 1
+
+                        print(f"{Fore.LIGHTCYAN_EX}[SEND QKD REQUEST]{Fore.RESET}")
                         sr_node.senderkm.send_request()
 
             topo_manager.gen_forward_tables()
+            if print_routing:
+                topo_manager.print_tables()
         else:
             msg_to_send -= 1
         tl.run()
@@ -192,6 +201,8 @@ def runSim(tl, network, sim_nodes, num_keys, key_size, msg_to_send):
         f"{Fore.YELLOW}[Execution Time]{Fore.RESET}{(time.time() - tick):0.4f} s")
 
 def main(argv):
+
+    print(f"{Fore.YELLOW}[Simulation Command]:{Fore.RESET} python3 {' '.join(sys.argv[0:])}")
 
     current_sim = "simulations/sim_" + \
         str(datetime.now().strftime("%Y-%m-%d_%H:%M:%S")) + "/"
@@ -253,7 +264,7 @@ def main(argv):
 
     tl = Timeline()
     sim_nodes = genTopology(network, tl, fidelity)
-    runSim(tl, network, sim_nodes, num_keys, key_size, msg_to_send)
+    runSim(tl, network, sim_nodes, num_keys, key_size, msg_to_send, print_routing)
 
     sys.stdout.flush()
     os.system("cat " + current_sim + "sim_output.txt"

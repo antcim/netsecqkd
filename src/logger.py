@@ -11,4 +11,5 @@ class Logger(object):
         self.log.write(msg)
 
     def flush(self):
-        pass
+        self.terminal.flush()
+        self.log.flush()
