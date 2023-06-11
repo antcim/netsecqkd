@@ -48,7 +48,7 @@ class MessagingProtocol(Protocol):
             print(f"{Fore.LIGHTMAGENTA_EX}[{self.own.name}]{Fore.RESET}")
             print(f"Received: {Fore.LIGHTGREEN_EX}TEXT Message{Fore.RESET}")
             print(
-                f"At Simulation Time: {Fore.LIGHTCYAN_EX}{self.own.timeline.now()} ps{Fore.RESET}")
+                f"At Simulation Time: {Fore.LIGHTCYAN_EX}{self.own.timeline.now() * (10 ** -12)} s{Fore.RESET}")
             print(
                 f"Encrypted Message: {Fore.LIGHTYELLOW_EX}{packet['payload']}{Fore.RESET}")
             print(
@@ -60,10 +60,10 @@ class MessagingProtocol(Protocol):
             print(f"{Fore.LIGHTMAGENTA_EX}[{self.own.name}]{Fore.RESET}")
             print(f"Received: {Fore.LIGHTGREEN_EX}TEXT Message{Fore.RESET}")
             print(
-                f"At Simulation Time: {Fore.LIGHTCYAN_EX}{self.own.timeline.now()} ps{Fore.RESET}")
+                f"At Simulation Time: {Fore.LIGHTCYAN_EX}{self.own.timeline.now() * (10 ** -12)} s{Fore.RESET}")
             print(f"{Fore.LIGHTBLUE_EX}[Forwarding...]{Fore.RESET}\n")
             self.super_qkd.sendMessage(self.own.timeline, packet["dest"],
-                                            json.dumps(packet))
+                                            json.dumps(packet), 0)
             
                 
                 

@@ -21,11 +21,11 @@ class SRQKDNode:
         self.senderp.addkm(senderkm)
         self.receiverp.addkm(receiverkm)
 
-    def sendMessage(self, tl, plaintext):
+    def sendMessage(self, tl, plaintext, delta):
         if len(self.senderkm.keys) > 0:
             key = self.senderkm.consume()
             process = Process(self.senderp, "start", [plaintext, key])
-            event = Event(tl.now(), process)
+            event = Event(tl.now() + delta, process)
             tl.schedule(event)
             return
         print(f"{Fore.RED} sender.name = {self.sender.name}{Fore.RESET}")
