@@ -141,16 +141,15 @@ def runSim(tl, network, sim_nodes, num_keys, key_size, msg_to_send, print_routin
     topo_manager = NewQKDTopo(sim_nodes)
 
     # pick a destination node for each node in the network
-    sender_receiver = {}
-
-    for i in range(0, msg_to_send + 1):
-        sender_node = random.randint(0, len(list(sim_nodes))-1)
+    sender_receiver = []
+    for sender in sim_nodes:
+        sender_node = int(sender[4:])
         receiver_node = random.randint(0, len(list(sim_nodes))-1)
 
         while sender_node == receiver_node:
             receiver_node = random.randint(0, len(list(sim_nodes))-1)
 
-        sender_receiver[f"node{sender_node}"] = f"node{receiver_node}"
+        sender_receiver.append({sender: f"node{receiver_node}"})
 
     print(f"{Fore.YELLOW}[Messages to Send]:{Fore.RESET} {json.dumps(sender_receiver, indent=4)}")
 
@@ -172,11 +171,31 @@ def runSim(tl, network, sim_nodes, num_keys, key_size, msg_to_send, print_routin
     topo_manager.gen_forward_tables()
 
     # schedule messages
-    for sender, receiver in sender_receiver.items():
+    for i in range(0,msg_to_send):
+        
+        for key, value in sender_receiver[i % len(sim_nodes)].items():
+            sender = key
+            receiver = value
+
         try:
             message = {"dest": receiver, "payload": plaintext}
             message = json.dumps(message)
             tl.init()
+            qkd_num = random.randint(0, len(list(sim_nodes))-1)
+            
+            #randomly executee qkd
+            for i in range(0, qkd_num):
+                node1 = random.randint(0, len(list(sim_nodes))-1)
+                node_index = random.randint(0, len(sim_nodes[f"node{node1}"].srqkdnodes.keys())-1)
+                node2 = list(sim_nodes[f"node{node1}"].srqkdnodes.keys())[node_index]
+                print(f"{Fore.LIGHTCYAN_EX}[SEND QKD REQUEST]:{Fore.RESET} {sim_nodes[f'node{node1}'].srqkdnodes[node2].sender.name}")
+                
+                # rest num keys internal to the stack protocol
+                sim_nodes[f"node{node1}"].srqkdnodes[node2].sender.protocol_stack[1].frame_num = num_keys 
+                sim_nodes[node2].srqkdnodes[f"node{node1}"].receiver.protocol_stack[1].frame_num = num_keys
+
+                sim_nodes[f"node{node1}"].srqkdnodes[node2].senderkm.send_request()      
+
             print(f"{Fore.LIGHTCYAN_EX}[Message]:{Fore.RESET} {sender} to {receiver}")
             sim_nodes[sender].sendMessage(tl, receiver, message, delta)
             tl.run()
@@ -184,7 +203,7 @@ def runSim(tl, network, sim_nodes, num_keys, key_size, msg_to_send, print_routin
             losses += 1
         else:
             successes +=1
-
+        
     print(
         f"{Fore.YELLOW}[Successful Messages]:{Fore.RESET} {successes}")
     print(
