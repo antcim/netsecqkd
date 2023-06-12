@@ -105,7 +105,7 @@ def genTopology(network, tl, fidelity):
 def runSim(tl, network, sim_nodes, num_keys, key_size, msg_to_send, print_routing, delta):
 
     tick = time.time()
-    print(f"{Fore.LIGHTMAGENTA_EX}[PAIRED NODES]{Fore.RESET}")
+    print(f"{Fore.LIGHTMAGENTA_EX}[NODES PAIRED FOR QKD]{Fore.RESET}")
     
     for node in network.get_nodes_by_type(QKDTopo.QKD_NODE):
         neighbors = node.qchannels.keys()
@@ -152,7 +152,7 @@ def runSim(tl, network, sim_nodes, num_keys, key_size, msg_to_send, print_routin
 
         sender_receiver[f"node{sender_node}"] = f"node{receiver_node}"
 
-    print(f"{Fore.YELLOW}[sender_receiver]:{Fore.RESET} {sender_receiver}")
+    print(f"{Fore.YELLOW}[Messages to Send]:{Fore.RESET} {json.dumps(sender_receiver, indent=4)}")
 
     # Generate the message with the destination
     plaintext = key_size * '1'
@@ -164,7 +164,7 @@ def runSim(tl, network, sim_nodes, num_keys, key_size, msg_to_send, print_routin
     tl.init()
     for super_node in sim_nodes.values():
         for sr_node in super_node.srqkdnodes.values():
-            print(f"{Fore.LIGHTCYAN_EX}[SEND QKD REQUEST]{Fore.RESET} {sr_node.sender.name}")
+            print(f"{Fore.LIGHTCYAN_EX}[SEND QKD REQUEST]:{Fore.RESET} {sr_node.sender.name}")
             sr_node.senderkm.send_request()
     tl.run()        
 
@@ -186,9 +186,9 @@ def runSim(tl, network, sim_nodes, num_keys, key_size, msg_to_send, print_routin
             successes +=1
 
     print(
-        f"{Fore.YELLOW}[Successful Messages]{Fore.RESET}{successes}")
+        f"{Fore.YELLOW}[Successful Messages]:{Fore.RESET} {successes}")
     print(
-        f"{Fore.YELLOW}[Dropped Messages]{Fore.RESET}{losses}")
+        f"{Fore.YELLOW}[Dropped Messages]:{Fore.RESET} {losses}")
     print(
         f"{Fore.YELLOW}[Message Time (Simulation)]{Fore.RESET}{tl.now()} ps")
 
@@ -254,12 +254,14 @@ def main(argv):
     print(f"{Fore.YELLOW}[Simulation Command]:{Fore.RESET} python3 {' '.join(sys.argv[0:])}")
 
     if do_gen:
+        print(
+            f"{Fore.YELLOW}[Random Network Topology Generated]{Fore.CYAN}")
         graph = genNetwork(current_sim + filename, nodes_number)
         while len(graph.nodes()) < 2:
             graph = genNetwork(current_sim + filename, nodes_number)
     else:
         print(
-            f"{Fore.LIGHTCYAN_EX}[Loaded Network Graph From File: {filename}]{Fore.CYAN}")
+            f"{Fore.YELLOW}[Loaded Network Graph From File]:{Fore.RESET} {filename}")
         with open(filename, 'r') as f:
             js_graph = json.load(f)
         graph = nx.readwrite.json_graph.node_link_graph(js_graph)
