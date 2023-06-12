@@ -172,7 +172,7 @@ def runSim(tl, network, sim_nodes, num_keys, key_size, msg_to_send, print_routin
 
     # schedule messages
     for i in range(0,msg_to_send):
-        
+
         for key, value in sender_receiver[i % len(sim_nodes)].items():
             sender = key
             receiver = value
@@ -203,20 +203,21 @@ def runSim(tl, network, sim_nodes, num_keys, key_size, msg_to_send, print_routin
             losses += 1
         else:
             successes +=1
-        
+
+    print(
+        f"{Fore.YELLOW}[Total Messages]:{Fore.RESET} {msg_to_send}")  
     print(
         f"{Fore.YELLOW}[Successful Messages]:{Fore.RESET} {successes}")
     print(
         f"{Fore.YELLOW}[Dropped Messages]:{Fore.RESET} {losses}")
     print(
-        f"{Fore.YELLOW}[Message Time (Simulation)]{Fore.RESET}{tl.now()} ps")
-
+        f"{Fore.YELLOW}[Simulation Time]:{Fore.RESET} {tl.now() * (10**-12)} s")
+    print(
+        f"{Fore.YELLOW}[Execution Time]: {Fore.RESET} {(time.time() - tick):0.4f} s")
+    
     for super_node in sim_nodes.values():
         for sr_node in super_node.srqkdnodes.values():
             sr_node.senderMetrics()
-
-    print(
-        f"{Fore.YELLOW}[Execution Time]{Fore.RESET}{(time.time() - tick):0.4f} s")
 
 def main(argv):
 
