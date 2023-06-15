@@ -176,6 +176,7 @@ def runSim(tl, network, sim_nodes, num_keys, key_size, delta):
     num_nodes = len(sim_nodes)
     
     while tl.now() + delta < tl.stop_time:
+        curr_sim_time = tl.now()
         for key, value in sender_receiver[i % num_nodes].items():
             sender = key
             receiver = value
@@ -183,6 +184,19 @@ def runSim(tl, network, sim_nodes, num_keys, key_size, delta):
         try:
             message = {"dest": receiver, "payload": plaintext}
             message = json.dumps(message)
+            tl.init()
+
+            print(f"{Fore.LIGHTCYAN_EX}[Message]:{Fore.RESET} {sender} to {receiver}")
+            sim_nodes[sender].sendMessage(tl, receiver, message)
+            
+            tl.run()
+            
+        except NoMoreKeysException:
+            losses += 1
+        else:
+            successes +=1
+        
+        while tl.now() - curr_sim_time < delta:
             tl.init()
             qkd_num = random.randint(0, len(list(sim_nodes))-1)
             
@@ -198,48 +212,8 @@ def runSim(tl, network, sim_nodes, num_keys, key_size, delta):
                 sim_nodes[node2].srqkdnodes[f"node{node1}"].receiver.protocol_stack[1].frame_num = 1
 
                 sim_nodes[f"node{node1}"].srqkdnodes[node2].senderkm.send_request()      
-
-            print(f"{Fore.LIGHTCYAN_EX}[Message]:{Fore.RESET} {sender} to {receiver}")
-            sim_nodes[sender].sendMessage(tl, receiver, message, delta)
-            tl.run()
-        except NoMoreKeysException:
-            losses += 1
-        else:
-            successes +=1
-
-    # # schedule messages
-    # for i in range(0,msg_to_send):
-
-    #     for key, value in sender_receiver[i % len(sim_nodes)].items():
-    #         sender = key
-    #         receiver = value
-
-    #     try:
-    #         message = {"dest": receiver, "payload": plaintext}
-    #         message = json.dumps(message)
-    #         tl.init()
-    #         qkd_num = random.randint(0, len(list(sim_nodes))-1)
             
-    #         #randomly execute qkd
-    #         for i in range(0, qkd_num):
-    #             node1 = random.randint(0, len(list(sim_nodes))-1)
-    #             node_index = random.randint(0, len(sim_nodes[f"node{node1}"].srqkdnodes.keys())-1)
-    #             node2 = list(sim_nodes[f"node{node1}"].srqkdnodes.keys())[node_index]
-    #             print(f"{Fore.LIGHTCYAN_EX}[SEND QKD REQUEST]:{Fore.RESET} {sim_nodes[f'node{node1}'].srqkdnodes[node2].sender.name}")
-                
-    #             # reset num keys internal to the stack protocol
-    #             sim_nodes[f"node{node1}"].srqkdnodes[node2].sender.protocol_stack[1].frame_num = 1
-    #             sim_nodes[node2].srqkdnodes[f"node{node1}"].receiver.protocol_stack[1].frame_num = 1
-
-    #             sim_nodes[f"node{node1}"].srqkdnodes[node2].senderkm.send_request()      
-
-    #         print(f"{Fore.LIGHTCYAN_EX}[Message]:{Fore.RESET} {sender} to {receiver}")
-    #         sim_nodes[sender].sendMessage(tl, receiver, message, delta)
-    #         tl.run()
-    #     except NoMoreKeysException:
-    #         losses += 1
-    #     else:
-    #         successes +=1
+            tl.run()
  
     print(
         f"{Fore.YELLOW}[Successful Messages]:{Fore.RESET} {successes}")

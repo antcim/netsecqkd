@@ -63,7 +63,7 @@ class MessagingProtocol(Protocol):
                 f"At Simulation Time: {Fore.LIGHTCYAN_EX}{self.own.timeline.now() * (10 ** -12)} s{Fore.RESET}")
             print(f"{Fore.LIGHTBLUE_EX}[Forwarding...]{Fore.RESET}\n")
             self.super_qkd.sendMessage(self.own.timeline, packet["dest"],
-                                            json.dumps(packet), 0)
+                                            json.dumps(packet))
             
                 
                 
