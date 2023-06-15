@@ -30,6 +30,7 @@ from keys_exception import NoMoreKeysException
 
 def genNetwork(filepath, nodes_number):
     G = nx.random_internet_as_graph(nodes_number)
+    # G =  nx.path_graph(nodes_number) this is to generate the chain
     json_G = nx.node_link_data(G)
     with open(filepath, 'w') as f:
         json.dump(json_G, f, ensure_ascii=False)
