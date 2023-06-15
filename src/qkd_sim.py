@@ -102,7 +102,7 @@ def genTopology(network, tl, fidelity):
     return sim_nodes
 
 
-def runSim(tl, network, sim_nodes, num_keys, key_size, msg_to_send, print_routing, delta):
+def runSim(tl, network, sim_nodes, num_keys, key_size, delta):
 
     tick = time.time()
     print(f"{Fore.LIGHTMAGENTA_EX}[NODES PAIRED FOR QKD]{Fore.RESET}")
@@ -154,7 +154,7 @@ def runSim(tl, network, sim_nodes, num_keys, key_size, msg_to_send, print_routin
     print(f"{Fore.YELLOW}[Messages to Send]:{Fore.RESET} {json.dumps(sender_receiver, indent=4)}")
 
     # Generate the message with the destination
-    plaintext = key_size * '1'
+    plaintext = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
     
     successes = 0
     losses = 0
@@ -165,34 +165,37 @@ def runSim(tl, network, sim_nodes, num_keys, key_size, msg_to_send, print_routin
         for sr_node in super_node.srqkdnodes.values():
             print(f"{Fore.LIGHTCYAN_EX}[SEND QKD REQUEST]:{Fore.RESET} {sr_node.sender.name}")
             sr_node.senderkm.send_request()
-    tl.run()        
+    tl.run()   
+    
+    print(
+        f"{Fore.YELLOW}[Simulation Time]:{Fore.RESET} {tl.now() * (10**-12)} s")     
 
     # generate the routing tables
     topo_manager.gen_forward_tables()
-
-    # schedule messages
-    for i in range(0,msg_to_send):
-
-        for key, value in sender_receiver[i % len(sim_nodes)].items():
+    i = 0
+    num_nodes = len(sim_nodes)
+    
+    while tl.now() + delta < tl.stop_time:
+        for key, value in sender_receiver[i % num_nodes].items():
             sender = key
             receiver = value
-
+        i += 1
         try:
             message = {"dest": receiver, "payload": plaintext}
             message = json.dumps(message)
             tl.init()
             qkd_num = random.randint(0, len(list(sim_nodes))-1)
             
-            #randomly executee qkd
+            #randomly execute qkd
             for i in range(0, qkd_num):
                 node1 = random.randint(0, len(list(sim_nodes))-1)
                 node_index = random.randint(0, len(sim_nodes[f"node{node1}"].srqkdnodes.keys())-1)
                 node2 = list(sim_nodes[f"node{node1}"].srqkdnodes.keys())[node_index]
                 print(f"{Fore.LIGHTCYAN_EX}[SEND QKD REQUEST]:{Fore.RESET} {sim_nodes[f'node{node1}'].srqkdnodes[node2].sender.name}")
                 
-                # rest num keys internal to the stack protocol
-                sim_nodes[f"node{node1}"].srqkdnodes[node2].sender.protocol_stack[1].frame_num = num_keys 
-                sim_nodes[node2].srqkdnodes[f"node{node1}"].receiver.protocol_stack[1].frame_num = num_keys
+                # reset num keys internal to the stack protocol
+                sim_nodes[f"node{node1}"].srqkdnodes[node2].sender.protocol_stack[1].frame_num = 1
+                sim_nodes[node2].srqkdnodes[f"node{node1}"].receiver.protocol_stack[1].frame_num = 1
 
                 sim_nodes[f"node{node1}"].srqkdnodes[node2].senderkm.send_request()      
 
@@ -204,8 +207,40 @@ def runSim(tl, network, sim_nodes, num_keys, key_size, msg_to_send, print_routin
         else:
             successes +=1
 
-    print(
-        f"{Fore.YELLOW}[Total Messages]:{Fore.RESET} {msg_to_send}")  
+    # # schedule messages
+    # for i in range(0,msg_to_send):
+
+    #     for key, value in sender_receiver[i % len(sim_nodes)].items():
+    #         sender = key
+    #         receiver = value
+
+    #     try:
+    #         message = {"dest": receiver, "payload": plaintext}
+    #         message = json.dumps(message)
+    #         tl.init()
+    #         qkd_num = random.randint(0, len(list(sim_nodes))-1)
+            
+    #         #randomly execute qkd
+    #         for i in range(0, qkd_num):
+    #             node1 = random.randint(0, len(list(sim_nodes))-1)
+    #             node_index = random.randint(0, len(sim_nodes[f"node{node1}"].srqkdnodes.keys())-1)
+    #             node2 = list(sim_nodes[f"node{node1}"].srqkdnodes.keys())[node_index]
+    #             print(f"{Fore.LIGHTCYAN_EX}[SEND QKD REQUEST]:{Fore.RESET} {sim_nodes[f'node{node1}'].srqkdnodes[node2].sender.name}")
+                
+    #             # reset num keys internal to the stack protocol
+    #             sim_nodes[f"node{node1}"].srqkdnodes[node2].sender.protocol_stack[1].frame_num = 1
+    #             sim_nodes[node2].srqkdnodes[f"node{node1}"].receiver.protocol_stack[1].frame_num = 1
+
+    #             sim_nodes[f"node{node1}"].srqkdnodes[node2].senderkm.send_request()      
+
+    #         print(f"{Fore.LIGHTCYAN_EX}[Message]:{Fore.RESET} {sender} to {receiver}")
+    #         sim_nodes[sender].sendMessage(tl, receiver, message, delta)
+    #         tl.run()
+    #     except NoMoreKeysException:
+    #         losses += 1
+    #     else:
+    #         successes +=1
+ 
     print(
         f"{Fore.YELLOW}[Successful Messages]:{Fore.RESET} {successes}")
     print(
@@ -226,16 +261,15 @@ def main(argv):
     num_keys = 3
     key_size = 128
     do_gen = True
-    print_routing = False
     filename = 'graph_networkx.json'
     parsename = 'graph_sequence.json'
     fidelity = 0.97
     nodes_number = 10
-    msg_to_send = 3
     output_html = False
-    delta = 1 #1 second
+    delta = 1 # 1 second
+    end_time = 5 # 5 seconds
 
-    opts, _ = getopt.getopt(argv, "f:n:s:ekvq:rd:m:ht:")
+    opts, _ = getopt.getopt(argv, "f:n:s:kvq:d:e:ht:")
     for opt, arg in opts:
         # network graph filepath
         if opt in ['-f']:
@@ -250,15 +284,12 @@ def main(argv):
         # fidelity of quantum channels
         elif opt in ['-q']:
             fidelity = float(arg)
-        # print routing tables
-        elif opt in ['-r']:
-            print_routing = True
         # number of nodes to generate
         elif opt in ['-d']:
             nodes_number = int(arg)
-        # number of messages to send
-        elif opt in ['-m']:
-            msg_to_send = int(arg)
+        # max simulation duration in seconds
+        elif opt in ['-e']:
+            end_time = int(arg)
         # generate html output
         elif opt in ['-h']:
             output_html = True
@@ -266,6 +297,8 @@ def main(argv):
         elif opt in ['-t']:
             delta = float(arg)
 
+    # conversion to picoseconds
+    end_time = end_time * (10**12)
     delta = delta * (10**12)
 
     os.makedirs(os.path.dirname(current_sim), exist_ok=True)
@@ -293,9 +326,9 @@ def main(argv):
     netparse(current_sim + filename, current_sim + parsename)
     network = readConfig(current_sim + parsename)
 
-    tl = Timeline()
+    tl = Timeline(end_time)
     sim_nodes = genTopology(network, tl, fidelity)
-    runSim(tl, network, sim_nodes, num_keys, key_size, msg_to_send, print_routing, delta)
+    runSim(tl, network, sim_nodes, num_keys, key_size, delta)
 
     sys.stdout.flush()
     if output_html:

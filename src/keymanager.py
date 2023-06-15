@@ -19,4 +19,3 @@ class KeyManager():
     def consume(self) -> str:
         key_format = "{0:0" + str(self.keysize) + "b}"
         return key_format.format(self.keys.pop(0))
-    
