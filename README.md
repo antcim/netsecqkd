@@ -1,15 +1,4 @@
 # Network Security Project: QKD
-This project generates a random qkd network where all nodes are coupled in pairs.
-
-Each pair than exchanges keys with the BB84 QKD protocol.
-
-Every node contains a routing table to get to every other node.
-
-The QKD keys are then used to cipher messages to be exchanged on the classical channel between the sender and receiver.
-
-The used cipher is the One Time Pad.
-
-For the message exchange we randomly pick two nodes among the available one and send a message from the first of these to the second.
 
 Each run will generate a folder in the `sim directory`.
 
@@ -31,6 +20,9 @@ python3 src/qkd_sim.py
 - \-f \<filepath> 
     - read network topology from json file
     - if absent a random network will be generated
+- \-d
+    - the number of nodes composing the network we want to test
+    - default: 10
 - \-n \<int> 
     - the number of keys to generate per each QKD instance
     - default: 3
@@ -39,19 +31,14 @@ python3 src/qkd_sim.py
     - default: 128
 - \-q <float, 0 < n <=1> 
     - fidelity of the quantum channels
-    - default: 1
+    - default: 0.97
+- \-t 
+    - set delta time of the messages in seconds
 - \-e 
-    - print error rates
-    - default: false
+    - set end time of the destination in seconds
 - \-k 
     - print generated/remaining keys
     - default: false
-- \-v 
-    - verbose printing of the network and pairing setup
-    - default: false
-- \-d
-    - the number of nodes composing the network we want to test
-    - default: 50
 
 ## Dependencies List
 ### Python Libs

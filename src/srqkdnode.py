@@ -15,11 +15,15 @@ class SRQKDNode:
         self.senderp = senderp
         self.receiverp = receiverp
 
+        # Key Managers
+        self.senderkm = None
+        self.receiverkm = None
+
     def addKeyManagers(self, senderkm, receiverkm):
         self.senderkm = senderkm
         self.receiverkm = receiverkm
-        self.senderp.addkm(senderkm)
-        self.receiverp.addkm(receiverkm)
+        self.senderp.add_key_manager(senderkm)
+        self.receiverp.add_key_manager(receiverkm)
 
     def sendMessage(self, tl, plaintext):
         if len(self.senderkm.keys) > 0:

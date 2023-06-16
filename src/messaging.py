@@ -5,7 +5,6 @@ from sequence.protocol import Protocol
 from sequence.message import Message
 import onetimepad
 from colorama import Fore
-from keys_exception import NoMoreKeysException
 
 
 class MsgType(Enum):
@@ -24,7 +23,7 @@ class MessagingProtocol(Protocol):
         self.other_name = other_name
         self.other_node = other_node
         self.super_qkd = superQKD
-        self.km = None
+        self.key_manager = None
 
     def init(self):
         pass
@@ -42,13 +41,14 @@ class MessagingProtocol(Protocol):
         assert msg.msg_type == MsgType.TEXT_MESS
 
         packet = json.loads(msg.payload)
-        plaintext = onetimepad.decrypt(packet["payload"], self.km.consume())
+        plaintext = onetimepad.decrypt(packet["payload"], self.key_manager.consume())
 
         if packet["dest"] == self.super_qkd.name:
             print(f"{Fore.LIGHTMAGENTA_EX}[{self.own.name}]{Fore.RESET}")
             print(f"Received: {Fore.LIGHTGREEN_EX}TEXT Message{Fore.RESET}")
             print(
-                f"At Simulation Time: {Fore.LIGHTCYAN_EX}{self.own.timeline.now() * (10 ** -12)} s{Fore.RESET}")
+                f"At Simulation Time: {Fore.LIGHTCYAN_EX}"
+                f" {self.own.timeline.now() * (10 ** -12)} s{Fore.RESET}")
             print(
                 f"Encrypted Message: {Fore.LIGHTYELLOW_EX}{packet['payload']}{Fore.RESET}")
             print(
@@ -60,13 +60,11 @@ class MessagingProtocol(Protocol):
             print(f"{Fore.LIGHTMAGENTA_EX}[{self.own.name}]{Fore.RESET}")
             print(f"Received: {Fore.LIGHTGREEN_EX}TEXT Message{Fore.RESET}")
             print(
-                f"At Simulation Time: {Fore.LIGHTCYAN_EX}{self.own.timeline.now() * (10 ** -12)} s{Fore.RESET}")
+                f"At Simulation Time: {Fore.LIGHTCYAN_EX}"
+                f" {self.own.timeline.now() * (10 ** -12)} s{Fore.RESET}")
             print(f"{Fore.LIGHTBLUE_EX}[Forwarding...]{Fore.RESET}\n")
             self.super_qkd.sendMessage(self.own.timeline, packet["dest"],
-                                            json.dumps(packet))
-            
-                
-                
+                                       json.dumps(packet))
 
-    def addkm(self, km):
-        self.km = km
+    def add_key_manager(self, key_manager):
+        self.key_manager = key_manager

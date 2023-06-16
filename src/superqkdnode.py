@@ -1,6 +1,7 @@
 from colorama import Fore
 from keys_exception import NoMoreKeysException
 
+
 class SuperQKDNode:
 
     def __init__(self, name):

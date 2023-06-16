@@ -1,7 +1,6 @@
 import sys
 import os
 import getopt
-import re
 import time
 from datetime import datetime
 import matplotlib.pyplot as plt
@@ -10,7 +9,7 @@ import json
 from colorama import Fore
 import random
 
-# Sequence lib
+# sequence modules
 from sequence.kernel.timeline import Timeline
 from sequence.topology.node import QKDNode
 from sequence.components.optical_channel import QuantumChannel, ClassicalChannel
@@ -18,7 +17,7 @@ from sequence.qkd.BB84 import pair_bb84_protocols
 from sequence.qkd.cascade import pair_cascade_protocols
 from sequence.topology.qkd_topo import QKDTopo
 
-# Netsecqkd lib
+# netsecqkd modules
 from netparser import netparse
 from superqkdnode import SuperQKDNode
 from srqkdnode import SRQKDNode
@@ -28,7 +27,8 @@ from keymanager import KeyManager
 from logger import Logger
 from keys_exception import NoMoreKeysException
 
-def genNetwork(filepath, nodes_number):
+
+def gen_network(filepath, nodes_number):
     G = nx.random_internet_as_graph(nodes_number)
     # G =  nx.path_graph(nodes_number) this is to generate the chain
     json_G = nx.node_link_data(G)
@@ -37,7 +37,7 @@ def genNetwork(filepath, nodes_number):
     return G
 
 
-def drawToFile(graph, filepath):
+def draw_to_file(graph, filepath):
     pos = nx.kamada_kawai_layout(graph)
     nx.draw_networkx_nodes(graph, pos, node_size=50, margins=0.01)
     nx.draw_networkx_labels(graph, pos, font_size=5, font_color='w')
@@ -46,11 +46,11 @@ def drawToFile(graph, filepath):
                 bbox_inches='tight')
 
 
-def readConfig(filepath):
+def read_config(filepath):
     return QKDTopo(filepath)
 
 
-def genTopology(network, tl, fidelity):
+def gen_topology(network, timeline, fidelity):
     sim_nodes = {}
 
     # Construct dictionary of super qkd nodes
@@ -65,32 +65,32 @@ def genTopology(network, tl, fidelity):
             dest = node.cchannels[key].receiver
 
             sender_name = source + " to " + dest + ".sender"
-            sender = QKDNode(sender_name, tl)
+            sender = QKDNode(sender_name, timeline)
 
             receiver_name = source + " to " + dest + ".receiver"
-            receiver = QKDNode(receiver_name, tl)
+            receiver = QKDNode(receiver_name, timeline)
 
             dest_receiver = dest + " to " + source + ".receiver"
             dest_sender = dest + " to " + source + ".sender"
 
             # Sender channels
             cchannel_name = "cchannel[" + source + " to " + dest + ".sender]"
-            cchannel = ClassicalChannel(cchannel_name, tl, 1000, 1)
+            cchannel = ClassicalChannel(cchannel_name, timeline, 1000, 1)
             cchannel.set_ends(sender, dest_receiver)
 
             qchannel_name = "qchannel[" + source + " to " + dest + ".sender]"
             qchannel = QuantumChannel(
-                qchannel_name, tl, 0.0001, 1000, fidelity)
+                qchannel_name, timeline, 0.0001, 1000, fidelity)
             qchannel.set_ends(sender, dest_receiver)
 
             # Receiver channels
             cchannel_name = "cchannel[" + source + " to " + dest + ".receiver]"
-            cchannel = ClassicalChannel(cchannel_name, tl, 1000, 1)
+            cchannel = ClassicalChannel(cchannel_name, timeline, 1000, 1)
             cchannel.set_ends(receiver, dest_sender)
 
             qchannel_name = "qchannel[" + source + " to " + dest + ".receiver]"
             qchannel = QuantumChannel(
-                qchannel_name, tl, 0.0001, 1000, fidelity)
+                qchannel_name, timeline, 0.0001, 1000, fidelity)
             qchannel.set_ends(receiver, dest_sender)
 
             senderp = MessagingProtocol(
@@ -98,16 +98,17 @@ def genTopology(network, tl, fidelity):
             receiverp = MessagingProtocol(
                 receiver, "msgp", "msgp", dest_sender, sim_nodes[node.name])
 
-            sim_nodes[node.name].srqkdnodes[dest] = SRQKDNode(sender, receiver, senderp, receiverp)
+            sim_nodes[node.name].srqkdnodes[dest] = SRQKDNode(
+                sender, receiver, senderp, receiverp)
 
     return sim_nodes
 
 
-def runSim(tl, network, sim_nodes, num_keys, key_size, delta):
+def run_sim(timeline, network, sim_nodes, num_keys, key_size, delta):
 
     tick = time.time()
     print(f"{Fore.LIGHTMAGENTA_EX}[NODES PAIRED FOR QKD]{Fore.RESET}")
-    
+
     for node in network.get_nodes_by_type(QKDTopo.QKD_NODE):
         neighbors = node.qchannels.keys()
         for k in neighbors:
@@ -127,11 +128,11 @@ def runSim(tl, network, sim_nodes, num_keys, key_size, delta):
     # this might be unnecessary with the cascade protocol
     for super_node in sim_nodes.values():
         for srnode in super_node.srqkdnodes.values():
-            km1 = KeyManager(tl, key_size, num_keys)
+            km1 = KeyManager(timeline, key_size, num_keys)
             km1.lower_protocols.append(srnode.sender.protocol_stack[1])
             srnode.sender.protocol_stack[1].upper_protocols.append(km1)
 
-            km2 = KeyManager(tl, key_size, num_keys)
+            km2 = KeyManager(timeline, key_size, num_keys)
             km2.lower_protocols.append(srnode.receiver.protocol_stack[1])
             srnode.receiver.protocol_stack[1].upper_protocols.append(km2)
 
@@ -152,32 +153,34 @@ def runSim(tl, network, sim_nodes, num_keys, key_size, delta):
 
         sender_receiver.append({sender: f"node{receiver_node}"})
 
-    print(f"{Fore.YELLOW}[Messages to Send]:{Fore.RESET} {json.dumps(sender_receiver, indent=4)}")
+    print(
+        f"{Fore.YELLOW}[Messages to Send]:{Fore.RESET} {json.dumps(sender_receiver, indent=4)}")
 
     # Generate the message with the destination
     plaintext = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-    
+
     successes = 0
     losses = 0
 
     # execute qkd for every node in the network
-    tl.init()
+    timeline.init()
     for super_node in sim_nodes.values():
         for sr_node in super_node.srqkdnodes.values():
-            print(f"{Fore.LIGHTCYAN_EX}[SEND QKD REQUEST]:{Fore.RESET} {sr_node.sender.name}")
+            print(
+                f"{Fore.LIGHTCYAN_EX}[SEND QKD REQUEST]:{Fore.RESET} {sr_node.sender.name}")
             sr_node.senderkm.send_request()
-    tl.run()   
-    
+    timeline.run()
+
     print(
-        f"{Fore.YELLOW}[Simulation Time]:{Fore.RESET} {tl.now() * (10**-12)} s")     
+        f"{Fore.YELLOW}[Simulation Time]:{Fore.RESET} {timeline.now() * (10**-12)} s")
 
     # generate the routing tables
     topo_manager.gen_forward_tables()
     i = 0
     num_nodes = len(sim_nodes)
-    
-    while tl.now() + delta < tl.stop_time:
-        curr_sim_time = tl.now()
+
+    while timeline.now() + delta < timeline.stop_time:
+        curr_sim_time = timeline.now()
         for key, value in sender_receiver[i % num_nodes].items():
             sender = key
             receiver = value
@@ -185,49 +188,55 @@ def runSim(tl, network, sim_nodes, num_keys, key_size, delta):
         try:
             message = {"dest": receiver, "payload": plaintext}
             message = json.dumps(message)
-            tl.init()
+            timeline.init()
 
-            print(f"{Fore.LIGHTCYAN_EX}[Message]:{Fore.RESET} {sender} to {receiver}")
-            sim_nodes[sender].sendMessage(tl, receiver, message)
-            
-            tl.run()
-            
+            print(
+                f"{Fore.LIGHTCYAN_EX}[Message]:{Fore.RESET} {sender} to {receiver}")
+            sim_nodes[sender].sendMessage(timeline, receiver, message)
+
+            timeline.run()
+
         except NoMoreKeysException:
             losses += 1
         else:
-            successes +=1
-        
-        while tl.now() - curr_sim_time < delta:
-            tl.init()
+            successes += 1
+
+        while timeline.now() - curr_sim_time < delta:
+            timeline.init()
             qkd_num = random.randint(0, len(list(sim_nodes))-1)
-            
-            #randomly execute qkd
+
+            # randomly execute qkd
             for i in range(0, qkd_num):
                 node1 = random.randint(0, len(list(sim_nodes))-1)
-                node_index = random.randint(0, len(sim_nodes[f"node{node1}"].srqkdnodes.keys())-1)
-                node2 = list(sim_nodes[f"node{node1}"].srqkdnodes.keys())[node_index]
-                print(f"{Fore.LIGHTCYAN_EX}[SEND QKD REQUEST]:{Fore.RESET} {sim_nodes[f'node{node1}'].srqkdnodes[node2].sender.name}")
-                
+                node_index = random.randint(
+                    0, len(sim_nodes[f"node{node1}"].srqkdnodes.keys())-1)
+                node2 = list(sim_nodes[f"node{node1}"].srqkdnodes.keys())[
+                    node_index]
+                print(
+                    f"{Fore.LIGHTCYAN_EX}[SEND QKD REQUEST]:{Fore.RESET}"
+                    f"{sim_nodes[f'node{node1}'].srqkdnodes[node2].sender.name}")
+
                 # reset num keys internal to the stack protocol
                 sim_nodes[f"node{node1}"].srqkdnodes[node2].sender.protocol_stack[1].frame_num = 1
                 sim_nodes[node2].srqkdnodes[f"node{node1}"].receiver.protocol_stack[1].frame_num = 1
 
-                sim_nodes[f"node{node1}"].srqkdnodes[node2].senderkm.send_request()      
-            
-            tl.run()
- 
+                sim_nodes[f"node{node1}"].srqkdnodes[node2].senderkm.send_request()
+
+            timeline.run()
+
     print(
         f"{Fore.YELLOW}[Successful Messages]:{Fore.RESET} {successes}")
     print(
         f"{Fore.YELLOW}[Dropped Messages]:{Fore.RESET} {losses}")
     print(
-        f"{Fore.YELLOW}[Simulation Time]:{Fore.RESET} {tl.now() * (10**-12)} s")
+        f"{Fore.YELLOW}[Simulation Time]:{Fore.RESET} {timeline.now() * (10**-12)} s")
     print(
         f"{Fore.YELLOW}[Execution Time]: {Fore.RESET} {(time.time() - tick):0.4f} s")
-    
+
     for super_node in sim_nodes.values():
         for sr_node in super_node.srqkdnodes.values():
             sr_node.senderMetrics()
+
 
 def main(argv):
 
@@ -241,8 +250,8 @@ def main(argv):
     fidelity = 0.97
     nodes_number = 10
     output_html = False
-    delta = 1 # 1 second
-    end_time = 5 # 5 seconds
+    delta = 1  # 1 second
+    end_time = 5  # 5 seconds
 
     opts, _ = getopt.getopt(argv, "f:n:s:kvq:d:e:ht:")
     for opt, arg in opts:
@@ -279,14 +288,15 @@ def main(argv):
     os.makedirs(os.path.dirname(current_sim), exist_ok=True)
     sys.stdout = Logger(current_sim + "sim_output.txt")
 
-    print(f"{Fore.YELLOW}[Simulation Command]:{Fore.RESET} python3 {' '.join(sys.argv[0:])}")
+    print(
+        f"{Fore.YELLOW}[Simulation Command]:{Fore.RESET} python3 {' '.join(sys.argv[0:])}")
 
     if do_gen:
         print(
             f"{Fore.YELLOW}[Random Network Topology Generated]{Fore.CYAN}")
-        graph = genNetwork(current_sim + filename, nodes_number)
+        graph = gen_network(current_sim + filename, nodes_number)
         while len(graph.nodes()) < 2:
-            graph = genNetwork(current_sim + filename, nodes_number)
+            graph = gen_network(current_sim + filename, nodes_number)
     else:
         print(
             f"{Fore.YELLOW}[Loaded Network Graph From File]:{Fore.RESET} {filename}")
@@ -297,18 +307,18 @@ def main(argv):
         with open(current_sim + filename, 'w') as f:
             json.dump(js_graph, f, ensure_ascii=False)
 
-    drawToFile(graph, current_sim + "network_graph.png")
+    draw_to_file(graph, current_sim + "network_graph.png")
     netparse(current_sim + filename, current_sim + parsename)
-    network = readConfig(current_sim + parsename)
+    network = read_config(current_sim + parsename)
 
-    tl = Timeline(end_time)
-    sim_nodes = genTopology(network, tl, fidelity)
-    runSim(tl, network, sim_nodes, num_keys, key_size, delta)
+    timeline = Timeline(end_time)
+    sim_nodes = gen_topology(network, timeline, fidelity)
+    run_sim(timeline, network, sim_nodes, num_keys, key_size, delta)
 
     sys.stdout.flush()
     if output_html:
         os.system("cat " + current_sim + "sim_output.txt"
-              + " | aha --black > " + current_sim + "sim_output.html")
+                  + " | aha --black > " + current_sim + "sim_output.html")
 
 
 if __name__ == "__main__":
