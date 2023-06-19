@@ -2,6 +2,7 @@ import re
 from networkx import DiGraph, exception, shortest_path
 from superqkdnode import SuperQKDNode
 from colorama import Fore
+from key_cont import KeyConteiner
 
 class NewQKDTopo():
 
@@ -23,7 +24,8 @@ class NewQKDTopo():
                 dst = re.search('to (.+?).sender', srqkdnode.sender.name).group(1)
                 cc = srqkdnode.sender.cchannels[dst + " to " + n + ".receiver"]
                 
-                n_keys = srqkdnode.senderkm.keys
+                #n_keys = srqkdnode.senderkm.keys
+                n_keys = KeyConteiner.keys[srqkdnode.sender.name]
                 
                 if len(n_keys) > 0:
                     edges.append((n, dst, {"weight": cc.distance}))

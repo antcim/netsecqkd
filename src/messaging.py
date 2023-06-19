@@ -8,12 +8,15 @@ from colorama import Fore
 from keys_exception import NoMoreKeysException
 
 
+
 class MsgType(Enum):
 
     TEXT_MESS = auto()
 
 
 class MessagingProtocol(Protocol):
+    
+    succ = 0
 
     def __init__(
             self, own: Node, name: str,
@@ -45,6 +48,7 @@ class MessagingProtocol(Protocol):
         plaintext = onetimepad.decrypt(packet["payload"], self.km.consume())
 
         if packet["dest"] == self.super_qkd.name:
+            MessagingProtocol.succ += 1
             print(f"{Fore.LIGHTMAGENTA_EX}[{self.own.name}]{Fore.RESET}")
             print(f"Received: {Fore.LIGHTGREEN_EX}TEXT Message{Fore.RESET}")
             print(
@@ -63,7 +67,7 @@ class MessagingProtocol(Protocol):
                 f"At Simulation Time: {Fore.LIGHTCYAN_EX}{self.own.timeline.now() * (10 ** -12)} s{Fore.RESET}")
             print(f"{Fore.LIGHTBLUE_EX}[Forwarding...]{Fore.RESET}\n")
             self.super_qkd.sendMessage(self.own.timeline, packet["dest"],
-                                            json.dumps(packet))
+                                            json.dumps(packet), 0)
             
                 
                 

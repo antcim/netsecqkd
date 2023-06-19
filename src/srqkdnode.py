@@ -2,9 +2,12 @@ from sequence.kernel.process import Process
 from sequence.kernel.event import Event
 from colorama import Fore
 from keys_exception import NoMoreKeysException
-
+from nop import Nop
+from key_cont import KeyConteiner
 
 class SRQKDNode:
+    
+    drop = 0
 
     def __init__(self, sender, receiver, senderp, receiverp):
         # Nodes
@@ -21,16 +24,23 @@ class SRQKDNode:
         self.senderp.addkm(senderkm)
         self.receiverp.addkm(receiverkm)
 
-    def sendMessage(self, tl, plaintext):
-        if len(self.senderkm.keys) > 0:
+    def sendMessage(self, tl, plaintext, delta):
+        if len(KeyConteiner.keys[self.sender.name]) > 0:
             key = self.senderkm.consume()
             process = Process(self.senderp, "start", [plaintext, key])
-            event = Event(tl.now(), process)
+            event = Event(tl.now() + delta, process)
             tl.schedule(event)
             return
+        SRQKDNode.drop += 1
+        # dummy event necessary for correct scheduling
+        nop = Nop()
+        process = Process(nop, "nop", [])
+        event = Event(tl.now() + delta, process)
+        tl.schedule(event)
+        
         print(f"{Fore.RED} sender.name = {self.sender.name}{Fore.RESET}")
         print(Fore.RED, "[No Keys Available To Use]", Fore.RESET)
-        raise NoMoreKeysException
+        return
 
     def _printMetrics(self, node):
         name = node.name
