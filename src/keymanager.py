@@ -8,10 +8,12 @@ class KeyManager():
         self.keys = []
         self.times = []
 
+    # interface with cascade protocol
     def send_request(self):
         for p in self.lower_protocols:
             p.push(self.keysize, self.num_keys)
 
+    # get keys from cascade protocol
     def pop(self, key):
         self.keys.append(key)
         self.times.append(self.timeline.now() * 1e-9)

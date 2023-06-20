@@ -7,15 +7,15 @@ from keys_exception import NoMoreKeysException
 class SRQKDNode:
 
     def __init__(self, sender, receiver, senderp, receiverp):
-        # Nodes
+        # nodes
         self.sender = sender
         self.receiver = receiver
 
-        # Messaging protocols for the nodes
+        # messaging protocols for the nodes
         self.senderp = senderp
         self.receiverp = receiverp
 
-        # Key Managers
+        # key Managers
         self.senderkm = None
         self.receiverkm = None
 

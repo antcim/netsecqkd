@@ -7,14 +7,11 @@ class NewQKDTopo():
 
     def __init__(self, sim_nodes):
         self.sim_nodes = sim_nodes
-        self.gen_forward_tables()
 
     def gen_forward_tables(self):
         graph = DiGraph()
         for n in self.sim_nodes.keys():
             graph.add_node(n)
-
-        # print(graph.nodes)
 
         edges = []
 

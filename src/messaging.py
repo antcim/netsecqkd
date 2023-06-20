@@ -54,7 +54,7 @@ class MessagingProtocol(Protocol):
             print(
                 f"Decrypted Message: {Fore.LIGHTYELLOW_EX}{plaintext}{Fore.RESET}")
 
-        # Message forwarding
+        # message forwarding
         else:
             packet["payload"] = plaintext
             print(f"{Fore.LIGHTMAGENTA_EX}[{self.own.name}]{Fore.RESET}")
