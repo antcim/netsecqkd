@@ -52,6 +52,3 @@ python3 src/qkd_sim.py
 $ sudo apt-get install aha
 ```
 
-# License
-
-GNU GPLv3
